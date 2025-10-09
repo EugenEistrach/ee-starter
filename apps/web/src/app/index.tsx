@@ -2,6 +2,7 @@ import { convexQuery } from '@convex-dev/react-query'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { api } from '@workspace/backend/convex/_generated/api'
+import { cn } from '@workspace/ui/lib/utils'
 
 export const Route = createFileRoute('/')({
   component: HomeComponent,
@@ -34,7 +35,7 @@ function HomeComponent() {
           <h2 className="mb-2 font-medium">API Status</h2>
           <div className="flex items-center gap-2">
             <div
-              className={`h-2 w-2 rounded-full ${healthCheck.data === 'OK' ? 'bg-green-500' : healthCheck.isLoading ? 'bg-orange-400' : 'bg-red-500'}`}
+              className={cn(`h-2 w-2 rounded-full`, healthCheck.data === 'OK' ? 'bg-success' : healthCheck.isLoading ? 'bg-warning' : 'bg-destructive')}
             />
             <span className="text-muted-foreground text-sm">
               {healthCheck.isLoading

@@ -1,0 +1,33 @@
+/**
+ * Semantic feedback colors for success, warning, error states
+ * References Tailwind CSS v4 default color palette directly
+ *
+ * Can be easily replaced or modified independently from the main theme
+ */
+
+:root {
+  /* Success - Uses Tailwind green scale */
+  --success: var(--color-green-500);
+  --success-foreground: var(--color-green-950);
+
+  /* Warning - Uses Tailwind amber scale */
+  --warning: var(--color-amber-500);
+  --warning-foreground: var(--color-amber-950);
+}
+
+.dark {
+  /* Success - Darker green with light foreground for dark mode */
+  --success: var(--color-green-600);
+  --success-foreground: var(--color-green-50);
+
+  /* Warning - Darker amber with light foreground for dark mode */
+  --warning: var(--color-amber-600);
+  --warning-foreground: var(--color-amber-50);
+}
+
+@theme inline {
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+}
