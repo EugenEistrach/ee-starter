@@ -19,7 +19,7 @@ export default {
     "apps/web": {
       entry: ["src/app/**/*.{ts,tsx}", "src/router.tsx"],
       ignore: ["src/routeTree.gen.ts", "src/shared/auth/lib/auth-server.ts"],
-      ignoreDependencies: ["tailwindcss", "tw-animate-css", "@tanstack/router-plugin"],
+      ignoreDependencies: ["tailwindcss", "tw-animate-css", "@tanstack/router-plugin", "@bprogress/core"],
     },
   },
 }
