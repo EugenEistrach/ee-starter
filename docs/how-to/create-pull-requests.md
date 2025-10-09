@@ -15,8 +15,10 @@
 
 3. **Push to remote**
    ```bash
-   git push origin HEAD:$(git branch --show-current)
+   git push -u origin HEAD:$(git branch --show-current)
    ```
+
+   The `-u` flag sets up tracking so future `git push` commands work without arguments.
 
 4. **Create PR**
    ```bash

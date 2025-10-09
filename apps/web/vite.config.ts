@@ -8,7 +8,11 @@ export default defineConfig({
   plugins: [
     tsconfigPaths(),
     tailwindcss(),
-    tanstackStart(),
+    tanstackStart({
+      router: {
+        routesDirectory: './app',
+      }
+    }),
     viteReact({
       babel: {
         plugins: ['babel-plugin-react-compiler'],

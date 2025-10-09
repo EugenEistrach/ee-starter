@@ -1,9 +1,6 @@
-import { defineSchema, defineTable } from 'convex/server'
-import { v } from 'convex/values'
+import { defineSchema } from 'convex/server'
+import { todosTable } from './features/todos/schema'
 
 export default defineSchema({
-  todos: defineTable({
-    text: v.string(),
-    completed: v.boolean(),
-  }),
+  todos: todosTable,
 })

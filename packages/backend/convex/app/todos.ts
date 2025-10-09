@@ -1,9 +1,10 @@
 import { v } from 'convex/values'
-import { mutation, query } from './_generated/server'
+import { mutation, query } from '../_generated/server'
+import { createTodo, getAllTodos, removeTodo, toggleTodo } from '../features/todos/logic'
 
 export const getAll = query({
   handler: async (ctx) => {
-    return ctx.db.query('todos').collect()
+    return getAllTodos(ctx)
   },
 })
 
@@ -12,11 +13,7 @@ export const create = mutation({
     text: v.string(),
   },
   handler: async (ctx, args) => {
-    const newTodoId = await ctx.db.insert('todos', {
-      text: args.text,
-      completed: false,
-    })
-    return ctx.db.get(newTodoId)
+    return createTodo(ctx, args.text)
   },
 })
 
@@ -26,8 +23,7 @@ export const toggle = mutation({
     completed: v.boolean(),
   },
   handler: async (ctx, args) => {
-    await ctx.db.patch(args.id, { completed: args.completed })
-    return { success: true }
+    return toggleTodo(ctx, args.id, args.completed)
   },
 })
 
@@ -36,7 +32,6 @@ export const deleteTodo = mutation({
     id: v.id('todos'),
   },
   handler: async (ctx, args) => {
-    await ctx.db.delete(args.id)
-    return { success: true }
+    return removeTodo(ctx, args.id)
   },
 })

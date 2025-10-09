@@ -1,15 +1,13 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { api } from '@workspace/backend/convex/_generated/api'
 import {
   Authenticated,
   AuthLoading,
   Unauthenticated,
-  useQuery,
 } from 'convex/react'
 import { useState } from 'react'
-import SignInForm from '@/components/sign-in-form'
-import SignUpForm from '@/components/sign-up-form'
-import UserMenu from '@/components/user-menu'
+import SignInForm from '@/shared/auth/views/sign-in-form'
+import SignUpForm from '@/shared/auth/views/sign-up-form'
+import UserMenu from '@/shared/auth/views/user-menu'
 
 export const Route = createFileRoute('/dashboard')({
   component: RouteComponent,
@@ -17,17 +15,12 @@ export const Route = createFileRoute('/dashboard')({
 
 function RouteComponent() {
   const [showSignIn, setShowSignIn] = useState(false)
-  const privateData = useQuery(api.privateData.get)
 
   return (
     <>
       <Authenticated>
         <div>
           <h1>Dashboard</h1>
-          <p>
-            privateData:
-            {privateData?.message}
-          </p>
           <UserMenu />
         </div>
       </Authenticated>
