@@ -2,6 +2,6 @@
 @import "@workspace/ui/globals.css";
 
 /* Scan UI package components for Tailwind classes */
-@source "../../packages/ui/src/**/*.{ts,tsx}";
+@source "@workspace/ui/src/**/*.{ts,tsx}";
 
 /* App-specific styles can go here */
