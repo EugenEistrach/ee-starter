@@ -1,101 +1,161 @@
-import { Toaster } from "@/components/ui/sonner";
+import type { ConvexQueryClient } from '@convex-dev/react-query'
 
+import type { QueryClient } from '@tanstack/react-query'
+import type { ConvexReactClient } from 'convex/react'
+import { ConvexBetterAuthProvider } from '@convex-dev/better-auth/react'
 import {
-	HeadContent,
-	Outlet,
-	Scripts,
-	createRootRouteWithContext,
-	useRouterState,
-	useRouteContext,
-} from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
-import Header from "../components/header";
-import appCss from "../index.css?url";
-import type { QueryClient } from "@tanstack/react-query";
-import type { ConvexQueryClient } from "@convex-dev/react-query";
-import type { ConvexReactClient } from "convex/react";
-import Loader from "@/components/loader";
-
-import { createServerFn } from "@tanstack/react-start";
-import { getRequest, getCookie } from "@tanstack/react-start/server";
-import { ConvexBetterAuthProvider } from "@convex-dev/better-auth/react";
+  fetchSession,
+  getCookieName,
+} from '@convex-dev/better-auth/react-start'
 import {
-	fetchSession,
-	getCookieName,
-} from "@convex-dev/better-auth/react-start";
-import { authClient } from "@/lib/auth-client";
-import { createAuth } from "@my-better-t-app/backend/convex/auth";
+  createRootRouteWithContext,
+  HeadContent,
+  Outlet,
+  Scripts,
+  useRouteContext,
+  useRouterState,
+} from '@tanstack/react-router'
+import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
+import { createServerFn } from '@tanstack/react-start'
+import { getCookie, getRequest } from '@tanstack/react-start/server'
 
-const fetchAuth = createServerFn({ method: "GET" }).handler(async () => {
-	const { session } = await fetchSession(getRequest());
-	const sessionCookieName = getCookieName(createAuth);
-	const token = getCookie(sessionCookieName);
-	return {
-		userId: session?.user.id,
-		token,
-	};
-});
+import { createAuth } from '@workspace/backend/convex/auth'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card'
+import { Toaster } from '@workspace/ui/components/sonner'
+import Loader from '@/components/loader'
+import { authClient } from '@/lib/auth-client'
+import Header from '../components/header'
+import appCss from '../index.css?url'
 
-export interface RouterAppContext {
-	queryClient: QueryClient;
-	convexClient: ConvexReactClient;
-	convexQueryClient: ConvexQueryClient;
+const fetchAuth = createServerFn({ method: 'GET' }).handler(async () => {
+  const { session } = await fetchSession(getRequest())
+  const sessionCookieName = getCookieName(createAuth)
+  const token = getCookie(sessionCookieName)
+  return {
+    userId: session?.user.id,
+    token,
+  }
+})
+
+interface RouterAppContext {
+  queryClient: QueryClient
+  convexClient: ConvexReactClient
+  convexQueryClient: ConvexQueryClient
 }
 
 export const Route = createRootRouteWithContext<RouterAppContext>()({
-	head: () => ({
-		meta: [
-			{
-				charSet: "utf-8",
-			},
-			{
-				name: "viewport",
-				content: "width=device-width, initial-scale=1",
-			},
-			{
-				title: "My App",
-			},
-		],
-		links: [
-			{
-				rel: "stylesheet",
-				href: appCss,
-			},
-		],
-	}),
+  beforeLoad: async (ctx) => {
+    try {
+      const { userId, token } = await fetchAuth()
+      if (token) {
+        ctx.context.convexQueryClient.serverHttpClient?.setAuth(token)
+      }
+      return { userId, token }
+    }
+    catch (error) {
+      console.error('Failed to fetch auth session:', error)
 
-	component: RootDocument,
-	beforeLoad: async (ctx) => {
-		const { userId, token } = await fetchAuth();
-		if (token) {
-			ctx.context.convexQueryClient.serverHttpClient?.setAuth(token);
-		}
-		return { userId, token };
-	},
-});
+      // Parse the error to give helpful messages
+      if (error instanceof Error) {
+        const errorStr = error.message + (error.cause?.toString() || '')
+
+        if (errorStr.includes('ECONNREFUSED')) {
+          throw new Error('Backend connection refused. Is Convex running?')
+        }
+
+        if (errorStr.includes('fetch failed')) {
+          throw new Error(`Auth service unreachable: ${error.message}`)
+        }
+      }
+
+      throw error
+    }
+  },
+
+  errorComponent: ({ error }) => {
+    const isBackendDown = error.message.includes('connection refused') || error.message.includes('ECONNREFUSED')
+
+    return (
+      <>
+        <link rel="stylesheet" href={appCss} />
+        <div className="min-h-screen flex items-center justify-center p-8 bg-background">
+          <Card className="max-w-2xl w-full border-destructive">
+            <CardHeader>
+              <CardTitle className="text-destructive">
+                {isBackendDown ? 'Backend Not Running' : 'Application Error'}
+              </CardTitle>
+              <CardDescription className="font-mono text-sm">{error.message}</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {isBackendDown && (
+                <div className="bg-muted p-3 rounded text-sm">
+                  <p className="font-medium mb-1">Start the backend:</p>
+                  <code>bun run dev:server</code>
+                </div>
+              )}
+              <Button
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  window.location.reload()
+                }}
+                className="w-full"
+              >
+                Retry
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </>
+    )
+  },
+
+  component: RootDocument,
+  head: () => ({
+    meta: [
+      {
+        charSet: 'utf-8',
+      },
+      {
+        name: 'viewport',
+        content: 'width=device-width, initial-scale=1',
+      },
+      {
+        title: 'My App',
+      },
+    ],
+    links: [
+      {
+        rel: 'stylesheet',
+        href: appCss,
+      },
+    ],
+  }),
+})
 
 function RootDocument() {
-	const isFetching = useRouterState({ select: (s) => s.isLoading });
-	const context = useRouteContext({ from: Route.id });
-	return (
-		<ConvexBetterAuthProvider
-			client={context.convexClient}
-			authClient={authClient}
-		>
-			<html lang="en" className="dark">
-				<head>
-					<HeadContent />
-				</head>
-				<body>
-					<div className="grid h-svh grid-rows-[auto_1fr]">
-						<Header />
-						{isFetching ? <Loader /> : <Outlet />}
-					</div>
-					<Toaster richColors />
-					<TanStackRouterDevtools position="bottom-left" />
-					<Scripts />
-				</body>
-			</html>
-		</ConvexBetterAuthProvider>
-	);
+  const isFetching = useRouterState({ select: s => s.isLoading })
+  const context = useRouteContext({ from: Route.id })
+  return (
+    <ConvexBetterAuthProvider
+      client={context.convexClient}
+      authClient={authClient}
+    >
+      <html lang="en" className="dark">
+        <head>
+          <HeadContent />
+        </head>
+        <body>
+          <div className="grid h-svh grid-rows-[auto_1fr]">
+            <Header />
+            {isFetching ? <Loader /> : <Outlet />}
+          </div>
+          <Toaster richColors />
+          <TanStackRouterDevtools position="bottom-left" />
+          <Scripts />
+        </body>
+      </html>
+    </ConvexBetterAuthProvider>
+  )
 }
