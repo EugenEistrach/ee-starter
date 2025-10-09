@@ -91,21 +91,22 @@ const branchName = execSync("git branch --show-current", { cwd: ROOT_DIR })
 // Read project name from package.json
 const packageJsonPath = join(ROOT_DIR, "package.json")
 const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf-8"))
-let projectName = packageJson.name || "convex-project"
+const projectName = packageJson.name || "convex-project"
 
-// Calculate max allowed length for project name
-// Format: {projectName}-{branchName}
+// Calculate max allowed length for branch name
+// Format: {branchName}-{projectName}
 // Max total: 64 chars, minus 1 for dash
 const MAX_SLUG_LENGTH = 64
-const maxProjectNameLength = MAX_SLUG_LENGTH - 1 - branchName.length
+const maxBranchNameLength = MAX_SLUG_LENGTH - 1 - projectName.length
 
-// Trim project name if needed to fit within Convex's 64 char limit
-if (projectName.length > maxProjectNameLength) {
-  projectName = projectName.slice(0, maxProjectNameLength)
-  console.log(`⚠️  Project name trimmed to fit slug limit: ${projectName}`)
+// Trim branch name from left if needed to fit within Convex's 64 char limit
+let trimmedBranchName = branchName
+if (branchName.length > maxBranchNameLength) {
+  trimmedBranchName = branchName.slice(branchName.length - maxBranchNameLength)
+  console.log(`⚠️  Branch name trimmed to fit slug limit: ${trimmedBranchName}`)
 }
 
-const fullProjectSlug = `${projectName}-${branchName}`
+const fullProjectSlug = `${trimmedBranchName}-${projectName}`
 console.log(`📋 Project slug: ${fullProjectSlug} (${fullProjectSlug.length} chars)`)
 
 // Initialize local Convex instance with branch-specific project name
