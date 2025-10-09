@@ -55,21 +55,7 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
     }
     catch (error) {
       console.error('Failed to fetch auth session:', error)
-
-      // Parse the error to give helpful messages
-      if (error instanceof Error) {
-        const errorStr = error.message + (error.cause?.toString() || '')
-
-        if (errorStr.includes('ECONNREFUSED')) {
-          throw new Error('Backend connection refused. Is Convex running?')
-        }
-
-        if (errorStr.includes('fetch failed')) {
-          throw new Error(`Auth service unreachable: ${error.message}`)
-        }
-      }
-
-      throw error
+      throw parseAuthError(error)
     }
   },
 
@@ -158,4 +144,22 @@ function RootDocument() {
       </html>
     </ConvexBetterAuthProvider>
   )
+}
+
+function parseAuthError(error: unknown): Error {
+  if (!(error instanceof Error)) {
+    return error as Error
+  }
+
+  const errorStr = error.message + (error.cause?.toString() || '')
+
+  if (errorStr.includes('ECONNREFUSED')) {
+    return new Error('Backend connection refused. Is Convex running?')
+  }
+
+  if (errorStr.includes('fetch failed')) {
+    return new Error(`Auth service unreachable: ${error.message}`)
+  }
+
+  return error
 }

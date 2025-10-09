@@ -1,0 +1,19 @@
+{
+  "name": "@workspace/eslint-rules",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.mjs"
+  },
+  "scripts": {
+    "check": "tsc --noEmit",
+    "clean": "rm -rf node_modules .turbo dist"
+  },
+  "devDependencies": {
+    "@types/eslint": "catalog:",
+    "@types/estree": "catalog:",
+    "@types/node": "catalog:",
+    "typescript": "catalog:"
+  }
+}

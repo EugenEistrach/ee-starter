@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "./feedback-colors.css";
 
 @source "../../**/*.{ts,tsx}";
 
