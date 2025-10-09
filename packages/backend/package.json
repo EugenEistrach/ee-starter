@@ -6,7 +6,6 @@
   "license": "ISC",
   "scripts": {
     "dev": "convex dev ",
-    "dev:setup": "convex dev --configure --until-success",
     "check": "eslint --cache --cache-location .eslintcache --concurrency auto convex/ && tsc --noEmit --project convex/tsconfig.json",
     "fix": "eslint --cache --cache-location .eslintcache --concurrency auto --fix convex/ && tsc --noEmit --project convex/tsconfig.json",
     "clean": "rm -rf node_modules .turbo .eslintcache"
