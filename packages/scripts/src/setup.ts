@@ -88,20 +88,30 @@ const branchName = execSync("git branch --show-current", { cwd: ROOT_DIR })
   .toString()
   .trim()
 
-// Add unique safety slug to prevent accidental deletion of wrong projects
-const safetySlug = `conductor-${Date.now()}`
-const projectName = `my-better-t-app-${branchName}-${safetySlug}`
+// Read project name from package.json
+const packageJsonPath = join(ROOT_DIR, "package.json")
+const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf-8"))
+let projectName = packageJson.name || "convex-project"
 
-console.log(`🔒 Safety slug: ${safetySlug}`)
+// Calculate max allowed length for project name
+// Format: {projectName}-{branchName}
+// Max total: 64 chars, minus 1 for dash
+const MAX_SLUG_LENGTH = 64
+const maxProjectNameLength = MAX_SLUG_LENGTH - 1 - branchName.length
 
-// Save safety slug for cleanup script
-const safetySlugPath = join(ROOT_DIR, ".convex-safety-slug")
-writeFileSync(safetySlugPath, safetySlug)
+// Trim project name if needed to fit within Convex's 64 char limit
+if (projectName.length > maxProjectNameLength) {
+  projectName = projectName.slice(0, maxProjectNameLength)
+  console.log(`⚠️  Project name trimmed to fit slug limit: ${projectName}`)
+}
+
+const fullProjectSlug = `${projectName}-${branchName}`
+console.log(`📋 Project slug: ${fullProjectSlug} (${fullProjectSlug.length} chars)`)
 
 // Initialize local Convex instance with branch-specific project name
 console.log(`🔌 Initializing local Convex instance for branch '${branchName}'...`)
 execSync(
-  `npx convex dev --local --once --configure new --project "${projectName}"`,
+  `npx convex dev --local --once --configure new --project "${fullProjectSlug}"`,
   {
     cwd: join(ROOT_DIR, "packages/backend"),
     stdio: "inherit"
