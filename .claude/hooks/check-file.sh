@@ -54,23 +54,41 @@ while IFS= read -r file; do
       eslint_pid=$!
     fi
 
-    # Start TypeScript in background - need to run from project root with tsconfig
-    if [[ "$file" =~ \.(ts|tsx)$ ]] && command -v bunx &> /dev/null; then
-      # Find the closest tsconfig.json
+    # Start TypeScript in background - use bun run check for package isolation
+    if [[ "$file" =~ \.(ts|tsx)$ ]] && command -v bun &> /dev/null; then
+      # Find the package that owns this file (nearest package.json with name field)
       file_dir=$(dirname "$file")
-      tsconfig_dir=""
+      package_dir=""
+      package_name=""
       while [ "$file_dir" != "/" ] && [ "$file_dir" != "." ]; do
-        if [ -f "$file_dir/tsconfig.json" ]; then
-          tsconfig_dir="$file_dir"
-          break
+        if [ -f "$file_dir/package.json" ]; then
+          pkg_name=$(jq -r '.name // empty' "$file_dir/package.json" 2>/dev/null)
+          if [ -n "$pkg_name" ]; then
+            package_dir="$file_dir"
+            package_name="$pkg_name"
+            break
+          fi
         fi
         file_dir=$(dirname "$file_dir")
       done
 
-      if [ -n "$tsconfig_dir" ]; then
-        # Use tsc-files to check individual file with proper tsconfig
-        (cd "$tsconfig_dir" && bunx tsc-files --noEmit "$file") 2>&1 > /tmp/tsc_output_$$ &
-        tsc_pid=$!
+      # Find monorepo root (has turbo.json or workspaces in package.json)
+      if [ -n "$package_dir" ]; then
+        search_dir="$package_dir"
+        monorepo_root=""
+        while [ "$search_dir" != "/" ] && [ "$search_dir" != "." ]; do
+          if [ -f "$search_dir/turbo.json" ]; then
+            monorepo_root="$search_dir"
+            break
+          fi
+          search_dir=$(dirname "$search_dir")
+        done
+
+        # Run bun run check for this package only
+        if [ -n "$monorepo_root" ] && [ -n "$package_name" ]; then
+          (cd "$monorepo_root" && bun run check --filter="$package_name" 2>&1) > /tmp/tsc_output_$$ &
+          tsc_pid=$!
+        fi
       fi
     fi
 
