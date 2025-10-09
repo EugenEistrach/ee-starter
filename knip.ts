@@ -6,6 +6,7 @@ export default {
     },
     "packages/ui": {
       entry: ["src/components/**/*.tsx", "src/lib/**/*.ts", "src/hooks/**/*.ts"],
+      ignoreDependencies: ["tailwindcss", "tw-animate-css"],
     },
     "packages/backend": {
       entry: ["convex/**/*.ts"],
