@@ -18,7 +18,11 @@
   "devDependencies": {
     "@antfu/eslint-config": "catalog:",
     "@types/node": "catalog:",
+    "@workspace/eslint-rules": "workspace:*",
     "eslint": "catalog:",
+    "eslint-import-resolver-typescript": "catalog:",
+    "eslint-plugin-boundaries": "catalog:",
+    "eslint-plugin-import": "catalog:",
     "typescript": "catalog:"
   }
 }
