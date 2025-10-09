@@ -34,7 +34,6 @@ type AuthCtx = QueryCtx | MutationCtx
  * Throws if not authenticated or user not found.
  */
 export async function ensureUser(ctx: AuthCtx) {
-  // @ts-expect-error this is a bug, will be resolved soon https://github.com/get-convex/better-auth/issues/95
   return authComponent.getAuthUser(ctx)
 }
 
@@ -42,6 +41,5 @@ export async function ensureUser(ctx: AuthCtx) {
  * Returns the authenticated user or undefined if not authenticated.
  */
 export async function getUserOrNull(ctx: AuthCtx) {
-  // @ts-expect-error this is a bug, will be resolved soon https://github.com/get-convex/better-auth/issues/95
   return authComponent.safeGetAuthUser(ctx)
 }
