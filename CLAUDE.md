@@ -7,6 +7,16 @@ This is a full-stack TypeScript monorepo using TanStack (Router, Query, Form) an
 Detailed architecture patterns, structure, and decision framework (MANDATORY read before starting any work):
 @docs/references/architecture.md
 
+## Dependency Management
+
+**IMPORTANT:** Always install dependencies in the specific package where they will be used.
+
+Example:
+```bash
+bun add --cwd apps/web some-package
+bun add --cwd packages/backend some-package
+```
+
 ## Lint Commands
 
 ```bash

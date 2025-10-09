@@ -2,6 +2,7 @@ import type { ConvexQueryClient } from '@convex-dev/react-query'
 
 import type { QueryClient } from '@tanstack/react-query'
 import type { ConvexReactClient } from 'convex/react'
+import { ProgressProvider, useProgress } from '@bprogress/react'
 import { ConvexBetterAuthProvider } from '@convex-dev/better-auth/react'
 import {
   fetchSession,
@@ -21,14 +22,14 @@ import {
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { createServerFn } from '@tanstack/react-start'
 import { getCookie, getRequest } from '@tanstack/react-start/server'
-
 import { createAuth } from '@workspace/backend/convex/shared/auth'
+
 import { Button } from '@workspace/ui/components/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card'
 import { Toaster } from '@workspace/ui/components/sonner'
+import { useEffect } from 'react'
 import { authClient } from '@/shared/auth/lib/auth-client'
 import Header from '@/shared/ui/components/header'
-import Loader from '@/shared/ui/components/loader'
 import appCss from '../index.css?url'
 
 const fetchAuth = createServerFn({ method: 'GET' }).handler(async () => {
@@ -124,41 +125,59 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 })
 
 function RootDocument() {
-  const isFetching = useRouterState({ select: s => s.isLoading })
   const context = useRouteContext({ from: Route.id })
   return (
-    <ConvexBetterAuthProvider
-      client={context.convexClient}
-      authClient={authClient}
-    >
-      <html lang="en" className="dark">
-        <head>
-          <HeadContent />
-        </head>
-        <body>
-          <div className="grid h-svh grid-rows-[auto_1fr]">
-            <Header />
-            {isFetching ? <Loader /> : <Outlet />}
-          </div>
-          <Toaster richColors />
-          <TanStackDevtools
-            plugins={[
-              {
-                name: 'TanStack Query',
-                render: <ReactQueryDevtoolsPanel />,
-              },
-              {
-                name: 'TanStack Router',
-                render: <TanStackRouterDevtoolsPanel />,
-              },
-              FormDevtoolsPlugin(),
-            ]}
-          />
-          <Scripts />
-        </body>
-      </html>
-    </ConvexBetterAuthProvider>
+    <ProgressProvider>
+      <ConvexBetterAuthProvider
+        client={context.convexClient}
+        authClient={authClient}
+      >
+        <html lang="en" className="dark">
+          <head>
+            <HeadContent />
+          </head>
+          <body>
+            <RouterProgressSync />
+            <div className="grid h-svh grid-rows-[auto_1fr]">
+              <Header />
+              <Outlet />
+            </div>
+            <Toaster richColors />
+            <TanStackDevtools
+              plugins={[
+                {
+                  name: 'TanStack Query',
+                  render: <ReactQueryDevtoolsPanel />,
+                },
+                {
+                  name: 'TanStack Router',
+                  render: <TanStackRouterDevtoolsPanel />,
+                },
+                FormDevtoolsPlugin(),
+              ]}
+            />
+            <Scripts />
+          </body>
+        </html>
+      </ConvexBetterAuthProvider>
+    </ProgressProvider>
   )
+}
+
+function RouterProgressSync() {
+  const { start, stop } = useProgress()
+  const isLoading = useRouterState({ select: s => s.isLoading })
+
+  useEffect(() => {
+    if (isLoading) {
+      start()
+    }
+    else {
+      stop()
+    }
+  }, [isLoading, start, stop])
+
+  return null
 }
 
 function parseAuthError(error: unknown): Error {

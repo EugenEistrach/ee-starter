@@ -1,6 +1,27 @@
 /* Import base styles from UI package */
 @import "@workspace/ui/globals.css";
 
+/* Import BProgress styles */
+@import "@bprogress/core/css";
+
+/* Override BProgress variables with shadcn design tokens */
+:root {
+  --bprogress-color: var(--primary);
+  --bprogress-height: 2px;
+  --bprogress-z-index: 99999;
+  --bprogress-box-shadow: none;
+}
+
+/* Force the bar to use our color variable */
+.bprogress .bar {
+  background: var(--primary) !important;
+}
+
+/* Hide the spinner - we only want the top bar */
+.bprogress .spinner {
+  display: none !important;
+}
+
 /* Scan UI package components for Tailwind classes */
 @source "@workspace/ui/src/**/*.{ts,tsx}";
 
