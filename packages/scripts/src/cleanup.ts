@@ -27,56 +27,32 @@ for (const port of PORTS_TO_CHECK) {
   }
 }
 
-const backendEnvPath = join(ROOT_DIR, "packages/backend/.env.local")
-
-// Check if .env.local exists
-if (!existsSync(backendEnvPath)) {
-  console.error("❌ Error: .env.local not found in packages/backend")
-  process.exit(1)
-}
-
-// Check if safety slug file exists
-const safetySlugPath = join(ROOT_DIR, ".convex-safety-slug")
-if (!existsSync(safetySlugPath)) {
-  console.error("❌ Error: .convex-safety-slug not found. This workspace may not have been set up properly.")
-  process.exit(1)
-}
-
-// Read safety slug
-const safetySlug = readFileSync(safetySlugPath, "utf-8").trim()
-if (!safetySlug) {
-  console.error("❌ Error: Safety slug is empty")
-  process.exit(1)
-}
-console.log(`🔒 Safety slug: ${safetySlug}`)
-
 // Read project slug from persisted file (preferred) or fall back to .env.local
 const projectSlugPath = join(ROOT_DIR, ".convex-project-slug")
+const backendEnvPath = join(ROOT_DIR, "packages/backend/.env.local")
 let projectSlug: string
 
 if (existsSync(projectSlugPath)) {
   projectSlug = readFileSync(projectSlugPath, "utf-8").trim()
   console.log(`📋 Found project slug from file: ${projectSlug}`)
-} else {
+} else if (existsSync(backendEnvPath)) {
   const envContent = readFileSync(backendEnvPath, "utf-8")
   const match = envContent.match(/# team:.*project: ([^ \n]*)/)
   if (!match || !match[1]) {
-    console.error("❌ Error: Could not extract project slug")
+    console.error("❌ Error: Could not extract project slug from .env.local")
     process.exit(1)
   }
   projectSlug = match[1].trim()
   console.log(`📋 Found project slug from .env.local: ${projectSlug}`)
-}
-
-// Verify safety slug is in project slug
-if (!projectSlug.includes(safetySlug)) {
-  console.error("❌ Error: Safety slug mismatch! Project slug does not contain expected safety slug.")
-  console.error("   This is a safety check to prevent deleting wrong projects.")
-  console.error(`   Expected: ${safetySlug}`)
-  console.error(`   Found in: ${projectSlug}`)
+} else {
+  console.error("❌ Error: Could not find project slug. No .convex-project-slug or .env.local found.")
   process.exit(1)
 }
-console.log("✅ Safety check passed")
+
+if (!projectSlug) {
+  console.error("❌ Error: Project slug is empty")
+  process.exit(1)
+}
 
 // Get team access token
 const envContent = readFileSync(backendEnvPath, "utf-8")

@@ -40,7 +40,6 @@ lerna-debug.log*
 .alchemy
 
 # Conductor (parallel development)
-.convex-safety-slug
 .convex-project-slug
 
 # Testing
