@@ -1,6 +1,10 @@
 # ee-starter
 
-Full-stack TypeScript starter with TanStack (Router, Query, Form) and Convex backend. Built with opinionated architecture patterns and comprehensive guardrails.
+> **Work in Progress**
+>
+> I've built many starters and boilerplates over the years working with LLMs and doing projects at my company. This one consolidates everything I've learned. I'm using this approach in 3+ production projects and migrating the best parts here. It's usable now but still missing some pieces—proper dashboard, landing page, org/team management (easy to add with bettter-auth), production deployment docs, i18n, and more documentation.
+
+Full-stack TypeScript starter with TanStack (Router, Query, Form) and Convex backend. Built with opinionated architecture patterns and comprehensive guardrails. Initially jumpstarted using https://www.better-t-stack.dev/
 
 ## Features
 
@@ -10,6 +14,8 @@ Full-stack TypeScript starter with TanStack (Router, Query, Form) and Convex bac
 - **Layered Architecture**: Enforced separation of concerns (app/features/shared)
 - **Lint Guardrails**: ESLint boundaries plugin + custom architectural rules
 - **Monorepo**: Turborepo with Bun package manager
+- **LLM Friendly**: Claude.md files and automated guardrails to make sure the LLM stays on track
+- **Conductor friendly** https://conductor.build/ - provides setup and archive scripts so it can be used with conductor easilyo
 
 ## Quick Start
 
@@ -50,6 +56,18 @@ bun run dev:server    # Start Convex backend only
 **References:**
 - [docs/references/architecture.md](docs/references/architecture.md)
 <!-- [/auto-generated] -->
+
+## Conductor Integration
+
+This starter is fully compatible with [Conductor](https://conductor.build/) for parallel worktree development. The `conductor.json` configuration provides automated setup and cleanup:
+
+**Scripts:**
+- `setup`: Runs `packages/scripts/src/setup.ts` to install dependencies, create branch-specific Convex projects, and configure env vars
+- `run`: Starts development servers via `packages/scripts/src/start.ts`
+- `archive`: Cleans up Convex projects when archiving worktrees via `packages/scripts/src/cleanup.ts`
+
+**Required for automatic cleanup:**
+Set `CONVEX_TEAM_ACCESS_TOKEN` in `packages/backend/.env.local` to enable automatic Convex project deletion when you merge and archive worktrees in Conductor. Without this token, projects will need to be manually deleted from the Convex dashboard.
 
 ## Lint Commands
 
