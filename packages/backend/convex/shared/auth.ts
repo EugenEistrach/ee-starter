@@ -34,6 +34,7 @@ type AuthCtx = QueryCtx | MutationCtx
  * Throws if not authenticated or user not found.
  */
 export async function ensureUser(ctx: AuthCtx) {
+  // @ts-expect-error bug will be fixed in some new version soon
   return authComponent.getAuthUser(ctx)
 }
 
@@ -41,5 +42,6 @@ export async function ensureUser(ctx: AuthCtx) {
  * Returns the authenticated user or undefined if not authenticated.
  */
 export async function getUserOrNull(ctx: AuthCtx) {
+  // @ts-expect-error bug will be fixed in some new version soon
   return authComponent.safeGetAuthUser(ctx)
 }
