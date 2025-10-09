@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "setup": "SOURCE_ROOT=\"$CONDUCTOR_ROOT_PATH\" bun run packages/scripts/src/setup.ts",
+    "run": "bun run packages/scripts/src/start.ts",
+    "archive": "bun run packages/scripts/src/cleanup.ts"
+  },
+  "runScriptMode": "nonconcurrent"
+}

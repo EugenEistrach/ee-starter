@@ -39,6 +39,10 @@ lerna-debug.log*
 # Better-T-Stack
 .alchemy
 
+# Conductor (parallel development)
+.convex-safety-slug
+.convex-project-slug
+
 # Testing
 coverage
 .nyc_output
@@ -47,4 +51,5 @@ coverage
 *.tgz
 .cache
 tmp
-temp
+temp.eslintcache
+.eslintcache
