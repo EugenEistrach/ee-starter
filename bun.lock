@@ -58,6 +58,7 @@
       "version": "1.0.0",
       "dependencies": {
         "@convex-dev/better-auth": "catalog:",
+        "@workspace/utils": "workspace:*",
         "better-auth": "catalog:",
         "convex": "catalog:",
       },
@@ -102,6 +103,7 @@
         "@types/node": "catalog:",
         "@types/react": "catalog:",
         "@types/react-dom": "catalog:",
+        "eslint": "catalog:",
         "react": "catalog:",
         "react-dom": "catalog:",
         "typescript": "catalog:",
@@ -109,6 +111,14 @@
       "peerDependencies": {
         "react": "catalog:",
         "react-dom": "catalog:",
+      },
+    },
+    "packages/utils": {
+      "name": "@workspace/utils",
+      "version": "0.0.0",
+      "devDependencies": {
+        "@types/node": "catalog:",
+        "typescript": "catalog:",
       },
     },
   },
@@ -849,6 +859,8 @@
     "@workspace/scripts": ["@workspace/scripts@workspace:packages/scripts"],
 
     "@workspace/ui": ["@workspace/ui@workspace:packages/ui"],
+
+    "@workspace/utils": ["@workspace/utils@workspace:packages/utils"],
 
     "acorn": ["acorn@8.15.0", "", { "bin": { "acorn": "bin/acorn" } }, "sha512-NZyJarBfL7nWwIq+FDL6Zp/yHEhePMNnnJ0y3qfieCrmNvYct8uvtiV41UvlSe6apAfk0fY1FbWx+NwfmpvtTg=="],
 

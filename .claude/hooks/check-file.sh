@@ -68,7 +68,8 @@ while IFS= read -r file; do
       done
 
       if [ -n "$tsconfig_dir" ]; then
-        (cd "$tsconfig_dir" && bunx tsc --noEmit) 2>&1 > /tmp/tsc_output_$$ &
+        # Use tsc-files to check individual file with proper tsconfig
+        (cd "$tsconfig_dir" && bunx tsc-files --noEmit "$file") 2>&1 > /tmp/tsc_output_$$ &
         tsc_pid=$!
       fi
     fi
