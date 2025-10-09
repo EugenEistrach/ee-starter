@@ -15,18 +15,16 @@
       ]
     },
     "//#knip": {
-      "cache": false
+      "cache": true
     },
     "check": {
       "dependsOn": [
-        "^check",
-        "//#knip"
+        "^check"
       ]
     },
     "fix": {
       "dependsOn": [
-        "^fix",
-        "//#knip"
+        "^fix"
       ],
       "cache": false
     },

@@ -19,13 +19,13 @@ import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import { createServerFn } from '@tanstack/react-start'
 import { getCookie, getRequest } from '@tanstack/react-start/server'
 
-import { createAuth } from '@workspace/backend/convex/auth'
+import { createAuth } from '@workspace/backend/convex/shared/auth'
 import { Button } from '@workspace/ui/components/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card'
 import { Toaster } from '@workspace/ui/components/sonner'
-import Loader from '@/components/loader'
-import { authClient } from '@/lib/auth-client'
-import Header from '../components/header'
+import { authClient } from '@/shared/auth/lib/auth-client'
+import Header from '@/shared/ui/components/header'
+import Loader from '@/shared/ui/components/loader'
 import appCss from '../index.css?url'
 
 const fetchAuth = createServerFn({ method: 'GET' }).handler(async () => {

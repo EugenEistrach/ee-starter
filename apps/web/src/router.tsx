@@ -3,8 +3,8 @@ import { QueryClient } from '@tanstack/react-query'
 import { createRouter as createTanStackRouter } from '@tanstack/react-router'
 import { routerWithQueryClient } from '@tanstack/react-router-with-query'
 import { ConvexProvider, ConvexReactClient } from 'convex/react'
-import Loader from './components/loader'
 import { routeTree } from './routeTree.gen'
+import Loader from './shared/ui/components/loader'
 
 export function getRouter() {
   const CONVEX_URL = (import.meta as any).env.VITE_CONVEX_URL!
@@ -34,7 +34,7 @@ export function getRouter() {
       defaultPendingComponent: () => <Loader />,
       defaultNotFoundComponent: () => <div>Not Found</div>,
       context: { queryClient, convexClient: convex, convexQueryClient },
-      Wrap: ({ children }) => (
+      Wrap: ({ children }: { children: React.ReactNode }) => (
         <ConvexProvider client={convexQueryClient.convexClient}>
           {children}
         </ConvexProvider>

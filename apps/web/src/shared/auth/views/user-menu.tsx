@@ -10,11 +10,11 @@ import {
   DropdownMenuTrigger,
 } from '@workspace/ui/components/dropdown-menu'
 import { useQuery } from 'convex/react'
-import { authClient } from '@/lib/auth-client'
+import { authClient } from '@/shared/auth/lib/auth-client'
 
 export default function UserMenu() {
   const navigate = useNavigate()
-  const user = useQuery(api.auth.getCurrentUser)
+  const user = useQuery(api.app.users.getCurrentUser)
 
   return (
     <DropdownMenu>

@@ -8,11 +8,12 @@
  * @module
  */
 
-import type * as auth from "../auth.js";
+import type * as app_todos from "../app/todos.js";
+import type * as app_users from "../app/users.js";
+import type * as features_todos_logic from "../features/todos/logic.js";
 import type * as healthCheck from "../healthCheck.js";
 import type * as http from "../http.js";
-import type * as privateData from "../privateData.js";
-import type * as todos from "../todos.js";
+import type * as shared_auth from "../shared/auth.js";
 
 import type {
   ApiFromModules,
@@ -29,11 +30,12 @@ import type {
  * ```
  */
 declare const fullApi: ApiFromModules<{
-  auth: typeof auth;
+  "app/todos": typeof app_todos;
+  "app/users": typeof app_users;
+  "features/todos/logic": typeof features_todos_logic;
   healthCheck: typeof healthCheck;
   http: typeof http;
-  privateData: typeof privateData;
-  todos: typeof todos;
+  "shared/auth": typeof shared_auth;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
 

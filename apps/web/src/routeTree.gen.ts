@@ -8,11 +8,11 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as TodosRouteImport } from './routes/todos'
-import { Route as DashboardRouteImport } from './routes/dashboard'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as rootRouteImport } from './app/__root'
+import { Route as TodosRouteImport } from './app/todos'
+import { Route as DashboardRouteImport } from './app/dashboard'
+import { Route as IndexRouteImport } from './app/index'
+import { Route as ApiAuthSplatRouteImport } from './app/api/auth.$'
 
 const TodosRoute = TodosRouteImport.update({
   id: '/todos',
