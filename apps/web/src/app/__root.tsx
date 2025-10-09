@@ -7,6 +7,9 @@ import {
   fetchSession,
   getCookieName,
 } from '@convex-dev/better-auth/react-start'
+import { TanStackDevtools } from '@tanstack/react-devtools'
+import { FormDevtoolsPlugin } from '@tanstack/react-form-devtools'
+import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools'
 import {
   createRootRouteWithContext,
   HeadContent,
@@ -15,7 +18,7 @@ import {
   useRouteContext,
   useRouterState,
 } from '@tanstack/react-router'
-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
+import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { createServerFn } from '@tanstack/react-start'
 import { getCookie, getRequest } from '@tanstack/react-start/server'
 
@@ -138,7 +141,19 @@ function RootDocument() {
             {isFetching ? <Loader /> : <Outlet />}
           </div>
           <Toaster richColors />
-          <TanStackRouterDevtools position="bottom-left" />
+          <TanStackDevtools
+            plugins={[
+              {
+                name: 'TanStack Query',
+                render: <ReactQueryDevtoolsPanel />,
+              },
+              {
+                name: 'TanStack Router',
+                render: <TanStackRouterDevtoolsPanel />,
+              },
+              FormDevtoolsPlugin(),
+            ]}
+          />
           <Scripts />
         </body>
       </html>
