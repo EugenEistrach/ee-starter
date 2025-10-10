@@ -39,4 +39,5 @@ bun run fix          # Auto-fix errors (all packages)
 
 **References** (general information and docs):
 - docs/references/architecture.md
+- docs/references/convex-guidelines.md
 <!-- [/auto-generated] -->

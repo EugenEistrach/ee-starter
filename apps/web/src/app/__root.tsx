@@ -29,7 +29,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@work
 import { Toaster } from '@workspace/ui/components/sonner'
 import { useEffect } from 'react'
 import { authClient } from '@/shared/auth/lib/auth-client'
-import Header from '@/shared/ui/components/header'
 import appCss from '../index.css?url'
 
 const fetchAuth = createServerFn({ method: 'GET' }).handler(async () => {
@@ -138,10 +137,7 @@ function RootDocument() {
           </head>
           <body>
             <RouterProgressSync />
-            <div className="grid h-svh grid-rows-[auto_1fr]">
-              <Header />
-              <Outlet />
-            </div>
+            <Outlet />
             <Toaster richColors />
             <TanStackDevtools
               plugins={[
