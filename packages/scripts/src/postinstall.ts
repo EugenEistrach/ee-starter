@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-import { readFileSync } from 'node:fs'
+import { readFileSync, existsSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { execSync } from 'node:child_process'
@@ -7,6 +7,10 @@ import { execSync } from 'node:child_process'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 const ROOT_DIR = join(__dirname, '../../..')
+
+function isGitRepo(): boolean {
+  return existsSync(join(ROOT_DIR, '.git'))
+}
 
 function isInitialized(): boolean {
   const packageJsonPath = join(ROOT_DIR, 'package.json')
@@ -19,12 +23,17 @@ function isInteractive(): boolean {
 }
 
 async function main() {
+  // Skip if this is the git repo (developer working on boilerplate)
+  if (isGitRepo()) {
+    return
+  }
+
   // Already initialized, skip silently
   if (isInitialized()) {
     return
   }
 
-  // First install detected
+  // First install detected (tiget/giget clone)
   if (isInteractive()) {
     console.log('\n🎉 Welcome to ee-starter!\n')
     execSync('bun run packages/scripts/src/init.ts', {
