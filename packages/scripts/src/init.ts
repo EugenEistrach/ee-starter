@@ -240,12 +240,51 @@ function HomeComponent() {
     rl.close()
   }
 
+  // Check if CONVEX_TEAM_ACCESS_TOKEN is already set
+  const backendEnvPath = join(ROOT_DIR, 'packages/backend/.env.local')
+  let hasTeamToken = false
+  try {
+    const backendEnvContent = readFileSync(backendEnvPath, 'utf-8')
+    hasTeamToken = backendEnvContent.includes('CONVEX_TEAM_ACCESS_TOKEN=') &&
+                   !backendEnvContent.match(/CONVEX_TEAM_ACCESS_TOKEN=\s*$/m)
+  } catch {
+    // File doesn't exist or can't be read
+  }
+
+  // Prompt for Conductor archive setup if token not set
+  if (!hasTeamToken) {
+    const rl2 = createInterface({ input, output })
+    console.log('\n🗄️  Conductor Auto-Archive Setup')
+    console.log('   Open dashboard and navigate to your team settings → Access Tokens')
+    console.log('   Dashboard: https://dashboard.convex.dev\n')
+    const teamToken = await rl2.question('Paste Convex Team Access Token (press enter to skip): ')
+    rl2.close()
+
+    if (teamToken.trim()) {
+      try {
+        const backendEnvContent = readFileSync(backendEnvPath, 'utf-8')
+        const updatedContent = backendEnvContent.replace(
+          /CONVEX_TEAM_ACCESS_TOKEN=.*$/m,
+          `CONVEX_TEAM_ACCESS_TOKEN=${teamToken.trim()}`
+        )
+        writeFileSync(backendEnvPath, updatedContent, 'utf-8')
+        console.log('✅ Conductor auto-archive configured')
+        hasTeamToken = true
+      } catch {
+        console.log('⚠️  Could not update .env.local, you can add it manually later')
+      }
+    }
+  }
+
   // Print next steps
   console.log('\n📋 Next steps:')
   console.log('   1. Run `bun run dev` to start development servers')
-  console.log('   2. (Optional) For Conductor auto-cleanup:')
-  console.log('      Add CONVEX_TEAM_ACCESS_TOKEN to packages/backend/.env.local')
-  console.log('      Get token from: https://dashboard.convex.dev/\n')
+  if (!hasTeamToken) {
+    console.log('   2. (Optional) For Conductor auto-cleanup:')
+    console.log('      Add CONVEX_TEAM_ACCESS_TOKEN to packages/backend/.env.local')
+    console.log('      Get token from: https://dashboard.convex.dev → Team Settings → Access Tokens')
+  }
+  console.log()
 }
 
 main().catch(console.error)
