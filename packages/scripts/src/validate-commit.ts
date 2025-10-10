@@ -18,7 +18,8 @@ const ALLOWED_FILENAMES = [
 // Directories where .md files are allowed
 const ALLOWED_MD_DIRECTORIES = [
   "docs/how-to",
-  "docs/references"
+  "docs/references",
+  ".claude"
 ]
 
 function isInWorktree(): boolean {
@@ -157,10 +158,10 @@ if (blocked.length > 0) {
 
   console.error("\n📋 Allowed .md files:")
   console.error("  • README.md, CLAUDE.md, AGENTS.md (case-insensitive, anywhere)")
-  console.error("  • Any .md files in docs/how-to/ or docs/references/")
+  console.error("  • Any .md files in docs/how-to/, docs/references/, or .claude/")
 
   console.error("\n💡 What to do:")
-  console.error("  1. Move documentation to docs/how-to/ or docs/references/")
+  console.error("  1. Move documentation to docs/how-to/, docs/references/, or .claude/")
   console.error("  2. Or rename to README.md, CLAUDE.md, or AGENTS.md")
   console.error("  3. Or delete if it's temporary documentation")
 
