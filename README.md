@@ -51,6 +51,7 @@ bun run dev:server    # Start Convex backend only
 **How-To Guides:**
 - [docs/how-to/create-pull-requests.md](docs/how-to/create-pull-requests.md)
 - [docs/how-to/update-dependencies.md](docs/how-to/update-dependencies.md)
+- [docs/how-to/use-linear-cli.md](docs/how-to/use-linear-cli.md)
 - [docs/how-to/write-documentation.md](docs/how-to/write-documentation.md)
 
 **References:**
