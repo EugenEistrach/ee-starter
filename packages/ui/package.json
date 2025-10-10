@@ -14,6 +14,7 @@
     "clean": "rm -rf node_modules .turbo"
   },
   "dependencies": {
+    "@tanstack/react-form": "catalog:",
     "class-variance-authority": "^0.7.1",
     "clsx": "catalog:",
     "cmdk": "^1.1.1",
@@ -23,7 +24,6 @@
     "next-themes": "^0.4.6",
     "radix-ui": "^1.4.3",
     "react-day-picker": "^9.11.1",
-    "react-hook-form": "^7.64.0",
     "react-resizable-panels": "^3.0.6",
     "recharts": "2.15.4",
     "sonner": "^2.0.7",
