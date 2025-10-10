@@ -171,8 +171,38 @@ function HomeComponent() {
     const createGhRepo = await rl.question('Create GitHub repository? [Y/n]: ')
 
     if (!createGhRepo.trim() || createGhRepo.toLowerCase() === 'y' || createGhRepo.toLowerCase() === 'yes') {
+      // Get available GitHub accounts/orgs
+      const username = execSync('gh api user --jq .login', { encoding: 'utf-8' }).trim()
+      const orgsOutput = execSync('gh api user/orgs --jq ".[].login"', { encoding: 'utf-8' }).trim()
+      const orgs = orgsOutput ? orgsOutput.split('\n') : []
+
+      const owners = [username, ...orgs]
+
+      // Show owner selection
+      console.log('\nSelect repository owner:')
+      owners.forEach((owner, index) => {
+        console.log(`  ${index + 1}) ${owner}`)
+      })
+
+      let selectedOwner = ''
+      while (!selectedOwner) {
+        const ownerChoice = await rl.question(`\nOwner (1-${owners.length}): `)
+        const choice = parseInt(ownerChoice, 10)
+        if (choice >= 1 && choice <= owners.length) {
+          selectedOwner = owners[choice - 1]!
+        } else {
+          console.log('Invalid selection')
+        }
+      }
+
+      // Ask for visibility
+      const visibility = await rl.question('\nPublic or private? [Public/private]: ')
+      const isPrivate = visibility.toLowerCase() === 'private' || visibility.toLowerCase() === 'p'
+      const visibilityFlag = isPrivate ? '--private' : '--public'
+
+      // Create repo
       console.log('\n📦 Creating GitHub repository...\n')
-      execSync('gh repo create --source=.', {
+      execSync(`gh repo create ${selectedOwner}/${slug} --source=. ${visibilityFlag} --push`, {
         cwd: ROOT_DIR,
         stdio: 'inherit'
       })
