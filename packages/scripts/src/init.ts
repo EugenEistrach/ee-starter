@@ -131,6 +131,19 @@ function HomeComponent() {
 
   console.log('\n✨ Project initialized successfully!\n')
 
+  // Initialize git repository
+  console.log('🔧 Creating git repository...')
+  execSync('git init', { cwd: ROOT_DIR, stdio: 'inherit' })
+  execSync('git add .', { cwd: ROOT_DIR, stdio: 'inherit' })
+  execSync('git commit -m "Initial commit"', { cwd: ROOT_DIR, stdio: 'inherit' })
+  console.log('✅ Git repository created with initial commit\n')
+
+  // Explain Convex setup
+  console.log('⚙️  Setup will configure Convex backend:')
+  console.log('   • Downloads Convex CLI automatically (via npx)')
+  console.log('   • Asks you to log in (free account at convex.dev)')
+  console.log('   • Creates your backend project\n')
+
   // Ask to run setup
   const runSetup = await rl.question('Run setup script now? (y/n): ')
   rl.close()
