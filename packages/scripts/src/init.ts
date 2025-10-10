@@ -146,7 +146,6 @@ function HomeComponent() {
 
   // Ask to run setup
   const runSetup = await rl.question('Run setup script now? (y/n): ')
-  rl.close()
 
   if (runSetup.toLowerCase() === 'y' || runSetup.toLowerCase() === 'yes') {
     console.log('\n🔧 Running setup...\n')
@@ -156,12 +155,39 @@ function HomeComponent() {
     })
   }
 
+  // Check if gh CLI is available and user is authenticated
+  let ghAvailable = false
+  try {
+    execSync('gh --version', { stdio: 'ignore' })
+    execSync('gh auth status', { stdio: 'ignore' })
+    ghAvailable = true
+  } catch {
+    // gh not installed or not authenticated
+  }
+
+  // Ask to create GitHub repo if gh is available
+  if (ghAvailable) {
+    console.log('\n')
+    const createGhRepo = await rl.question('Create GitHub repository? (y/n): ')
+
+    if (createGhRepo.toLowerCase() === 'y' || createGhRepo.toLowerCase() === 'yes') {
+      console.log('\n📦 Creating GitHub repository...\n')
+      execSync('gh repo create --source=.', {
+        cwd: ROOT_DIR,
+        stdio: 'inherit'
+      })
+      console.log('\n✅ GitHub repository created!')
+    }
+  }
+
+  rl.close()
+
   // Print next steps
   console.log('\n📋 Next steps:')
   console.log('   1. Run `bun run dev` to start development servers')
   console.log('   2. (Optional) For Conductor auto-cleanup:')
   console.log('      Add CONVEX_TEAM_ACCESS_TOKEN to packages/backend/.env.local')
-  console.log('      Get token from: https://dashboard.convex.dev/settings/access-tokens\n')
+  console.log('      Get token from: https://dashboard.convex.dev/\n')
 }
 
 main().catch(console.error)
