@@ -1,0 +1,4 @@
+{
+  "installCommand": "bun install",
+  "buildCommand": "cd packages/backend && npx convex deploy --cmd 'cd ../../apps/web && bun run build' --cmd-url-env-var-name VITE_CONVEX_URL"
+}

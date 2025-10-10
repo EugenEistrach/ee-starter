@@ -11,13 +11,16 @@ export const authComponent = createClient<DataModel>(components.betterAuth)
 export function createAuth(ctx: GenericCtx<DataModel>, { optionsOnly } = { optionsOnly: false }) {
   const urlToUse = process.env.SITE_URL!
 
+  // Support all production aliases from Vercel deployment
+  const trustedOrigins = process.env.TRUSTED_ORIGINS?.split(',').filter(Boolean) || [urlToUse]
+
   return betterAuth({
     logger: {
       disabled: optionsOnly,
     },
     baseUrl: urlToUse,
     baseURL: urlToUse,
-    trustedOrigins: [urlToUse],
+    trustedOrigins,
     database: authComponent.adapter(ctx),
     emailAndPassword: {
       enabled: true,

@@ -204,13 +204,41 @@ function HomeComponent() {
       console.log('\n📦 Creating GitHub repository...\n')
       execSync(`gh repo create ${selectedOwner}/${slug} --source=. ${visibilityFlag} --push`, {
         cwd: ROOT_DIR,
-        stdio: 'inherit'
+        stdio: 'inherit',
+        env: { ...process.env, NO_COLOR: '1' }
       })
       console.log('\n✅ GitHub repository created!')
     }
   }
 
-  rl.close()
+  // Check if Vercel CLI is available and user is authenticated
+  let vercelAvailable = false
+  try {
+    execSync('vercel --version', { stdio: 'ignore' })
+    execSync('vercel whoami', { stdio: 'ignore' })
+    vercelAvailable = true
+  } catch {
+    // Vercel not installed or not authenticated
+  }
+
+  // Ask to setup production deployment if Vercel is available
+  if (vercelAvailable) {
+    console.log('\n')
+    const setupProd = await rl.question('Setup production deployment? [Y/n]: ')
+
+    if (!setupProd.trim() || setupProd.toLowerCase() === 'y' || setupProd.toLowerCase() === 'yes') {
+      rl.close()
+      console.log('\n')
+      execSync(`bun run packages/scripts/src/setup-prod.ts ${slug}`, {
+        cwd: ROOT_DIR,
+        stdio: 'inherit'
+      })
+    } else {
+      rl.close()
+    }
+  } else {
+    rl.close()
+  }
 
   // Print next steps
   console.log('\n📋 Next steps:')
