@@ -6,7 +6,9 @@ import boundaries from 'eslint-plugin-boundaries'
 import reactCompiler from 'eslint-plugin-react-compiler'
 import customRules from '@workspace/eslint-rules'
 
+
 export default antfu({
+
   gitignore: true,
   ignores: [
     '**/node_modules/**',
@@ -51,11 +53,14 @@ export default antfu({
     'boundaries/elements': [
       { type: 'backend', pattern: '**/packages/backend/**' },
       { type: 'ui', pattern: '**/packages/ui/**' },
-      { type: 'feature-components', pattern: 'src/features/*/components/**', capture: ['feature'] },
-      { type: 'shared-components', pattern: 'src/shared/**/components/**' },
+      // More specific patterns first - components within features/shared
+      { type: 'components', pattern: 'src/features/*/components/**', mode: 'file', capture: ['feature'] },
+      { type: 'components', pattern: 'src/shared/*/components/**', mode: 'file', capture: ['domain'] },
+      // Then feature/shared folders
+      { type: 'features', pattern: 'src/features/*/**', mode: 'file', capture: ['feature'] },
+      { type: 'shared', pattern: 'src/shared/*/**', mode: 'file', capture: ['domain'] },
+      // App routes last
       { type: 'app', pattern: 'src/app/**' },
-      { type: 'features', pattern: 'src/features/*', capture: ['feature'], mode: 'folder' },
-      { type: 'shared', pattern: 'src/shared/**' },
     ],
   },
   rules: {
@@ -71,42 +76,48 @@ export default antfu({
     'boundaries/element-types': ['error', {
       default: 'disallow',
       rules: [
-        { from: 'app', allow: ['features', 'shared', 'shared-components', 'ui', 'backend'] },
+        // App can import anything
+        {
+          from: 'app',
+          allow: ['features', 'shared', 'components', 'ui', 'backend'],
+        },
+        // Features can only import from same feature, shared, ui, backend
         {
           from: 'features',
           allow: [
-            // Features can only import from the same feature (including its components)
             ['features', { feature: '${from.feature}' }],
-            ['feature-components', { feature: '${from.feature}' }],
+            ['components', { feature: '${from.feature}' }],
             'shared',
-            'shared-components',
             'ui',
             'backend',
           ],
         },
+        // Shared can only import from same domain, ui, backend
         {
-          from: 'feature-components',
+          from: 'shared',
           allow: [
-            // Feature components can import from other components in the same feature and ui
-            ['feature-components', { feature: '${from.feature}' }],
+            ['shared', { domain: '${from.domain}' }],
+            ['components', { domain: '${from.domain}' }],
             'ui',
+            'backend',
           ],
         },
+        // Components can import from UI and same-domain shared/features
         {
-          from: 'feature-components',
+          from: 'components',
+          allow: [
+            'ui',
+            ['shared', { domain: '${from.domain}' }],
+            ['features', { feature: '${from.feature}' }],
+          ],
+        },
+        // Allow type-only imports from backend in components
+        {
+          from: 'components',
           allow: ['backend'],
           importKind: 'type',
         },
-        {
-          from: 'shared-components',
-          allow: ['shared-components', 'ui'],
-        },
-        {
-          from: 'shared-components',
-          allow: ['backend'],
-          importKind: 'type',
-        },
-        { from: 'shared', allow: ['shared-components', 'ui', 'backend'] },
+        // UI and backend are isolated
         { from: 'ui', allow: [] },
         { from: 'backend', allow: [] },
       ],

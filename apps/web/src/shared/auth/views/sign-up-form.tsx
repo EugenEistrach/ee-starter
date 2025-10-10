@@ -1,16 +1,25 @@
-import { useForm } from '@tanstack/react-form'
 import { Link, useNavigate } from '@tanstack/react-router'
-import { Button } from '@workspace/ui/components/button'
-import { Input } from '@workspace/ui/components/input'
-import { Label } from '@workspace/ui/components/label'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@workspace/ui/components/card'
+import { FieldGroup } from '@workspace/ui/components/field'
+import { useAppForm } from '@workspace/ui/components/form'
+import { cn } from '@workspace/ui/lib/utils'
 import { toast } from 'sonner'
 import z from 'zod'
 import { authClient } from '@/shared/auth/lib/auth-client'
 
-export default function SignUpForm() {
+export default function SignUpForm({
+  className,
+  ...props
+}: React.ComponentProps<'div'>) {
   const navigate = useNavigate()
 
-  const form = useForm({
+  const form = useAppForm({
     defaultValues: {
       email: '',
       password: '',
@@ -36,6 +45,7 @@ export default function SignUpForm() {
         },
       )
     },
+
     validators: {
       onSubmit: z.object({
         name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -46,103 +56,51 @@ export default function SignUpForm() {
   })
 
   return (
-    <div className="mx-auto w-full mt-10 max-w-md p-6">
-      <h1 className="mb-6 text-center text-3xl font-bold">Create Account</h1>
+    <div className={cn('flex flex-col gap-6', className)} {...props}>
+      <Card>
+        <CardHeader className="text-center">
+          <CardTitle className="text-xl">Create account</CardTitle>
+          <CardDescription>
+            Sign up with your email and password
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form
+            noValidate
+            onSubmit={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              form.handleSubmit()
+            }}
+          >
+            <FieldGroup>
+              <form.AppField name="name">
+                {field => <field.TextField label="Name" placeholder="John Doe" />}
+              </form.AppField>
 
-      <form
-        onSubmit={(e) => {
-          e.preventDefault()
-          e.stopPropagation()
-          form.handleSubmit()
-        }}
-        className="space-y-4"
-      >
-        <div>
-          <form.Field name="name">
-            {field => (
-              <div className="space-y-2">
-                <Label htmlFor={field.name}>Name</Label>
-                <Input
-                  id={field.name}
-                  name={field.name}
-                  value={field.state.value}
-                  onBlur={field.handleBlur}
-                  onChange={e => field.handleChange(e.target.value)}
-                />
-                {field.state.meta.errors.map(error => (
-                  <p key={error?.message} className="text-destructive">
-                    {error?.message}
-                  </p>
-                ))}
-              </div>
-            )}
-          </form.Field>
-        </div>
+              <form.AppField name="email">
+                {field => <field.TextField label="Email" placeholder="m@example.com" type="email" />}
+              </form.AppField>
 
-        <div>
-          <form.Field name="email">
-            {field => (
-              <div className="space-y-2">
-                <Label htmlFor={field.name}>Email</Label>
-                <Input
-                  id={field.name}
-                  name={field.name}
-                  type="email"
-                  value={field.state.value}
-                  onBlur={field.handleBlur}
-                  onChange={e => field.handleChange(e.target.value)}
-                />
-                {field.state.meta.errors.map(error => (
-                  <p key={error?.message} className="text-destructive">
-                    {error?.message}
-                  </p>
-                ))}
-              </div>
-            )}
-          </form.Field>
-        </div>
+              <form.AppField name="password">
+                {field => <field.PasswordField label="Password" />}
+              </form.AppField>
 
-        <div>
-          <form.Field name="password">
-            {field => (
-              <div className="space-y-2">
-                <Label htmlFor={field.name}>Password</Label>
-                <Input
-                  id={field.name}
-                  name={field.name}
-                  type="password"
-                  value={field.state.value}
-                  onBlur={field.handleBlur}
-                  onChange={e => field.handleChange(e.target.value)}
-                />
-                {field.state.meta.errors.map(error => (
-                  <p key={error?.message} className="text-destructive">
-                    {error?.message}
-                  </p>
-                ))}
-              </div>
-            )}
-          </form.Field>
-        </div>
-
-        <form.Subscribe>
-          {state => (
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={!state.canSubmit || state.isSubmitting}
-            >
-              {state.isSubmitting ? 'Submitting...' : 'Sign Up'}
-            </Button>
-          )}
-        </form.Subscribe>
-      </form>
-
-      <div className="mt-4 text-center">
-        <Button variant="link" asChild>
-          <Link to="/login">Already have an account? Sign In</Link>
-        </Button>
-      </div>
+              <form.AppForm>
+                <form.SubmitButton description={(
+                  <>
+                    Already have an account?
+                    <Link to="/login">Sign in</Link>
+                  </>
+                )}
+                >
+                  Sign up
+                </form.SubmitButton>
+              </form.AppForm>
+            </FieldGroup>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   )
 }
