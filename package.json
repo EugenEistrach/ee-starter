@@ -47,7 +47,8 @@
     "dev:web": "turbo -F web dev",
     "dev:server": "turbo -F @workspace/backend dev",
     "clean": "turbo clean && rm -rf node_modules",
-    "prepare": "husky"
+    "prepare": "husky",
+    "postinstall": "bun run packages/scripts/src/postinstall.ts"
   },
   "dependencies": {},
   "devDependencies": {
