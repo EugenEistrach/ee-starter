@@ -61,6 +61,7 @@ export default antfu({
   rules: {
     'react-compiler/react-compiler': 'error',
     '@tanstack/router/create-route-property-order': 'warn',
+    'unused-imports/no-unused-imports': 'off',
     // Enforce maximum nesting depth
     'max-depth': ['error', 2],
     // Encourage named parameters for functions with many params

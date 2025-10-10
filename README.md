@@ -56,6 +56,7 @@ bun run dev:server    # Start Convex backend only
 
 **References:**
 - [docs/references/architecture.md](docs/references/architecture.md)
+- [docs/references/convex-guidelines.md](docs/references/convex-guidelines.md)
 <!-- [/auto-generated] -->
 
 ## Conductor Integration

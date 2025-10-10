@@ -9,14 +9,23 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './app/__root'
-import { Route as TodosRouteImport } from './app/todos'
+import { Route as SignupRouteImport } from './app/signup'
+import { Route as LoginRouteImport } from './app/login'
 import { Route as DashboardRouteImport } from './app/dashboard'
 import { Route as IndexRouteImport } from './app/index'
+import { Route as DashboardIndexRouteImport } from './app/dashboard.index'
+import { Route as DashboardTodosRouteImport } from './app/dashboard.todos'
+import { Route as DashboardSettingsRouteImport } from './app/dashboard.settings'
 import { Route as ApiAuthSplatRouteImport } from './app/api/auth.$'
 
-const TodosRoute = TodosRouteImport.update({
-  id: '/todos',
-  path: '/todos',
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -29,6 +38,21 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardTodosRoute = DashboardTodosRouteImport.update({
+  id: '/todos',
+  path: '/todos',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardSettingsRoute = DashboardSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -37,45 +61,88 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
-  '/todos': typeof TodosRoute
+  '/dashboard': typeof DashboardRouteWithChildren
+  '/login': typeof LoginRoute
+  '/signup': typeof SignupRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/todos': typeof DashboardTodosRoute
+  '/dashboard/': typeof DashboardIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
-  '/todos': typeof TodosRoute
+  '/login': typeof LoginRoute
+  '/signup': typeof SignupRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/todos': typeof DashboardTodosRoute
+  '/dashboard': typeof DashboardIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
-  '/todos': typeof TodosRoute
+  '/dashboard': typeof DashboardRouteWithChildren
+  '/login': typeof LoginRoute
+  '/signup': typeof SignupRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/todos': typeof DashboardTodosRoute
+  '/dashboard/': typeof DashboardIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/todos' | '/api/auth/$'
+  fullPaths:
+    | '/'
+    | '/dashboard'
+    | '/login'
+    | '/signup'
+    | '/dashboard/settings'
+    | '/dashboard/todos'
+    | '/dashboard/'
+    | '/api/auth/$'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/todos' | '/api/auth/$'
-  id: '__root__' | '/' | '/dashboard' | '/todos' | '/api/auth/$'
+  to:
+    | '/'
+    | '/login'
+    | '/signup'
+    | '/dashboard/settings'
+    | '/dashboard/todos'
+    | '/dashboard'
+    | '/api/auth/$'
+  id:
+    | '__root__'
+    | '/'
+    | '/dashboard'
+    | '/login'
+    | '/signup'
+    | '/dashboard/settings'
+    | '/dashboard/todos'
+    | '/dashboard/'
+    | '/api/auth/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  DashboardRoute: typeof DashboardRoute
-  TodosRoute: typeof TodosRoute
+  DashboardRoute: typeof DashboardRouteWithChildren
+  LoginRoute: typeof LoginRoute
+  SignupRoute: typeof SignupRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/todos': {
-      id: '/todos'
-      path: '/todos'
-      fullPath: '/todos'
-      preLoaderRoute: typeof TodosRouteImport
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -92,6 +159,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/todos': {
+      id: '/dashboard/todos'
+      path: '/todos'
+      fullPath: '/dashboard/todos'
+      preLoaderRoute: typeof DashboardTodosRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/settings': {
+      id: '/dashboard/settings'
+      path: '/settings'
+      fullPath: '/dashboard/settings'
+      preLoaderRoute: typeof DashboardSettingsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -102,10 +190,27 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface DashboardRouteChildren {
+  DashboardSettingsRoute: typeof DashboardSettingsRoute
+  DashboardTodosRoute: typeof DashboardTodosRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute
+}
+
+const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardSettingsRoute: DashboardSettingsRoute,
+  DashboardTodosRoute: DashboardTodosRoute,
+  DashboardIndexRoute: DashboardIndexRoute,
+}
+
+const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
+  DashboardRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  DashboardRoute: DashboardRoute,
-  TodosRoute: TodosRoute,
+  DashboardRoute: DashboardRouteWithChildren,
+  LoginRoute: LoginRoute,
+  SignupRoute: SignupRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport

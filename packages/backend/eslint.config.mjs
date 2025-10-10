@@ -25,6 +25,7 @@ export default antfu({
   rules: {
     // Convex uses global process.env, disable node/prefer-global/process
     'node/prefer-global/process': 'off',
+    'unused-imports/no-unused-imports': 'off',
     // Enforce maximum nesting depth
     'max-depth': ['error', 2],
   },

@@ -1,5 +1,5 @@
 import { useForm } from '@tanstack/react-form'
-import { useNavigate } from '@tanstack/react-router'
+import { Link, useNavigate } from '@tanstack/react-router'
 import { Button } from '@workspace/ui/components/button'
 import { Input } from '@workspace/ui/components/input'
 import { Label } from '@workspace/ui/components/label'
@@ -7,14 +7,8 @@ import { toast } from 'sonner'
 import z from 'zod'
 import { authClient } from '@/shared/auth/lib/auth-client'
 
-export default function SignInForm({
-  onSwitchToSignUp,
-}: {
-  onSwitchToSignUp: () => void
-}) {
-  const navigate = useNavigate({
-    from: '/',
-  })
+export default function SignInForm() {
+  const navigate = useNavigate()
 
   const form = useForm({
     defaultValues: {
@@ -120,12 +114,8 @@ export default function SignInForm({
       </form>
 
       <div className="mt-4 text-center">
-        <Button
-          variant="link"
-          onClick={onSwitchToSignUp}
-          className="text-primary hover:text-primary/80"
-        >
-          Need an account? Sign Up
+        <Button variant="link" asChild>
+          <Link to="/signup">Need an account? Sign Up</Link>
         </Button>
       </div>
     </div>
