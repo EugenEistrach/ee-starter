@@ -145,9 +145,9 @@ function HomeComponent() {
   console.log('   • Creates your backend project\n')
 
   // Ask to run setup
-  const runSetup = await rl.question('Run setup script now? (y/n): ')
+  const runSetup = await rl.question('Run setup script now? [Y/n]: ')
 
-  if (runSetup.toLowerCase() === 'y' || runSetup.toLowerCase() === 'yes') {
+  if (!runSetup.trim() || runSetup.toLowerCase() === 'y' || runSetup.toLowerCase() === 'yes') {
     console.log('\n🔧 Running setup...\n')
     execSync('bun run packages/scripts/src/setup.ts', {
       cwd: ROOT_DIR,
@@ -168,9 +168,9 @@ function HomeComponent() {
   // Ask to create GitHub repo if gh is available
   if (ghAvailable) {
     console.log('\n')
-    const createGhRepo = await rl.question('Create GitHub repository? (y/n): ')
+    const createGhRepo = await rl.question('Create GitHub repository? [Y/n]: ')
 
-    if (createGhRepo.toLowerCase() === 'y' || createGhRepo.toLowerCase() === 'yes') {
+    if (!createGhRepo.trim() || createGhRepo.toLowerCase() === 'y' || createGhRepo.toLowerCase() === 'yes') {
       console.log('\n📦 Creating GitHub repository...\n')
       execSync('gh repo create --source=.', {
         cwd: ROOT_DIR,
