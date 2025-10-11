@@ -5,7 +5,7 @@
 import { defineSchema, defineTable } from 'convex/server'
 import { v } from 'convex/values'
 
-const tables = {
+export const tables = {
   user: defineTable({
     name: v.string(),
     email: v.string(),
@@ -13,10 +13,11 @@ const tables = {
     image: v.optional(v.union(v.null(), v.string())),
     createdAt: v.number(),
     updatedAt: v.number(),
+    userId: v.optional(v.union(v.null(), v.string())),
   })
     .index('email_name', ['email', 'name'])
-    .index('name', ['name']),
-
+    .index('name', ['name'])
+    .index('userId', ['userId']),
   session: defineTable({
     expiresAt: v.number(),
     token: v.string(),

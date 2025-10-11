@@ -43,7 +43,15 @@ Read and internalize the project structure:
 - Ask user to describe what they want to build
 - Ask about requirements, constraints, and goals
 
-### Step 3: Check Existing Implementation (CRITICAL)
+### Step 3: Research External Documentation (if needed)
+
+**For third-party libraries and frameworks:**
+- Use Context7 MCP tools to fetch up-to-date documentation
+- Call `mcp__context7__resolve-library-id` first to find the library
+- Then use `mcp__context7__get-library-docs` with the library ID and `tokens: 3000` to limit context usage
+- Examples: Better Auth plugins, TanStack libraries, UI frameworks
+
+### Step 4: Check Existing Implementation (CRITICAL)
 
 **Before planning, search the codebase for:**
 
@@ -75,7 +83,7 @@ Read and internalize the project structure:
 
 **Report findings:** Tell user what already exists to avoid recreating functionality.
 
-### Step 4: Ask Clarifying Questions
+### Step 5: Ask Clarifying Questions
 
 Based on requirements and existing code, ask about:
 
@@ -99,44 +107,30 @@ Based on requirements and existing code, ask about:
 - What APIs need to be created?
 - What UI components are needed?
 
-### Step 5: Create Implementation Plan
+### Step 6: Create Implementation Plan
 
-Only after understanding everything, create a detailed plan:
+Present a **focused, scannable plan**:
 
-**1. Architecture Overview**
-- Feature name and location (features/X, apps/web/src/features/X)
-- How it fits into existing structure
-- Which layers are involved
+**Format:**
+- Use clear headings and bullet points
+- Group related changes together
+- Show file paths clearly
+- Focus on high-level architecture decisions
 
-**2. Changes to Existing Code** (if any)
-- Files to modify
-- Why modifications are needed
-- What to change
+**What to include:**
+- New files to create (with paths)
+- Existing files to modify (with what changes)
+- How it integrates into the architecture
+- User flow (if UI changes)
+- Implementation order
 
-**3. New Files to Create**
-- Backend: schemas, queries, mutations, actions
-- Frontend: components, views, hooks, utilities
-- Organized by layer (app/features/shared)
+**What to skip:**
+- Configuration details (use good defaults)
+- Obvious testing steps
+- Low-level implementation details
+- Questions about trivial decisions
 
-**4. Dependencies**
-- New packages needed
-- Where to install them (backend vs web)
-
-**5. Implementation Steps**
-- Numbered step-by-step order
-- Start with schema/data model
-- Then backend logic
-- Then frontend
-- Dependencies between steps
-
-**6. Testing Strategy**
-- How to verify it works
-- Edge cases to test
-
-**7. Risks & Concerns**
-- Potential issues
-- Complexity areas
-- Questions that remain
+**Keep it concise** - the user wants to scan and understand quickly, not read documentation.
 
 ## IMPORTANT RULES
 

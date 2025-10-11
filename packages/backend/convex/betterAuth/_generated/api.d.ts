@@ -44,6 +44,7 @@ export type Mounts = {
                 image?: null | string;
                 name: string;
                 updatedAt: number;
+                userId?: null | string;
               };
               model: "user";
             }
@@ -115,6 +116,7 @@ export type Mounts = {
                   | "image"
                   | "createdAt"
                   | "updatedAt"
+                  | "userId"
                   | "_id";
                 operator?:
                   | "lt"
@@ -296,6 +298,7 @@ export type Mounts = {
                   | "image"
                   | "createdAt"
                   | "updatedAt"
+                  | "userId"
                   | "_id";
                 operator?:
                   | "lt"
@@ -541,6 +544,7 @@ export type Mounts = {
                 image?: null | string;
                 name?: string;
                 updatedAt?: number;
+                userId?: null | string;
               };
               where?: Array<{
                 connector?: "AND" | "OR";
@@ -551,6 +555,7 @@ export type Mounts = {
                   | "image"
                   | "createdAt"
                   | "updatedAt"
+                  | "userId"
                   | "_id";
                 operator?:
                   | "lt"
@@ -765,6 +770,7 @@ export type Mounts = {
                 image?: null | string;
                 name?: string;
                 updatedAt?: number;
+                userId?: null | string;
               };
               where?: Array<{
                 connector?: "AND" | "OR";
@@ -775,6 +781,7 @@ export type Mounts = {
                   | "image"
                   | "createdAt"
                   | "updatedAt"
+                  | "userId"
                   | "_id";
                 operator?:
                   | "lt"

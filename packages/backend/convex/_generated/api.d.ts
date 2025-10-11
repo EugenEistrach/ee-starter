@@ -72,6 +72,7 @@ export declare const components: {
                   image?: null | string;
                   name: string;
                   updatedAt: number;
+                  userId?: null | string;
                 };
                 model: "user";
               }
@@ -143,6 +144,7 @@ export declare const components: {
                     | "image"
                     | "createdAt"
                     | "updatedAt"
+                    | "userId"
                     | "_id";
                   operator?:
                     | "lt"
@@ -324,6 +326,7 @@ export declare const components: {
                     | "image"
                     | "createdAt"
                     | "updatedAt"
+                    | "userId"
                     | "_id";
                   operator?:
                     | "lt"
@@ -569,6 +572,7 @@ export declare const components: {
                   image?: null | string;
                   name?: string;
                   updatedAt?: number;
+                  userId?: null | string;
                 };
                 where?: Array<{
                   connector?: "AND" | "OR";
@@ -579,6 +583,7 @@ export declare const components: {
                     | "image"
                     | "createdAt"
                     | "updatedAt"
+                    | "userId"
                     | "_id";
                   operator?:
                     | "lt"
@@ -793,6 +798,7 @@ export declare const components: {
                   image?: null | string;
                   name?: string;
                   updatedAt?: number;
+                  userId?: null | string;
                 };
                 where?: Array<{
                   connector?: "AND" | "OR";
@@ -803,6 +809,7 @@ export declare const components: {
                     | "image"
                     | "createdAt"
                     | "updatedAt"
+                    | "userId"
                     | "_id";
                   operator?:
                     | "lt"
