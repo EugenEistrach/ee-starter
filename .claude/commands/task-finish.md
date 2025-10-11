@@ -23,8 +23,10 @@ Follow the PR creation workflow from @docs/how-to/create-pull-requests.md
 **Important steps:**
 
 1. **Update documentation:**
-   - Use SlashCommand tool to execute `/update-docs`
-   - This will analyze changes and propose doc updates
+   - Quick check: Review staged/unstaged changes (`git status`, `git diff --stat`)
+   - If changes are small and you understand them well: Skip to proposing doc updates directly
+   - If changes are large or unfamiliar: Use SlashCommand tool to execute `/update-docs` (which will use change-summarizer agent)
+   - Propose doc updates based on the changes
    - Review and apply doc updates with user approval
    - Once docs are updated, continue to PR creation
 

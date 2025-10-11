@@ -42,3 +42,7 @@ export const userProfilesSchema = {
 - `ensureUser(ctx)` - Returns user or throws (use for protected endpoints)
 - `getUserOrNull(ctx)` - Returns user or undefined (use for optional auth)
 - Config: `convex/auth.config.ts`
+
+## Sending Emails
+
+Use `ctx.scheduler.runAfter(0, internal.emails.send, {...})` to send template-based emails. See `packages/backend/features/email/README.md` for details.

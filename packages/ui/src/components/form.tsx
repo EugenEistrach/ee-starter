@@ -39,13 +39,26 @@ export function TextField({
 }
 
 // PasswordField Component
-export function PasswordField({ label }: { label: string }) {
+export function PasswordField({
+  label,
+  secondaryAction
+}: {
+  label: string | React.ReactNode
+  secondaryAction?: React.ReactNode
+}) {
   const field = useFieldContext<string>()
   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid
 
   return (
     <Field data-invalid={isInvalid}>
-      <FieldLabel htmlFor={field.name}>{label}</FieldLabel>
+      <FieldLabel htmlFor={field.name} className="flex items-center justify-between">
+        <span>{label}</span>
+        {secondaryAction && (
+          <span className="text-sm font-normal text-muted-foreground">
+            {secondaryAction}
+          </span>
+        )}
+      </FieldLabel>
       <Input
         id={field.name}
         name={field.name}
