@@ -1,6 +1,6 @@
 import { v } from 'convex/values'
-import { mutation, query } from '../_generated/server'
 import { createTodo, getAllTodos, removeTodo, toggleTodo } from '../features/todos/logic'
+import { mutation, query } from './_generated/server'
 
 const todoValidator = v.object({
   _id: v.id('todos'),

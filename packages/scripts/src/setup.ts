@@ -152,5 +152,12 @@ execSync('npx convex dev --once --run-sh "npx convex env set SITE_URL \\"http://
   stdio: "inherit"
 })
 
+// Set DEBUG flag for local development
+console.log("🔧 Setting DEBUG flag...")
+execSync('npx convex dev --once --run-sh "npx convex env set DEBUG \\"true\\""', {
+  cwd: join(ROOT_DIR, "packages/backend"),
+  stdio: "inherit"
+})
+
 console.log("✅ Workspace setup complete!")
 console.log("   You can now run the development server.")

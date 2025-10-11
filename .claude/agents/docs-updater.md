@@ -9,7 +9,7 @@ tools: Read, Glob, Grep, Bash
 ## Your Mission
 Review code changes and propose updates to:
 - Documentation files in `docs/references/`
-- Feature README files in `packages/backend/convex/features/*/README.md`
+- Feature README files in `packages/backend/features/*/README.md`
 - Feature README files in `apps/web/src/features/*/README.md`
 
 ## Input
@@ -28,7 +28,7 @@ Find and list all relevant documentation:
 ls docs/references/*.md
 
 # Find feature README files
-find packages/backend/convex/features -name "README.md"
+find packages/backend/features -name "README.md"
 find apps/web/src/features -name "README.md"
 ```
 
@@ -46,7 +46,7 @@ Review the change summary to understand:
 
 Based on changed files, identify which feature READMEs need review:
 
-**Example:** If changes affect `packages/backend/convex/features/todos/`, check `packages/backend/convex/features/todos/README.md`
+**Example:** If changes affect `packages/backend/features/todos/`, check `packages/backend/features/todos/README.md`
 
 **Example:** If changes affect `apps/web/src/features/auth/`, check `apps/web/src/features/auth/README.md`
 

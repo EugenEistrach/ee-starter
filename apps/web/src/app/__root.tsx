@@ -22,13 +22,14 @@ import {
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { createServerFn } from '@tanstack/react-start'
 import { getCookie, getRequest } from '@tanstack/react-start/server'
-import { createAuth } from '@workspace/backend/convex/shared/auth'
+import { createAuth } from '@workspace/backend/convex/auth'
 
 import { Button } from '@workspace/ui/components/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card'
 import { Toaster } from '@workspace/ui/components/sonner'
 import { ThemeProvider } from '@workspace/ui/components/theme-provider'
 import { useEffect } from 'react'
+import { EmailPanel } from '@/features/dev-tools/views/email-panel'
 import { authClient } from '@/shared/auth/lib/auth-client'
 import appCss from '../index.css?url'
 
@@ -157,6 +158,14 @@ function RootDocument() {
                     render: <TanStackRouterDevtoolsPanel />,
                   },
                   FormDevtoolsPlugin(),
+                  ...(import.meta.env.DEV
+                    ? [
+                        {
+                          name: 'Emails',
+                          render: <EmailPanel />,
+                        },
+                      ]
+                    : []),
                 ]}
               />
               <Scripts />

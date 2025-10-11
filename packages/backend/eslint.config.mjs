@@ -16,7 +16,7 @@ export default antfu({
     '**/*.md',
   ],
   typescript: {
-    tsconfigPath: './convex/tsconfig.json',
+    tsconfigPath: './tsconfig.json',
     files: ['**/*.ts', '**/*.tsx', '**/*.mts', '**/*.cts'],
   },
   javascript: {
@@ -36,13 +36,14 @@ export default antfu({
   settings: {
     'import/resolver': {
       typescript: {
-        project: './convex/tsconfig.json',
+        project: './tsconfig.json',
       },
     },
     'boundaries/elements': [
-      { type: 'app', pattern: 'convex/app/**' },
-      { type: 'features', pattern: 'convex/features/*', capture: ['feature'], mode: 'folder' },
-      { type: 'shared', pattern: 'convex/shared/**' },
+      { type: 'generated', pattern: 'convex/_generated/**' },
+      { type: 'convex', pattern: 'convex/**', mode: 'folder' },
+      { type: 'features', pattern: 'features/*', capture: ['feature'], mode: 'folder' },
+      { type: 'shared', pattern: 'shared/**' },
     ],
   },
   rules: {
@@ -50,8 +51,9 @@ export default antfu({
     'boundaries/element-types': ['error', {
       default: 'disallow',
       rules: [
-        { from: 'app', allow: ['features', 'shared'] },
-        { from: 'features', allow: ['shared'] },
+        { from: 'convex', allow: ['features', 'shared', 'generated'] },
+        { from: 'features', allow: ['shared', 'generated'] },
+        { from: 'shared', allow: ['generated'] },
       ],
     }],
   },

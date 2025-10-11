@@ -19,12 +19,12 @@ import TodoItem from '../components/todo-item'
 export default function TodosList() {
   const [newTodoText, setNewTodoText] = useState('')
 
-  const todosQuery = useSuspenseQuery(convexQuery(api.app.todos.getAll, {}))
+  const todosQuery = useSuspenseQuery(convexQuery(api.todos.getAll, {}))
   const todos = todosQuery.data
 
-  const createTodo = useMutation(api.app.todos.create)
-  const toggleTodo = useMutation(api.app.todos.toggle)
-  const removeTodo = useMutation(api.app.todos.deleteTodo)
+  const createTodo = useMutation(api.todos.create)
+  const toggleTodo = useMutation(api.todos.toggle)
+  const removeTodo = useMutation(api.todos.deleteTodo)
 
   const handleAddTodo = async (e: React.FormEvent) => {
     e.preventDefault()

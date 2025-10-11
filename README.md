@@ -4,7 +4,7 @@
 >
 > I've built many starters and boilerplates over the years working with LLMs and doing projects at my company. This one consolidates everything I've learned. I'm using this approach in 3+ production projects and migrating the best parts here. It's usable now but still missing some pieces e.g. org/team management (easy to add with bettter-auth), i18n, and more documentation.
 
-Full-stack TypeScript starter with TanStack (Router, Query, Form) and Convex backend. Built with opinionated architecture patterns and comprehensive guardrails. Initially jumpstarted using https://www.better-t-stack.dev/
+Claude Code optimized full-stack TypeScript starter with exceptional developer experience. Built with TanStack (Router, Query, Form), Convex backend, and comprehensive guardrails for both humans and AI. Initially jumpstarted using https://www.better-t-stack.dev/
 
 
 ## Quick Start
@@ -29,11 +29,21 @@ Automated setup prompts for:
 - **TanStack Suite**: Router (file-based), Query, Form with unified devtools
 - **Convex Backend**: Real-time database with type-safe queries/mutations
 - **Better Auth**: Authentication integrated with Convex
+- **Developer Experience**: Custom devtools panels & inspectors (e.g., email previews), comprehensive documentation, clean patterns
+- **LLM Optimized**: Built for any LLM. Claude Code: custom agents, slash commands, hooks. CLAUDE.md files for auto-context injection. Automated guardrails: architecture + design system + code quality
 - **Layered Architecture**: Enforced separation of concerns (app/features/shared)
-- **Lint Guardrails**: ESLint boundaries plugin + custom architectural rules
 - **Monorepo**: Turborepo with Bun package manager
-- **LLM Friendly**: Claude.md files and automated guardrails to make sure the LLM stays on track
-- **Conductor friendly** https://conductor.build/ - provides setup and archive scripts so it can be used with conductor easilyo
+- **Conductor friendly**: https://conductor.build/ - automated setup and archive scripts
+
+## Production Features
+
+**Included:**
+- ✅ Email system: Template-based, local/Resend switching, devtools integration, full audit trail
+
+**Coming Soon:**
+- 🚧 User onboarding flows
+- 🚧 Organization management
+- 🚧 Admin UIs
 
 ## Development
 
