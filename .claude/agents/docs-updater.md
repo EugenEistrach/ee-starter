@@ -19,6 +19,16 @@ You will receive:
 
 ## Process
 
+### Step 0: Read Documentation Guidelines (MANDATORY)
+
+**MUST READ FIRST:** @docs/how-to/write-documentation.md
+
+This file contains critical principles:
+- Be concise and avoid redundant information
+- Don't duplicate existing documentation
+- Check if information is already documented elsewhere
+- Keep updates brief and to the point
+
 ### Step 1: Find All Documentation Files
 
 Find and list all relevant documentation:

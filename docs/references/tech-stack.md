@@ -10,6 +10,7 @@
 
 ### Authentication
 - Email/password auth via Better Auth
+- Password reset flow (forgot/reset password)
 - User sessions, protected routes
 - Auth UI components in `apps/web/src/shared/auth/`
 - Config: `packages/backend/convex/auth.config.ts`
@@ -23,6 +24,11 @@
 - Complete shadcn/ui library in `@workspace/ui`
 - Layout components (Sidebar, Header)
 - Form components with TanStack Form
+
+### Email System
+- Template-based emails with design components
+- Automatic provider switching (Resend/local)
+- See `packages/backend/features/email/README.md`
 
 ### Example Feature: Todos
 - Full CRUD: `packages/backend/features/todos/` + `apps/web/src/features/todos/`

@@ -7,8 +7,10 @@ import type { DataModel } from './_generated/dataModel'
 import type { MutationCtx, QueryCtx } from './_generated/server'
 import { createClient } from '@convex-dev/better-auth'
 import { convex } from '@convex-dev/better-auth/plugins'
+import { requireActionCtx } from '@convex-dev/better-auth/utils'
 import { betterAuth } from 'better-auth'
 import { v } from 'convex/values'
+import { createPasswordResetEmail } from '../features/email/templates/password-reset'
 import { createWelcomeEmail } from '../features/email/templates/welcome'
 import { components, internal } from './_generated/api'
 import { internalMutation } from './_generated/server'
@@ -98,6 +100,22 @@ export function createAuth(ctx: GenericCtx<DataModel>, { optionsOnly } = { optio
     emailAndPassword: {
       enabled: true,
       requireEmailVerification: false,
+      async sendResetPassword({ user, url }) {
+        if (!user.email || !user.name)
+          return
+
+        const template = createPasswordResetEmail({
+          name: user.name,
+          resetUrl: url,
+        })
+
+        await requireActionCtx(ctx).scheduler.runAfter(0, internal.emails.send, {
+          to: user.email,
+          template,
+          userId: user.id,
+          metadata: { triggeredBy: 'password-reset-request' },
+        })
+      },
     },
     plugins: [convex()],
 

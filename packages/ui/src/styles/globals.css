@@ -18,6 +18,15 @@ body {
   }
 }
 
+/*
+ * Design Tokens - Light Mode
+ *
+ * IMPORTANT: When updating these colors, also update the corresponding
+ * hex values in packages/backend/features/email/design-tokens.ts
+ *
+ * Email clients don't support CSS variables or OKLCH, so we maintain
+ * a parallel set of tokens converted to hex for inline email styles.
+ */
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);

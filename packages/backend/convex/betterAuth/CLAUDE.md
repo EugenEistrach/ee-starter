@@ -39,3 +39,19 @@ users: defineTable({...}).index('by_email_verified', ['email', 'emailVerified'])
 - `verification` - Email verification tokens
 
 Do not rename or remove these tables.
+
+## Type Utilities
+
+When using Better Auth callbacks (e.g., `sendResetPassword`), use type guards to ensure correct context:
+
+```typescript
+import { requireActionCtx, requireRunMutationCtx } from '@convex-dev/better-auth/utils'
+
+// For scheduler access (mutations/actions)
+requireRunMutationCtx(ctx)
+
+// For action-specific features
+requireActionCtx(ctx)
+```
+
+Reference: https://convex-better-auth.netlify.app/api/type-utilities
