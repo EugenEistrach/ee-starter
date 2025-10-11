@@ -131,6 +131,16 @@ function HomeComponent() {
 
   console.log('\n✨ Project initialized successfully!\n')
 
+  // Delete .linear.toml if it exists (from template repo)
+  const linearConfigPath = join(ROOT_DIR, '.linear.toml')
+  try {
+    const fs = await import('node:fs/promises')
+    await fs.unlink(linearConfigPath)
+    console.log('✅ Removed template .linear.toml')
+  } catch {
+    // File doesn't exist, that's fine
+  }
+
   // Initialize git repository
   console.log('🔧 Creating git repository...')
   execSync('git init', { cwd: ROOT_DIR, stdio: 'inherit' })

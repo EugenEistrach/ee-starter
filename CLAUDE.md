@@ -1,6 +1,11 @@
 # Claude Code Project Guide
 
-This is a full-stack TypeScript monorepo using TanStack (Router, Query, Form) and Convex backend with enforced layered architecture.
+## Important: Check What Exists First
+
+**BEFORE starting any new feature, read this to avoid recreating existing functionality:**
+@docs/references/tech-stack.md
+
+This document lists all pre-implemented features (auth, UI components, etc.) and technologies in use.
 
 ## Architecture
 
@@ -47,11 +52,15 @@ bun run fix          # Auto-fix errors (all packages)
 **How-To Guides** (processes and workflows):
 - docs/how-to/build-forms.md
 - docs/how-to/create-pull-requests.md
+- docs/how-to/deploy-production.md
 - docs/how-to/update-dependencies.md
 - docs/how-to/use-linear-cli.md
 - docs/how-to/write-documentation.md
 
 **References** (general information and docs):
 - docs/references/architecture.md
+- docs/references/backend-guidelines.md
 - docs/references/convex-guidelines.md
+- docs/references/frontend-guidelines.md
+- docs/references/tech-stack.md
 <!-- [/auto-generated] -->
