@@ -12,7 +12,7 @@ export default antfu({
     '**/dist/**',
     '**/build/**',
     '**/.convex/**',
-    '**/convex/_generated/**',
+    '**/convex/**/_generated/**',
     '**/*.md',
   ],
   typescript: {
@@ -40,7 +40,7 @@ export default antfu({
       },
     },
     'boundaries/elements': [
-      { type: 'generated', pattern: 'convex/_generated/**' },
+      { type: 'generated', pattern: 'convex/**/_generated/**' },
       { type: 'convex', pattern: 'convex/**', mode: 'folder' },
       { type: 'features', pattern: 'features/*', capture: ['feature'], mode: 'folder' },
       { type: 'shared', pattern: 'shared/**' },

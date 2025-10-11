@@ -12,6 +12,7 @@ import { v } from 'convex/values'
 import { createWelcomeEmail } from '../features/email/templates/welcome'
 import { components, internal } from './_generated/api'
 import { internalMutation } from './_generated/server'
+import betterAuthSchema from './betterAuth/schema'
 
 const triggers: Triggers<DataModel, any> = {
   user: {
@@ -73,6 +74,10 @@ const authFunctions = internal.auth as AuthFunctions
 
 export const authComponent = createClient<DataModel>(components.betterAuth, {
   authFunctions,
+  local: {
+
+    schema: betterAuthSchema as any,
+  },
   triggers,
 })
 
