@@ -25,5 +25,5 @@
 - Form components with TanStack Form
 
 ### Example Feature: Todos
-- Full CRUD: `packages/backend/convex/features/todos/` + `apps/web/src/features/todos/`
+- Full CRUD: `packages/backend/features/todos/` + `apps/web/src/features/todos/`
 - Use as reference for new features

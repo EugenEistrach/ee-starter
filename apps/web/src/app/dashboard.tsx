@@ -57,7 +57,7 @@ function DashboardLayout() {
 
 function AppSidebar() {
   const navigate = useNavigate()
-  const user = useQuery(api.app.users.getCurrentUser)
+  const user = useQuery(api.users.getCurrentUser)
 
   return (
     <Sidebar collapsible="icon" variant="inset">

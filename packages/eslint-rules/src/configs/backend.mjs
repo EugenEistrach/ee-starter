@@ -25,12 +25,12 @@ export default {
 					{
 						source: 'convex/server',
 						specifiers: ['query', 'mutation', 'action', 'internalQuery', 'internalMutation', 'internalAction'],
-						reason: 'Only the app layer can define Convex endpoints.',
+						reason: 'Only the convex layer can define Convex endpoints.',
 					},
 					{
 						source: '_generated/server',
 						specifiers: ['query', 'mutation', 'action', 'internalQuery', 'internalMutation', 'internalAction'],
-						reason: 'Only the app layer can define Convex endpoints.',
+						reason: 'Only the convex layer can define Convex endpoints.',
 					},
 				],
 			},

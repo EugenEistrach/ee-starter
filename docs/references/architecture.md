@@ -27,15 +27,15 @@ ee-starter/
 
 | Scenario | Location | Rule |
 |----------|----------|------|
-| Creating API endpoint | `convex/app/` | Thin layer that composes features |
-| New feature/domain logic | `convex/features/{feature}/` | Start here. Keep isolated. |
-| Logic used by 3+ features | `convex/shared/` | Extract only when proven necessary (file or folder) |
+| Creating API endpoint | `convex/` | Thin layer that composes features |
+| New feature/domain logic | `features/{feature}/` | Start here. Keep isolated. |
+| Logic used by 3+ features | `shared/` | Extract only when proven necessary (file or folder) |
 | Pure utilities (date, string, etc.) | `@workspace/utils` package | Framework-agnostic, reusable everywhere |
 
 **Import rules:**
 
 ```
-app/        → Can import from features/, shared/, @workspace/utils
+convex/     → Can import from features/, shared/, @workspace/utils
 features/   → Can import from shared/, @workspace/utils (NEVER other features)
 shared/     → Can import from @workspace/utils (files within same folder can import each other)
 ```
@@ -65,7 +65,7 @@ shared/     → Can import from @workspace/* (files in same folder can import ea
 
 **When features need to work together:**
 1. Always coupled? → Combine into one feature
-2. Just need to call both? → Compose in `app/` layer
+2. Just need to call both? → Compose in `convex/` layer
 
 **When to extract logic to `shared/`:**
 - Used by 1-2 features? → Copy-paste the code (keep features isolated)
@@ -80,10 +80,11 @@ Prefer duplication over premature abstraction. Code in 2 places can evolve indep
 ### Layer Structure
 
 ```
-packages/backend/convex/
-├── app/                        # API surface (queries, mutations, actions)
+packages/backend/
+├── convex/                     # API surface (queries, mutations, actions)
 │   ├── posts.ts               # Thin, composes features
-│   └── users.ts
+│   ├── users.ts
+│   └── schema.ts              # Composed from all feature schemas
 ├── features/                   # Feature slices (isolated domains)
 │   ├── billing/
 │   │   ├── README.md          # Feature summary
@@ -97,7 +98,6 @@ packages/backend/convex/
 │       ├── schema.ts          # Table definitions
 │       ├── types.ts           # (optional) Exported types
 │       └── validators.ts      # (optional) Complex validators only
-├── schema.ts                   # Composed from all slices
 └── shared/                     # Extracted shared logic
     ├── auth.ts                # Flat files for simple shared code
     ├── email.ts
@@ -108,19 +108,19 @@ packages/backend/convex/
 
 ### Key Principles
 
-**Dependency Flow:** `app` → `features` → `shared` → `@workspace/utils` (one direction only)
+**Dependency Flow:** `convex` → `features` → `shared` → `@workspace/utils` (one direction only)
 
 **Slice Isolation:** Each feature slice is self-contained. No cross-imports between features. Shared files within the same folder can import from each other.
 
 **Progressive Extraction:** Start in `features/`, extract to `shared/` only when proven necessary (3+ usages).
 
-**Schema Colocation:** Schemas live in slices, composed in root `schema.ts`:
+**Schema Colocation:** Schemas live in feature slices, imported into `convex/schema.ts`:
 ```typescript
 // features/users/schema.ts
 export const usersSchema = { users: defineTable({...}) }
 
 // convex/schema.ts
-import { usersSchema } from './features/users/schema';
+import { usersSchema } from '../features/users/schema';
 export default defineSchema({ ...usersSchema, ... });
 ```
 

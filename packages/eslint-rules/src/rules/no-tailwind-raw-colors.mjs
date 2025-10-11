@@ -20,6 +20,15 @@ export default {
 	 * @param {RuleContext} context
 	 */
 	create(context) {
+		// Skip checking files in dev-tools (devtools use their own color scheme)
+		const filename = context.filename || context.getFilename();
+		if (
+			filename.includes("/dev-tools/") ||
+			filename.includes("\\dev-tools\\")
+		) {
+			return {};
+		}
+
 		// Tailwind color names
 		const colorNames = [
 			"red",

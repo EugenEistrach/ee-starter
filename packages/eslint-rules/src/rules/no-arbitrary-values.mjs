@@ -12,13 +12,15 @@ export default {
 		fixable: null,
 	},
 	create(context) {
-		// Skip checking files in shared/ui (shadcn components)
+		// Skip checking files in shared/ui (shadcn components) and dev-tools (devtools use their own styling)
 		const filename = context.filename || context.getFilename();
 		if (
 			filename.includes("/shared/ui/") ||
 			filename.includes("\\shared\\ui\\") ||
 			filename.includes("/packages/ui/") ||
-			filename.includes("\\packages\\ui\\")
+			filename.includes("\\packages\\ui\\") ||
+			filename.includes("/dev-tools/") ||
+			filename.includes("\\dev-tools\\")
 		) {
 			return {};
 		}

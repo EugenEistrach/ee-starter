@@ -50,13 +50,13 @@ Read and internalize the project structure:
 1. **Similar features** - Does something like this already exist?
    ```
    Use Grep to search for related functionality
-   Check convex/features/ for backend
+   Check features/ for backend
    Check apps/web/src/features/ for frontend
    ```
 
 2. **Existing schemas** - Is there already a table/model for this domain?
    ```
-   Search convex/features/*/schema.ts
+   Search features/*/schema.ts
    Look for related table definitions
    ```
 
@@ -104,7 +104,7 @@ Based on requirements and existing code, ask about:
 Only after understanding everything, create a detailed plan:
 
 **1. Architecture Overview**
-- Feature name and location (convex/features/X, apps/web/src/features/X)
+- Feature name and location (features/X, apps/web/src/features/X)
 - How it fits into existing structure
 - Which layers are involved
 
