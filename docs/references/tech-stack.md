@@ -10,6 +10,7 @@
 
 ### Authentication
 - Email/password auth via Better Auth
+- Magic link passwordless authentication
 - Password reset flow (forgot/reset password)
 - User sessions, protected routes
 - Auth UI components in `apps/web/src/shared/auth/`

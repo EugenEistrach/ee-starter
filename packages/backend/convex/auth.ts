@@ -9,7 +9,9 @@ import { createClient } from '@convex-dev/better-auth'
 import { convex } from '@convex-dev/better-auth/plugins'
 import { requireActionCtx } from '@convex-dev/better-auth/utils'
 import { betterAuth } from 'better-auth'
+import { magicLink } from 'better-auth/plugins'
 import { v } from 'convex/values'
+import { createMagicLinkEmail } from '../features/email/templates/magic-link'
 import { createPasswordResetEmail } from '../features/email/templates/password-reset'
 import { createWelcomeEmail } from '../features/email/templates/welcome'
 import { components, internal } from './_generated/api'
@@ -117,7 +119,25 @@ export function createAuth(ctx: GenericCtx<DataModel>, { optionsOnly } = { optio
         })
       },
     },
-    plugins: [convex()],
+    plugins: [
+      convex(),
+      magicLink({
+        async sendMagicLink({ email, url }) {
+          const template = createMagicLinkEmail({
+            name: undefined,
+            magicLink: url,
+          })
+
+          await requireActionCtx(ctx).scheduler.runAfter(0, internal.emails.send, {
+            to: email,
+            template,
+            metadata: { triggeredBy: 'magic-link-request' },
+          })
+        },
+        expiresIn: 60 * 5, // 5 minutes
+        disableSignUp: false,
+      }),
+    ],
 
   })
 }
