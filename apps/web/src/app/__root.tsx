@@ -27,6 +27,7 @@ import { createAuth } from '@workspace/backend/convex/shared/auth'
 import { Button } from '@workspace/ui/components/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card'
 import { Toaster } from '@workspace/ui/components/sonner'
+import { ThemeProvider } from '@workspace/ui/components/theme-provider'
 import { useEffect } from 'react'
 import { authClient } from '@/shared/auth/lib/auth-client'
 import appCss from '../index.css?url'
@@ -136,30 +137,32 @@ function RootDocument() {
         client={context.convexClient}
         authClient={authClient}
       >
-        <html lang="en" className="dark">
-          <head>
-            <HeadContent />
-          </head>
-          <body>
-            <RouterProgressSync />
-            <Outlet />
-            <Toaster richColors />
-            <TanStackDevtools
-              plugins={[
-                {
-                  name: 'TanStack Query',
-                  render: <ReactQueryDevtoolsPanel />,
-                },
-                {
-                  name: 'TanStack Router',
-                  render: <TanStackRouterDevtoolsPanel />,
-                },
-                FormDevtoolsPlugin(),
-              ]}
-            />
-            <Scripts />
-          </body>
-        </html>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <html lang="en">
+            <head>
+              <HeadContent />
+            </head>
+            <body>
+              <RouterProgressSync />
+              <Outlet />
+              <Toaster richColors />
+              <TanStackDevtools
+                plugins={[
+                  {
+                    name: 'TanStack Query',
+                    render: <ReactQueryDevtoolsPanel />,
+                  },
+                  {
+                    name: 'TanStack Router',
+                    render: <TanStackRouterDevtoolsPanel />,
+                  },
+                  FormDevtoolsPlugin(),
+                ]}
+              />
+              <Scripts />
+            </body>
+          </html>
+        </ThemeProvider>
       </ConvexBetterAuthProvider>
     </ProgressProvider>
   )

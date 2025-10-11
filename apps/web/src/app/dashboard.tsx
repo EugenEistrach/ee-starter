@@ -24,6 +24,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from '@workspace/ui/components/sidebar'
+import { ThemeToggle } from '@workspace/ui/components/theme-toggle'
 import { TooltipProvider } from '@workspace/ui/components/tooltip'
 import { useQuery } from 'convex/react'
 import { CheckSquare, ChevronsUpDown, LogOut, Settings } from 'lucide-react'
@@ -179,6 +180,9 @@ function DashboardHeader() {
       <div className="flex w-full items-center gap-2 px-4">
         <SidebarTrigger className="-ml-1" />
         <Separator orientation="vertical" className="mr-2 h-4" />
+        <div className="ml-auto">
+          <ThemeToggle />
+        </div>
       </div>
     </header>
   )
