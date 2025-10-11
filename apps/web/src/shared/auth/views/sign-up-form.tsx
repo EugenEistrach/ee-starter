@@ -90,6 +90,7 @@ export default function SignUpForm({
                 <form.SubmitButton description={(
                   <>
                     Already have an account?
+                    {' '}
                     <Link to="/login">Sign in</Link>
                   </>
                 )}

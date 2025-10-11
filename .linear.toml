@@ -1,0 +1,6 @@
+# linear cli
+# https://github.com/schpet/linear-cli
+
+workspace = "perfux"
+team_id = "PRFX"
+issue_sort = "manual"

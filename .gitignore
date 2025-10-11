@@ -42,9 +42,6 @@ lerna-debug.log*
 # Conductor (parallel development)
 .convex-project-slug
 
-# Linear CLI
-.linear.toml
-
 # Testing
 coverage
 .nyc_output

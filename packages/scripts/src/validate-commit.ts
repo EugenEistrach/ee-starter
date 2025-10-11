@@ -134,10 +134,10 @@ if (unstagedFiles.length > 0) {
   unstagedFiles.forEach(file => console.error(`  - ${file}`))
 
   console.error("\n💡 What to do:")
-  console.error("  1. Review these files carefully")
-  console.error("  2. If intended: git add <file>")
-  console.error("  3. If temp/unwanted: delete the file")
-  console.error("  4. If permanent but not needed in git: add to .gitignore")
+  console.error("  1. Review these files carefully - are they intended changes?")
+  console.error("  2. If intended for this commit: git add <file>")
+  console.error("  3. If not needed: remove manually after review")
+  console.error("  4. If permanent but not for git: add to .gitignore")
 
   if (inWorktree) {
     console.error("\n⚠️  Worktree detected: Be extra careful with unstaged files!")

@@ -18,7 +18,12 @@ Always ask the user first. They may have made manual changes you're unaware of.
    git diff
    ```
 
-   If unexpected changes appear, ask the user before proceeding.
+   **IMPORTANT:** If unexpected files or changes appear:
+   - List them clearly for the user
+   - Ask if these are intended changes
+   - Ask what to do with unexpected files (stage, ignore, or user will handle)
+   - Never delete or modify files without explicit user approval
+   - Wait for user confirmation before proceeding
 
 2. **Stage changes**
    ```bash
@@ -63,5 +68,5 @@ Use [Conventional Commits](https://www.conventionalcommits.org/):
 
 ## Auto-closing Issues
 
-- **Linear:** `Implements PRFX-40`
+- **Linear:** `Implements PRFX-40` or multiple: `Implements PRFX-40, PRFX-41, PRFX-42`
 - **GitHub:** `Closes #123` or `Fixes #123`

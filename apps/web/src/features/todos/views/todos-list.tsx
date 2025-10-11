@@ -9,7 +9,9 @@ import {
   CardHeader,
   CardTitle,
 } from '@workspace/ui/components/card'
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@workspace/ui/components/empty'
 import { useMutation } from 'convex/react'
+import { CheckSquare } from 'lucide-react'
 import { useState } from 'react'
 import TodoForm from '../components/todo-form'
 import TodoItem from '../components/todo-item'
@@ -73,7 +75,17 @@ export default function TodosList() {
 
           {todos?.length === 0
             ? (
-                <p className="py-4 text-center">No todos yet. Add one above!</p>
+                <Empty>
+                  <EmptyHeader>
+                    <EmptyMedia variant="icon">
+                      <CheckSquare />
+                    </EmptyMedia>
+                    <EmptyTitle>No todos yet</EmptyTitle>
+                    <EmptyDescription>
+                      Add your first task above to get started
+                    </EmptyDescription>
+                  </EmptyHeader>
+                </Empty>
               )
             : (
                 <ul className="space-y-2">

@@ -2,9 +2,27 @@
 
 > **Work in Progress**
 >
-> I've built many starters and boilerplates over the years working with LLMs and doing projects at my company. This one consolidates everything I've learned. I'm using this approach in 3+ production projects and migrating the best parts here. It's usable now but still missing some pieces—proper dashboard, landing page, org/team management (easy to add with bettter-auth), production deployment docs, i18n, and more documentation.
+> I've built many starters and boilerplates over the years working with LLMs and doing projects at my company. This one consolidates everything I've learned. I'm using this approach in 3+ production projects and migrating the best parts here. It's usable now but still missing some pieces e.g. org/team management (easy to add with bettter-auth), i18n, and more documentation.
 
 Full-stack TypeScript starter with TanStack (Router, Query, Form) and Convex backend. Built with opinionated architecture patterns and comprehensive guardrails. Initially jumpstarted using https://www.better-t-stack.dev/
+
+
+## Quick Start
+
+```bash
+# Create new project from starter (runs interactive setup automatically)
+bunx giget@latest gh:eugeneistrach/ee-starter my-app-name --install
+cd my-app-name
+
+# Start development
+bun run dev
+```
+
+Automated setup prompts for:
+- App name and branding customization
+- Convex backend configuration (free account at convex.dev)
+- GitHub repository creation (optional)
+- Production deployment to Vercel (optional)
 
 ## Features
 
@@ -16,26 +34,6 @@ Full-stack TypeScript starter with TanStack (Router, Query, Form) and Convex bac
 - **Monorepo**: Turborepo with Bun package manager
 - **LLM Friendly**: Claude.md files and automated guardrails to make sure the LLM stays on track
 - **Conductor friendly** https://conductor.build/ - provides setup and archive scripts so it can be used with conductor easilyo
-
-## Quick Start
-
-```bash
-# Clone and setup
-git clone <your-repo>
-cd ee-starter
-
-# Run setup script (installs deps, configures Convex, sets env vars)
-bun run packages/scripts/src/setup.ts
-
-# Start development
-bun run dev
-```
-
-The setup script will:
-- Install dependencies
-- Create a branch-specific Convex project
-- Configure environment variables
-- Set up Better Auth secrets
 
 ## Development
 
@@ -51,13 +49,17 @@ bun run dev:server    # Start Convex backend only
 **How-To Guides:**
 - [docs/how-to/build-forms.md](docs/how-to/build-forms.md)
 - [docs/how-to/create-pull-requests.md](docs/how-to/create-pull-requests.md)
+- [docs/how-to/deploy-production.md](docs/how-to/deploy-production.md)
 - [docs/how-to/update-dependencies.md](docs/how-to/update-dependencies.md)
 - [docs/how-to/use-linear-cli.md](docs/how-to/use-linear-cli.md)
 - [docs/how-to/write-documentation.md](docs/how-to/write-documentation.md)
 
 **References:**
 - [docs/references/architecture.md](docs/references/architecture.md)
+- [docs/references/backend-guidelines.md](docs/references/backend-guidelines.md)
 - [docs/references/convex-guidelines.md](docs/references/convex-guidelines.md)
+- [docs/references/frontend-guidelines.md](docs/references/frontend-guidelines.md)
+- [docs/references/tech-stack.md](docs/references/tech-stack.md)
 <!-- [/auto-generated] -->
 
 ## Conductor Integration

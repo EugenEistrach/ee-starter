@@ -110,7 +110,7 @@ async function main() {
   console.log('\n📝  Step 4: Creating vercel.json...')
   const vercelConfig = {
     installCommand: "bun install",
-    buildCommand: "cd packages/backend && npx convex deploy --cmd 'cd ../../apps/web && bun run build' --cmd-url-env-var-name VITE_CONVEX_URL"
+    buildCommand: "bun run packages/scripts/src/build-vercel.ts"
   }
   writeFileSync(join(ROOT_DIR, 'vercel.json'), JSON.stringify(vercelConfig, null, 2), 'utf-8')
   console.log('✅  Created vercel.json in root')
