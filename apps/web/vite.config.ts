@@ -4,11 +4,13 @@ import viteReact from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import { nitroV2Plugin } from '@tanstack/nitro-v2-vite-plugin'
+import { syncRoutesToBackend } from '../../packages/scripts/src/vite-plugin-sync-routes.ts'
 
 export default defineConfig({
   plugins: [
     tsconfigPaths(),
     tailwindcss(),
+    syncRoutesToBackend(),
     tanstackStart({
       router: {
         routesDirectory: './app',

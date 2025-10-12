@@ -12,7 +12,7 @@ export default {
     },
     "packages/backend": {
       convex: true,
-      ignore: ["convex/betterAuth/schema.ts"],
+      ignore: ["convex/betterAuth/schema.ts", "convex/reserved-routes.ts"],
     },
     "packages/scripts": {
       entry: ["src/**/*.ts"],
