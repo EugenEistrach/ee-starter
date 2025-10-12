@@ -1,12 +1,22 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "hooks": {
     "PostToolUse": [
       {
-        "matcher": "Edit|Write|MultiEdit",
+        "matcher": "Write",
         "hooks": [
           {
             "type": "command",
-            "command": "$(git rev-parse --show-toplevel)/.claude/hooks/check-file.sh"
+            "command": ".claude/hooks/post-write-docs.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/post-commit-sync-routes.sh"
           }
         ]
       }
