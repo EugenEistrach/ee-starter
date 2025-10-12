@@ -9,7 +9,6 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './app/__root'
-import { Route as TestRouteImport } from './app/test'
 import { Route as SignupRouteImport } from './app/signup'
 import { Route as ResetPasswordRouteImport } from './app/reset-password'
 import { Route as ORouteImport } from './app/o'
@@ -23,11 +22,6 @@ import { Route as OOrganizationSlugTodosRouteImport } from './app/o.$organizatio
 import { Route as OOrganizationSlugSettingsRouteImport } from './app/o.$organizationSlug.settings'
 import { Route as ApiAuthSplatRouteImport } from './app/api/auth.$'
 
-const TestRoute = TestRouteImport.update({
-  id: '/test',
-  path: '/test',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
@@ -98,7 +92,6 @@ export interface FileRoutesByFullPath {
   '/o': typeof ORouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
-  '/test': typeof TestRoute
   '/o/$organizationSlug': typeof OOrganizationSlugRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/o/$organizationSlug/settings': typeof OOrganizationSlugSettingsRoute
@@ -113,7 +106,6 @@ export interface FileRoutesByTo {
   '/o': typeof ORouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
-  '/test': typeof TestRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/o/$organizationSlug/settings': typeof OOrganizationSlugSettingsRoute
   '/o/$organizationSlug/todos': typeof OOrganizationSlugTodosRoute
@@ -128,7 +120,6 @@ export interface FileRoutesById {
   '/o': typeof ORouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
-  '/test': typeof TestRoute
   '/o/$organizationSlug': typeof OOrganizationSlugRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/o/$organizationSlug/settings': typeof OOrganizationSlugSettingsRoute
@@ -145,7 +136,6 @@ export interface FileRouteTypes {
     | '/o'
     | '/reset-password'
     | '/signup'
-    | '/test'
     | '/o/$organizationSlug'
     | '/api/auth/$'
     | '/o/$organizationSlug/settings'
@@ -160,7 +150,6 @@ export interface FileRouteTypes {
     | '/o'
     | '/reset-password'
     | '/signup'
-    | '/test'
     | '/api/auth/$'
     | '/o/$organizationSlug/settings'
     | '/o/$organizationSlug/todos'
@@ -174,7 +163,6 @@ export interface FileRouteTypes {
     | '/o'
     | '/reset-password'
     | '/signup'
-    | '/test'
     | '/o/$organizationSlug'
     | '/api/auth/$'
     | '/o/$organizationSlug/settings'
@@ -190,19 +178,11 @@ export interface RootRouteChildren {
   ORoute: typeof ORouteWithChildren
   ResetPasswordRoute: typeof ResetPasswordRoute
   SignupRoute: typeof SignupRoute
-  TestRoute: typeof TestRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/test': {
-      id: '/test'
-      path: '/test'
-      fullPath: '/test'
-      preLoaderRoute: typeof TestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/signup': {
       id: '/signup'
       path: '/signup'
@@ -323,7 +303,6 @@ const rootRouteChildren: RootRouteChildren = {
   ORoute: ORouteWithChildren,
   ResetPasswordRoute: ResetPasswordRoute,
   SignupRoute: SignupRoute,
-  TestRoute: TestRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport

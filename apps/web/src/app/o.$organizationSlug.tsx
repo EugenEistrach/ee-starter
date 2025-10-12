@@ -39,9 +39,9 @@ export const Route = createFileRoute('/o/$organizationSlug')({
       throw redirect({ to: '/login' })
     }
 
-    const { user } = await context.queryClient.ensureQueryData(convexQuery(api.users.getCurrentUser, {}))
+    const organizations = await context.queryClient.ensureQueryData(convexQuery(api.organizations.listAll, {}))
 
-    const organization = user?.organizations.find(organization => organization.slug === params.organizationSlug)
+    const organization = organizations.find(organization => organization.slug === params.organizationSlug)
 
     if (!organization) {
       throw redirect({ to: '/new-organization' })

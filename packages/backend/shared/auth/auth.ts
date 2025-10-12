@@ -114,9 +114,4 @@ export async function getAuth(ctx: GenericCtx<DataModel>) {
   return authComponent.getAuth(createAuth, ctx)
 }
 
-export async function getAuthApi(ctx: GenericCtx<DataModel>) {
-  const { auth } = await getAuth(ctx)
-  return auth.api
-}
-
 export type AuthCtx = QueryCtx | MutationCtx

@@ -22,7 +22,7 @@ export default function TodosList() {
 
   const organization = useOrganization()
 
-  const todosQuery = useSuspenseQuery(convexQuery(api.todos.getAll, { organizationId: organization._id }))
+  const todosQuery = useSuspenseQuery(convexQuery(api.todos.getAll, { organizationId: organization.id }))
   const todos = todosQuery.data
 
   const createTodo = useMutation(api.todos.create)
@@ -35,7 +35,7 @@ export default function TodosList() {
     if (text) {
       setNewTodoText('')
       try {
-        await createTodo({ text, organizationId: organization._id })
+        await createTodo({ text, organizationId: organization.id })
       }
       catch (error) {
         console.error('Failed to add todo:', error)
@@ -46,7 +46,7 @@ export default function TodosList() {
 
   const handleToggleTodo = async (id: Id<'todos'>, completed: boolean) => {
     try {
-      await toggleTodo({ id, completed: !completed, organizationId: organization._id })
+      await toggleTodo({ id, completed: !completed, organizationId: organization.id })
     }
     catch (error) {
       console.error('Failed to toggle todo:', error)
@@ -55,7 +55,7 @@ export default function TodosList() {
 
   const handleDeleteTodo = async (id: Id<'todos'>) => {
     try {
-      await removeTodo({ id, organizationId: organization._id })
+      await removeTodo({ id, organizationId: organization.id })
     }
     catch (error) {
       console.error('Failed to delete todo:', error)

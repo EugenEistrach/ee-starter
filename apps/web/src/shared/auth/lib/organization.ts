@@ -4,13 +4,13 @@ import { redirect } from '@tanstack/react-router'
 import { api } from '@workspace/backend/convex/_generated/api'
 
 async function getFirstOrganization(queryClient: QueryClient) {
-  const { user } = await queryClient.ensureQueryData(convexQuery(api.users.getCurrentUser, {}))
+  const organizations = await queryClient.ensureQueryData(convexQuery(api.organizations.listAll, {}))
 
-  if (!user?.organizations.length) {
+  if (!organizations.length) {
     return undefined
   }
 
-  return user.organizations[0]
+  return organizations[0]
 }
 
 export async function redirectToFirstOrganization(queryClient: QueryClient) {

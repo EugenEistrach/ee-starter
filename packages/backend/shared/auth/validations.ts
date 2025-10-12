@@ -1,4 +1,3 @@
-import type { Id } from '../../convex/_generated/dataModel'
 import type { AuthCtx } from './auth'
 import type { Permissions } from './permissions'
 import { ensure } from '@workspace/utils'
@@ -57,25 +56,7 @@ export async function ensureUserWithPermissions(ctx: AuthCtx, { permissions, org
  */
 export async function getUserOrNull(ctx: AuthCtx) {
   const user = await authComponent.safeGetAuthUser(ctx)
-
-  if (!user) {
-    return { user: undefined }
-  }
-
-  const membeships = await ctx.db.query('member')
-    .withIndex('userId', q => q.eq('userId', user._id))
-    .collect()
-
-  const organizations = await Promise.all(membeships.map(async (membership) => {
-    const organization = await ctx.db.get(membership.organizationId as Id<'organization'>)
-    ensure(organization !== null, 'Organization not found')
-    return organization
-  }))
-
-  return { user: {
-    ...user,
-    organizations,
-  } }
+  return { user }
 }
 
 /**

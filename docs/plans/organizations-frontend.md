@@ -2,489 +2,430 @@
 
 ## Overview
 
-Build UI for organization management with URL-based organization context, matching the backend multi-tenancy architecture.
+Build UI for organization management with URL-based organization context. Backend multi-tenancy is already implemented with Better Auth organizations plugin.
 
-## Key Requirements
+## Current Implementation Status
 
-- **URL-based Active Organization**: `/:slug/todos` (org slug is root path)
-- **Organization Switcher**: Dropdown/menu to switch between organizations
-- **Onboarding Flow**: Force new users to create organization before accessing app
-- **Member Management UI**: Single page showing both active members and pending invitations
-- **Invitation Flow**: Accept invitations from email links
-- **Auto-generated Slugs**: Slug automatically generated from org name by backend
-- **Simple UX**: Clear, easy to understand (like Linear/Vercel)
-- **Flat File Routing**: TanStack Start flat filenames (e.g., `$slug.todos.tsx`)
+### Already Implemented ✅
 
-## Architecture Decision
+**Backend:**
+- `api.organizations.create({ name, logo })` - Creates org with auto-generated slug
+- `api.organizations.listAll()` - Returns all user's organizations
+- `api.organizations.get({ slug })` - Returns org details INCLUDING members and invites
+- Better Auth organization plugin configured on backend
+- Slug auto-generation with collision handling
 
-Following project architecture:
-- New feature slice: `apps/web/src/features/organizations/`
-- Shared components: `apps/web/src/shared/organizations/` (only if used 3+ times)
-- Routes: `apps/web/src/app/$slug.tsx`, `apps/web/src/app/$slug.todos.tsx`, etc.
-- Better Auth client plugin: Add `organizationClient()` to auth-client.ts
+**Frontend:**
+- Routes: `/o/$organizationSlug` layout with sidebar, navigation, user dropdown
+- `useOrganization()` hook - Fetches org via `useSuspenseQuery(convexQuery(api.organizations.get))`, returns org with members + invites
+- `useCurrentUser()` hook - Returns authenticated user
+- Route guard validates org access and redirects to `/new-organization` if no orgs
+- `authClient` with Better Auth `organizationClient()` plugin already configured
+- Todos feature fully org-scoped
 
-## Component Structure
+### What Needs to Be Built 🚧
 
-### Features Slice: `apps/web/src/features/organizations/`
+**Component Structure** - All in `apps/web/src/features/organizations/`:
+
+**components/** (Presentational):
+- `organization-card.tsx` - Org card for switcher dropdown
+- `member-list-item.tsx` - Member/invitation row with actions
+- `member-role-badge.tsx` - Visual role indicator
+- `create-organization-form.tsx` - Form for creating organization
+- `invite-member-dialog.tsx` - Modal for inviting members
+
+**views/** (Smart components):
+- `organization-switcher.tsx` - Dropdown showing all user's orgs
+- `members-table.tsx` - Combined members + pending invitations table
+
+**Routes:**
+- `new-organization.tsx` - Replace placeholder with org creation form
+- `o.$organizationSlug.settings.tsx` - Replace placeholder with tabbed settings (General/Members/Danger)
+- `accept-invite.$invitationId.tsx` - NEW: Accept invitation page
+
+## Architecture Decisions
+
+### Data Fetching Pattern
+
+**For Reading Data:**
+- Use `useOrganization()` hook to get current org including members + invites
+- Use `useSuspenseQuery(convexQuery(api.organizations.listAll))` for all user's orgs
+- Use `authClient.organization.getInvitation()` in route loaders for invitation details
+
+**For Mutations:**
+- Use `authClient.organization.*` methods directly (no Convex wrappers needed)
+- Create org: `authClient.organization.create()` OR Convex `api.organizations.create()` (both work, use Convex for consistency)
+- Invite: `authClient.organization.inviteMember({ email, role })`
+- Update role: `authClient.organization.updateMemberRole({ memberId, role })`
+- Remove: `authClient.organization.removeMember({ memberIdOrEmail })`
+- Cancel invite: `authClient.organization.cancelInvitation({ invitationId })`
+- Update org: `authClient.organization.update({ data: { name, logo } })`
+- Delete org: `authClient.organization.delete({ organizationId })`
+- Leave org: `authClient.organization.leave({ organizationId })`
+
+**For Permissions:**
+- Get current role: `authClient.organization.getActiveMemberRole()`
+- Check permissions: `authClient.organization.checkRolePermission({ permissions, role })`
+- Use for conditional rendering (show/hide buttons based on role)
+
+### URL Structure
 
 ```
-features/organizations/
-├── README.md                           # Feature summary
-├── components/                         # Presentational components
-│   ├── organization-card.tsx          # Org card for list/switcher
-│   ├── member-list-item.tsx           # Member/invitation row with role badge
-│   ├── member-role-badge.tsx          # Visual role indicator (owner/admin/member)
-│   ├── create-organization-form.tsx   # Form for creating org (name only)
-│   └── invite-member-dialog.tsx       # Modal for inviting members
-├── views/                              # Smart components (Convex integration)
-│   ├── organization-switcher.tsx      # Dropdown with user's orgs
-│   ├── members-table.tsx              # Combined members + invitations view
-│   └── onboarding-view.tsx            # Force org creation for new users
-└── lib/
-    └── organization-helpers.ts         # Utilities (if needed)
+/o/$organizationSlug              → Organization layout (sidebar, nav)
+/o/$organizationSlug/todos        → Todos (already implemented)
+/o/$organizationSlug/settings     → Settings tabs (General/Members/Danger)
+/new-organization                 → Create new organization
+/accept-invite/$invitationId      → Accept invitation from email
 ```
 
-### Routes: `apps/web/src/app/` (Flat File Routing)
+**Route Guard:** `/o/$organizationSlug` loader checks user has access to org, redirects to `/new-organization` if no orgs exist.
 
-```
-app/
-├── __root.tsx                          # Add org existence check
-├── onboarding.tsx                      # NEW: Create first organization
-├── accept-invite.tsx                   # NEW: Accept invitation from email
-├── $slug.tsx                           # NEW: Org layout (root for org)
-├── $slug.index.tsx                     # NEW: Org home/landing
-├── $slug.todos.tsx                     # Org-scoped todos
-└── $slug.settings.members.tsx          # NEW: Members + invitations management
-```
+## Component Implementation Details
 
-**Note**: Routes like `onboarding`, `accept-invite`, `login`, `signup`, etc. are reserved and can't be used as organization slugs. Backend validates this automatically (auto-synced from route manifest).
+### 1. Organization Switcher
 
-## Implementation Overview
+**Location:** Enhance `ChevronsUpDown` button area in `o.$organizationSlug.tsx` sidebar
 
-### 1. Update Better Auth Client
-
-**File: `apps/web/src/shared/auth/lib/auth-client.ts`**
-
+**Data:**
 ```typescript
-import { convexClient } from '@convex-dev/better-auth/client/plugins'
-import { organizationClient } from 'better-auth/client/plugins'  // NEW
-import { magicLinkClient } from 'better-auth/client/plugins'
-import { createAuthClient } from 'better-auth/react'
+const organizations = useSuspenseQuery(convexQuery(api.organizations.listAll, {}))
+const currentOrg = useOrganization()
+```
 
-export const authClient = createAuthClient({
-  plugins: [
-    convexClient(),
-    magicLinkClient(),
-    organizationClient(),  // NEW: Add organization plugin
-  ],
+**UI:**
+- Dropdown menu triggered by org name/logo
+- List all organizations with org cards
+- Highlight current organization
+- "+ New Organization" button at bottom → navigate to `/new-organization`
+- Click org → navigate to `/o/{slug}`
+
+**Components used:** `organization-card.tsx`
+
+### 2. New Organization Form
+
+**Location:** `apps/web/src/app/new-organization.tsx`
+
+**Fields:**
+- Organization name (required)
+- Logo URL (optional)
+- Slug is auto-generated by backend
+
+**Mutation:**
+```typescript
+const createOrg = useMutation(api.organizations.create)
+await createOrg({ name, logo })
+// Backend generates slug and returns organization
+// Redirect to /o/{slug}
+```
+
+**Components used:** `create-organization-form.tsx`
+
+### 3. Settings Page - General Tab
+
+**Location:** `apps/web/src/app/o.$organizationSlug.settings.tsx`
+
+**Data:**
+```typescript
+const organization = useOrganization()
+```
+
+**Form fields:**
+- Organization name
+- Logo URL
+
+**Mutation:**
+```typescript
+await authClient.organization.update({
+  data: { name, logo }
 })
 ```
 
-### 2. Root Route - Organization Check
+**Permissions:** Only owner/admin can edit
 
-**File: `apps/web/src/app/__root.tsx`**
+### 4. Settings Page - Members Tab
 
-Add loader to check if user needs onboarding:
+**Location:** Same file, Members tab
 
+**Data:**
 ```typescript
-// Before rendering any protected routes, check:
-// 1. Is user authenticated?
-// 2. Does user belong to any organization?
-// 3. If no → redirect to /onboarding
-// 4. If yes → continue to requested route
+const organization = useOrganization()
+// organization.members: [{ id, name, email, role }]
+// organization.invites: [{ id, email, role, status, expiresAt }]
 ```
 
-### 3. Onboarding Route
+**UI - Single Combined Table:**
 
-**File: `apps/web/src/app/onboarding.tsx`**
+```
+┌─────────────────────────────────────────────────────┐
+│ Members & Invitations                      [Invite] │
+├─────────────────────────────────────────────────────┤
+│ Active Members (3)                                   │
+├─────────────────────────────────────────────────────┤
+│ 👤 John Doe      [OWNER]   [Change] [Remove]        │
+│ 👤 Jane Smith    [ADMIN]   [Change] [Remove]        │
+│ 👤 Bob Johnson   [MEMBER]  [Change] [Remove]        │
+├─────────────────────────────────────────────────────┤
+│ Pending Invitations (2)                              │
+├─────────────────────────────────────────────────────┤
+│ 📧 alice@ex.com  [ADMIN]   [Resend] [Revoke]        │
+│ 📧 bob@ex.com    [MEMBER]  [Resend] [Revoke]        │
+└─────────────────────────────────────────────────────┘
+```
 
+**Actions (owner/admin only):**
+
+Invite:
 ```typescript
-// Shows create-organization-form
-// Required field: organization name ONLY
-// Slug is auto-generated by backend from name
-// On success → redirect to /:slug (new org's home)
+await authClient.organization.inviteMember({
+  email,
+  role, // 'owner' | 'admin' | 'member'
+})
 ```
 
-**Uses:**
-- `features/organizations/views/onboarding-view.tsx`
-- `features/organizations/components/create-organization-form.tsx`
-
-### 4. Organization Layout Route
-
-**File: `apps/web/src/app/$slug.tsx`**
-
+Update role:
 ```typescript
-// Layout for all org routes
-// Loads organization by slug (validates user is member)
-// Provides org context to child routes
-// Shows header with org switcher
-// If org not found or user not member → redirect to first available org or onboarding
+await authClient.organization.updateMemberRole({
+  memberId,
+  role,
+})
 ```
 
-**Uses:**
-- `features/organizations/views/organization-switcher.tsx`
-
-### 5. Organization Home
-
-**File: `apps/web/src/app/$slug.index.tsx`**
-
+Remove member:
 ```typescript
-// Simple landing page for organization root
-// Shows: Org name, member count, quick actions
-// This is what users see at /:slug
+await authClient.organization.removeMember({
+  memberIdOrEmail,
+})
 ```
 
-### 6. Organization Switcher (in Header)
-
-**Component: `features/organizations/views/organization-switcher.tsx`**
-
+Revoke invitation:
 ```typescript
-// Dropdown menu showing all user's organizations
-// Click organization → navigate to /:slug
-// "Create Organization" button at bottom
-// Current org highlighted
+await authClient.organization.cancelInvitation({
+  invitationId,
+})
 ```
 
-**Uses:**
-- `features/organizations/components/organization-card.tsx`
-- Convex query: `api.organizations.listMyOrganizations`
-
-### 7. Members Management Page (Combined View)
-
-**File: `apps/web/src/app/$slug.settings.members.tsx`**
-
+**Permissions:**
 ```typescript
-// Single table with two sections (like Linear):
-// 1. Active members (with role badges, actions)
-// 2. Pending invitations (with email, role, revoke action)
-//
-// Actions (admin/owner only):
-//   - Invite new member (dialog)
-//   - Change member role (dropdown)
-//   - Remove member (button)
-//   - Revoke invitation (button)
-//
-// Members (non-admin/owner) see read-only view
+const { data: memberRole } = await authClient.organization.getActiveMemberRole()
+const canManageMembers = authClient.organization.checkRolePermission({
+  permissions: { member: ['create', 'delete'] },
+  role: memberRole?.role
+})
 ```
 
-**Uses:**
-- `features/organizations/views/members-table.tsx`
-- `features/organizations/components/member-list-item.tsx`
-- `features/organizations/components/member-role-badge.tsx`
-- `features/organizations/components/invite-member-dialog.tsx`
+**Components used:** `members-table.tsx`, `member-list-item.tsx`, `member-role-badge.tsx`, `invite-member-dialog.tsx`
 
-**Single Query**: `api.organizations.getMembers` returns both members and invitations
+### 5. Settings Page - Danger Zone Tab
 
-### 8. Accept Invitation Route
+**Location:** Same file, Danger Zone tab
 
-**File: `apps/web/src/app/accept-invite.tsx`**
+**Actions:**
 
+Delete organization:
 ```typescript
-// Receives invitation token from email link
-// If not logged in → redirect to sign-up/sign-in with return URL
-// If logged in → accept invitation → redirect to /:slug
+await authClient.organization.delete({
+  organizationId: organization.id
+})
+// Redirect to first available org or /new-organization
 ```
 
-### 9. Update Todos Feature
-
-**File: `apps/web/src/features/todos/views/todos-list.tsx`**
-
+Leave organization:
 ```typescript
-// Pass organizationId from route context to Convex queries
-// All todo queries now require organizationId
+await authClient.organization.leave({
+  organizationId: organization.id
+})
+// Redirect to first available org or /new-organization
 ```
 
-**File: `apps/web/src/app/$slug.todos.tsx`**
+**Permissions:** Only owner can delete, any member can leave
 
+### 6. Accept Invitation Route
+
+**File:** `apps/web/src/app/accept-invite.$invitationId.tsx`
+
+**Route Loader:**
 ```typescript
-// Get organizationId from route params
-// Pass to todos-list component
-```
-
-## URL Structure (Flat File Routing)
-
-```
-/                                   → Redirect to /:slug (first org)
-/onboarding                         → Create first organization
-/accept-invite?token=xyz            → Accept invitation
-
-/:slug                              → Organization home (index)
-/:slug/todos                        → Organization todos
-/:slug/settings/members             → Members + invitations (admin/owner/read-only)
-```
-
-**Reserved Routes** (can't be used as org slugs):
-- `onboarding`
-- `accept-invite`
-- `login`
-- `signup`
-- `reset-password`
-- `forgot-password`
-- `api`
-
-Auto-synced from frontend routes by Vite plugin (PRFX-70).
-
-## Data Flow Examples
-
-### 1. User Navigates to `/acme/todos`
-
-```
-1. Route loader gets slug "acme"
-2. Query: api.organizations.getBySlug({ slug: "acme" })
-3. Convex validates user is member
-4. If valid → render todos with organizationId
-5. If invalid → redirect to first available org or onboarding
-```
-
-### 2. User Switches Organization
-
-```
-1. Click org in switcher
-2. Navigate to /:newSlug
-3. Route loader loads new org context
-4. All child routes use new organizationId
-```
-
-### 3. User Invites Member (Admin/Owner Only)
-
-```
-1. Open invite dialog in /acme/settings/members
-2. Enter email, select role (owner/admin/member)
-3. Mutation: api.organizations.inviteMember(...)
-4. Backend sends email with invite link
-5. Update combined members+invitations table
-```
-
-### 4. New User Signs Up
-
-```
-1. Sign up via auth form
-2. Redirect to /onboarding (via __root.tsx loader)
-3. Enter organization name (slug auto-generated by backend)
-4. Mutation: api.organizations.create({ name })
-5. Backend returns { organization, slug }
-6. Redirect to /:slug (new org home)
-```
-
-### 5. User Accepts Invitation
-
-```
-1. Click link in email → /accept-invite?token=...
-2. If not logged in → redirect to sign-in
-3. If logged in → mutation to accept invite
-4. Redirect to /:slug (invited org home)
-```
-
-## State Management
-
-### Organization Context
-
-Create context provider in org layout route:
-
-```typescript
-interface OrganizationContext {
-  organization: Organization
-  userRole: 'owner' | 'admin' | 'member'
-  isOwner: boolean
-  isAdmin: boolean
+loader: async ({ params }) => {
+  const invitation = await authClient.organization.getInvitation({
+    id: params.invitationId
+  })
+  return { invitation }
 }
-
-// Available to all routes under /:slug/
 ```
 
-### Active Organization
+**UI:**
+- Show organization name, role, inviter info
+- Accept button
+- Reject button
 
-- **Storage**: URL slug (single source of truth)
-- **No localStorage/cookies**: Organization is always in URL
-- **Switching**: Just navigate to different URL
+**Actions:**
+
+Accept:
+```typescript
+await authClient.organization.acceptInvitation({
+  invitationId
+})
+// Redirect to /o/{slug}
+```
+
+Reject:
+```typescript
+await authClient.organization.rejectInvitation({
+  invitationId
+})
+// Redirect to first available org or /new-organization
+```
+
+## Roles & Permissions
+
+Better Auth default roles:
+- **owner** - Full control, can delete organization
+- **admin** - Can invite/remove members, change roles
+- **member** - Basic access
+
+**Permission Checking Pattern:**
+```typescript
+// Get current user's role
+const { data: memberRole } = await authClient.organization.getActiveMemberRole()
+
+// Check what role can do (client-side, for UI only)
+const canInvite = authClient.organization.checkRolePermission({
+  permissions: { member: ['create'] },
+  role: memberRole?.role
+})
+
+// Use for conditional rendering
+{canInvite && <Button>Invite Member</Button>}
+```
+
+**Important:** Client-side checks are for UI only. Backend enforces permissions on all operations.
 
 ## Form Validation
 
-### Create Organization Form
+### Create Organization
+- Name: Required, 1-100 characters
+- Logo: Optional, valid URL
+- Slug: Auto-generated by backend (not shown in form)
 
-- **Name**: Required, 1-100 characters
-- **Slug**: NOT SHOWN - Auto-generated by backend from name
-
-**Backend handles:**
-- Slug generation (sanitize, lowercase, hyphens)
-- Collision resolution (append random suffix if needed)
-- Reserved route validation
-
-### Invite Member Form
-
-- **Email**: Required, valid email format
-- **Role**: Required, select (owner/admin/member)
+### Invite Member
+- Email: Required, valid email format
+- Role: Required, select from owner/admin/member
 
 ## Error Handling
 
 ### Organization Not Found
-
-```
-User navigates to /invalid-slug
-→ Show error: "Organization not found"
-→ Redirect to /:firstAvailableSlug
+```typescript
+// Route guard handles this
+// Redirects to /new-organization if user has no orgs
 ```
 
 ### User Not Member
-
-```
-User navigates to /not-my-org
-→ Show error: "You don't have access to this organization"
-→ Redirect to /:firstAvailableSlug
-```
-
-### User Has No Organizations
-
-```
-User logged in but kicked from all orgs
-→ Redirect to /onboarding
-→ Force create new organization
-```
-
-## Permission-based UI
-
-### Hide/Disable based on Role
-
 ```typescript
-{(isOwner || isAdmin) && (
-  <Button onClick={handleInviteMember}>
-    Invite Member
-  </Button>
-)}
-
-// OR
-
-<Button
-  disabled={!isAdmin && !isOwner}
-  onClick={handleRemoveMember}
->
-  Remove
-</Button>
+// Route guard validates membership
+// Redirects to first available org or /new-organization
 ```
 
-### Route Protection
-
+### Permission Denied
 ```typescript
-// In members settings page
-if (!isAdmin && !isOwner) {
-  return <div>Read-only view for members</div>
-}
+// Better Auth returns error
+// Show toast notification
+// Disable buttons based on role checks
 ```
 
 ## UI Components Needed
 
-### New shadcn/ui Components (if not already in @workspace/ui)
+**From `@workspace/ui`:**
+- Badge - Role badges
+- DropdownMenu - Org switcher
+- Dialog - Invite dialog
+- Avatar - User avatars
+- Select - Role selection
+- Table - Members table
+- Tabs - Settings tabs
+- Card - Layout
+- Button - Actions
+- Form/Input - Forms
 
-- `Badge` - For role badges (owner/admin/member)
-- `DropdownMenu` - For organization switcher
-- `Dialog` - For invite member modal
-- `Avatar` - For member avatars
-- `Select` - For role selection
-- `Table` - For members + invitations table
+**Custom Components:**
+All in `features/organizations/components/` and `features/organizations/views/`
 
-### Custom Components
+## State Management
 
-All listed in "Component Structure" section above.
+### Organization Context
+- **Source of truth:** URL slug parameter
+- **Access pattern:** `useOrganization()` hook
+- **Switching:** Navigate to different URL
+- **No localStorage/cookies:** Organization always in URL
 
-## Members Table Structure (Combined View)
-
-Like Linear, single table with two sections:
-
-```
-┌─────────────────────────────────────────────────┐
-│ Members & Invitations                    [Invite]│
-├─────────────────────────────────────────────────┤
-│ Members (3)                                      │
-├─────────────────────────────────────────────────┤
-│ 👤 John Doe         [OWNER]  [Change] [Remove]  │
-│ 👤 Jane Smith       [ADMIN]  [Change] [Remove]  │
-│ 👤 Bob Johnson      [MEMBER] [Change] [Remove]  │
-├─────────────────────────────────────────────────┤
-│ Pending Invitations (2)                          │
-├─────────────────────────────────────────────────┤
-│ 📧 alice@example.com  [ADMIN]  [Revoke]         │
-│ 📧 charlie@example.com [MEMBER] [Revoke]        │
-└─────────────────────────────────────────────────┘
-```
-
-**Single Query**: `api.organizations.getMembers({ organizationId })` returns:
+### Active Organization Data
 ```typescript
-{
-  members: [...],      // Active members with user details
-  invitations: [...]   // Pending invitations
-}
+const organization = useOrganization()
+// Returns:
+// {
+//   id: string (cast to Id<'organization'>)
+//   name: string
+//   slug: string
+//   logo: string | null
+//   members: Array<{ id, name, email, role }>
+//   invites: Array<{ id, email, role, status, expiresAt }>
+// }
 ```
-
-## Roles
-
-Better Auth default roles (displayed as badges):
-- **Owner** - Full control, can delete organization
-- **Admin** - Management permissions, can invite/remove members
-- **Member** - Basic member access
-
-Role hierarchy: Owner > Admin > Member
 
 ## Testing Checklist
 
-- [ ] Onboarding flow works for new users
-- [ ] Organization name input only (no slug field)
-- [ ] Slug auto-generated and shown after creation
 - [ ] Organization switcher shows all user's orgs
+- [ ] Can create new organization with name only (slug auto-generated)
 - [ ] URL changes when switching orgs
-- [ ] Todos scoped to correct organization
-- [ ] Members + invitations table shows both groups
-- [ ] Role badges show owner/admin/member correctly
-- [ ] Invite, remove, role change work (admin/owner only)
-- [ ] Invitation revocation works
-- [ ] Accept invitation from email link
-- [ ] Non-admin/owner see read-only members view
-- [ ] User with no orgs redirected to onboarding
-- [ ] Invalid org slug handled gracefully
-- [ ] Can't remove last owner/admin
+- [ ] Settings General tab: can update org name/logo
+- [ ] Settings Members tab: shows active members and pending invites
+- [ ] Can invite new members (owner/admin only)
+- [ ] Can change member roles (owner/admin only)
+- [ ] Can remove members (owner/admin only)
+- [ ] Can revoke invitations (owner/admin only)
+- [ ] Members (non-admin) see read-only view
+- [ ] Settings Danger tab: can delete org (owner only)
+- [ ] Settings Danger tab: can leave org (any member)
+- [ ] Accept invitation from email link works
+- [ ] Reject invitation works
+- [ ] User with no orgs redirected to /new-organization
+- [ ] Permission checks hide/disable actions based on role
 
-## Design Notes
+## Design Guidelines
 
 ### Visual Hierarchy
+- Organization name/logo prominent in switcher
+- Role badges color-coded (owner=purple, admin=blue, member=gray)
+- Combined members+invitations table with clear sections
+- Danger zone actions clearly separated (red theme)
 
-- Current organization prominently displayed in header/sidebar
-- Organization switcher easily accessible (top-right or sidebar)
-- Role badges clearly visible (color-coded: owner=purple, admin=blue, member=gray)
-- Combined members+invitations table with clear section headers
-
-### UX Inspiration
-
-- **Linear**: Clean org switcher, URL-based routing, combined members table
-- **Vercel**: Simple team management, clear role display
-- **GitHub**: Familiar patterns for member management
+### UX Patterns
+- URL-based org selection (shareable links)
+- Optimistic updates for mutations
+- Toast notifications for success/error
+- Confirmation dialogs for destructive actions
+- Loading states during data fetching
 
 ### Accessibility
-
 - Keyboard navigation for org switcher
 - Screen reader labels for role badges
 - Focus management in dialogs
-- Clear section headings for members vs invitations
+- Clear section headings
+- ARIA labels for icon buttons
 
-## Backend API Reference
+## Implementation Order
 
-**Organization Operations:**
-- `api.organizations.listMyOrganizations()` - Get user's orgs
-- `api.organizations.getBySlug({ slug })` - Get org by slug
-- `api.organizations.needsOnboarding()` - Check if user needs onboarding
-- `api.organizations.create({ name })` - Create org (slug auto-generated)
-- `api.organizations.getMembers({ organizationId })` - Get members + invitations
+1. **Organization Switcher** - Enhance sidebar with org dropdown
+2. **New Organization Form** - Replace placeholder route
+3. **Settings General Tab** - Org name/logo editing
+4. **Settings Members Tab** - Combined members + invites table
+5. **Settings Danger Tab** - Delete/leave actions
+6. **Accept Invitation Route** - New route for email links
 
-**Member Operations:**
-- `api.organizations.inviteMember({ organizationId, email, role })` - Invite member
-- `api.organizations.revokeInvitation({ invitationId })` - Revoke invitation
-- `api.organizations.removeMember({ organizationId, userId })` - Remove member
-- `api.organizations.updateMemberRole({ organizationId, memberId, role })` - Change role
+## Notes
 
-## Future Enhancements (Not in Phase 1)
-
-- Organization logo upload
-- Organization settings (rename, delete)
-- Member search/filter
-- Team support (sub-groups)
-- Bulk member operations
-- Advanced permissions UI
-- Organization analytics/usage
+- All mutations refetch relevant queries automatically (React Query handles this)
+- Use `useSuspenseQuery` for data that must exist before render
+- Use `useMutation` from Convex for Convex mutations
+- Use `authClient` directly for Better Auth mutations
+- Toast notifications for all success/error states
+- Confirm dialogs for destructive actions (delete, remove, leave)
