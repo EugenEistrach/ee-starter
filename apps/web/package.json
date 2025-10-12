@@ -24,6 +24,7 @@
     "@tanstack/router-plugin": "^1.132.51",
     "@workspace/backend": "workspace:*",
     "@workspace/ui": "workspace:*",
+    "@workspace/utils": "workspace:*",
     "better-auth": "catalog:",
     "convex": "catalog:",
     "lucide-react": "catalog:",

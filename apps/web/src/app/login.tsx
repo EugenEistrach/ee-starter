@@ -1,10 +1,11 @@
-import { createFileRoute, redirect } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
+import { redirectToFirstOrganization } from '@/shared/auth/lib/organization'
 import SignInForm from '@/shared/auth/views/sign-in-form'
 
 export const Route = createFileRoute('/login')({
   beforeLoad: async ({ context }) => {
     if (context.userId) {
-      throw redirect({ to: '/dashboard' })
+      await redirectToFirstOrganization(context.queryClient)
     }
   },
   component: LoginPage,

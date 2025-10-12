@@ -20,6 +20,6 @@
     "isolatedModules": true,
     "skipLibCheck": true
   },
-  "include": ["./**/*"],
+  "include": ["./**/*", "../shared/auth/auth.ts", "../shared/reservedRoutes.ts"],
   "exclude": ["./_generated"]
 }

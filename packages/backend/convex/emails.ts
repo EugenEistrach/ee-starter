@@ -1,7 +1,7 @@
 import { v } from 'convex/values'
-import { sendEmail as sendEmailLogic } from '../features/email/logic'
+import { ensureDebugActive } from '../shared/auth/validations'
+import { sendEmail as sendEmailLogic } from '../shared/email/logic'
 import { internalAction, internalMutation, query } from './_generated/server'
-import { ensureDebugActive } from './auth'
 
 // Internal Actions (called by system triggers)
 

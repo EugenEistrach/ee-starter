@@ -1,5 +1,5 @@
 import { createApi } from '@convex-dev/better-auth'
-import { createAuth } from '../auth'
+import { createAuth } from '../../../shared/auth/auth'
 import schema from './schema'
 
 export const {
@@ -10,4 +10,5 @@ export const {
   findOne,
   updateMany,
   updateOne,
+
 } = createApi(schema, createAuth)

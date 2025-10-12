@@ -17,9 +17,16 @@ mv schema.ts convex/betterAuth/schema.ts
 - Changing auth providers
 - Modifying auth configuration in `convex/auth.ts`
 
-## Custom Indexes
+## Manual Schema Changes
 
-Schema is auto-generated. Custom indexes added manually will be **overwritten** on regeneration.
+Schema is auto-generated. Manual changes will be **overwritten** on regeneration and must be re-applied.
+
+**Current manual changes to re-apply after regeneration:**
+
+1. **Remove `activeOrganizationId` from session table** (we use URL-based org selection)
+   - The organization plugin adds this field, but we don't use it
+   - After generation, remove the line: `activeOrganizationId: v.optional(v.union(v.null(), v.string()))`
+   - Add comment: `// MANUAL CHANGE: removed activeOrganizationId - we use URL-based org selection`
 
 If you need custom indexes:
 1. Add after schema generation

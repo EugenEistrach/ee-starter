@@ -9,17 +9,25 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './app/__root'
+import { Route as TestRouteImport } from './app/test'
 import { Route as SignupRouteImport } from './app/signup'
 import { Route as ResetPasswordRouteImport } from './app/reset-password'
+import { Route as ORouteImport } from './app/o'
+import { Route as NewOrganizationRouteImport } from './app/new-organization'
 import { Route as LoginRouteImport } from './app/login'
 import { Route as ForgotPasswordRouteImport } from './app/forgot-password'
-import { Route as DashboardRouteImport } from './app/dashboard'
 import { Route as IndexRouteImport } from './app/index'
-import { Route as DashboardIndexRouteImport } from './app/dashboard.index'
-import { Route as DashboardTodosRouteImport } from './app/dashboard.todos'
-import { Route as DashboardSettingsRouteImport } from './app/dashboard.settings'
+import { Route as OOrganizationSlugRouteImport } from './app/o.$organizationSlug'
+import { Route as OOrganizationSlugIndexRouteImport } from './app/o.$organizationSlug.index'
+import { Route as OOrganizationSlugTodosRouteImport } from './app/o.$organizationSlug.todos'
+import { Route as OOrganizationSlugSettingsRouteImport } from './app/o.$organizationSlug.settings'
 import { Route as ApiAuthSplatRouteImport } from './app/api/auth.$'
 
+const TestRoute = TestRouteImport.update({
+  id: '/test',
+  path: '/test',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
@@ -28,6 +36,16 @@ const SignupRoute = SignupRouteImport.update({
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ORoute = ORouteImport.update({
+  id: '/o',
+  path: '/o',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NewOrganizationRoute = NewOrganizationRouteImport.update({
+  id: '/new-organization',
+  path: '/new-organization',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -40,31 +58,32 @@ const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DashboardRoute = DashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DashboardIndexRoute = DashboardIndexRouteImport.update({
+const OOrganizationSlugRoute = OOrganizationSlugRouteImport.update({
+  id: '/$organizationSlug',
+  path: '/$organizationSlug',
+  getParentRoute: () => ORoute,
+} as any)
+const OOrganizationSlugIndexRoute = OOrganizationSlugIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => DashboardRoute,
+  getParentRoute: () => OOrganizationSlugRoute,
 } as any)
-const DashboardTodosRoute = DashboardTodosRouteImport.update({
+const OOrganizationSlugTodosRoute = OOrganizationSlugTodosRouteImport.update({
   id: '/todos',
   path: '/todos',
-  getParentRoute: () => DashboardRoute,
+  getParentRoute: () => OOrganizationSlugRoute,
 } as any)
-const DashboardSettingsRoute = DashboardSettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => DashboardRoute,
-} as any)
+const OOrganizationSlugSettingsRoute =
+  OOrganizationSlugSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => OOrganizationSlugRoute,
+  } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -73,90 +92,117 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/new-organization': typeof NewOrganizationRoute
+  '/o': typeof ORouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
-  '/dashboard/settings': typeof DashboardSettingsRoute
-  '/dashboard/todos': typeof DashboardTodosRoute
-  '/dashboard/': typeof DashboardIndexRoute
+  '/test': typeof TestRoute
+  '/o/$organizationSlug': typeof OOrganizationSlugRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/o/$organizationSlug/settings': typeof OOrganizationSlugSettingsRoute
+  '/o/$organizationSlug/todos': typeof OOrganizationSlugTodosRoute
+  '/o/$organizationSlug/': typeof OOrganizationSlugIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/new-organization': typeof NewOrganizationRoute
+  '/o': typeof ORouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
-  '/dashboard/settings': typeof DashboardSettingsRoute
-  '/dashboard/todos': typeof DashboardTodosRoute
-  '/dashboard': typeof DashboardIndexRoute
+  '/test': typeof TestRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/o/$organizationSlug/settings': typeof OOrganizationSlugSettingsRoute
+  '/o/$organizationSlug/todos': typeof OOrganizationSlugTodosRoute
+  '/o/$organizationSlug': typeof OOrganizationSlugIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/new-organization': typeof NewOrganizationRoute
+  '/o': typeof ORouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
-  '/dashboard/settings': typeof DashboardSettingsRoute
-  '/dashboard/todos': typeof DashboardTodosRoute
-  '/dashboard/': typeof DashboardIndexRoute
+  '/test': typeof TestRoute
+  '/o/$organizationSlug': typeof OOrganizationSlugRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/o/$organizationSlug/settings': typeof OOrganizationSlugSettingsRoute
+  '/o/$organizationSlug/todos': typeof OOrganizationSlugTodosRoute
+  '/o/$organizationSlug/': typeof OOrganizationSlugIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/dashboard'
     | '/forgot-password'
     | '/login'
+    | '/new-organization'
+    | '/o'
     | '/reset-password'
     | '/signup'
-    | '/dashboard/settings'
-    | '/dashboard/todos'
-    | '/dashboard/'
+    | '/test'
+    | '/o/$organizationSlug'
     | '/api/auth/$'
+    | '/o/$organizationSlug/settings'
+    | '/o/$organizationSlug/todos'
+    | '/o/$organizationSlug/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/forgot-password'
     | '/login'
+    | '/new-organization'
+    | '/o'
     | '/reset-password'
     | '/signup'
-    | '/dashboard/settings'
-    | '/dashboard/todos'
-    | '/dashboard'
+    | '/test'
     | '/api/auth/$'
+    | '/o/$organizationSlug/settings'
+    | '/o/$organizationSlug/todos'
+    | '/o/$organizationSlug'
   id:
     | '__root__'
     | '/'
-    | '/dashboard'
     | '/forgot-password'
     | '/login'
+    | '/new-organization'
+    | '/o'
     | '/reset-password'
     | '/signup'
-    | '/dashboard/settings'
-    | '/dashboard/todos'
-    | '/dashboard/'
+    | '/test'
+    | '/o/$organizationSlug'
     | '/api/auth/$'
+    | '/o/$organizationSlug/settings'
+    | '/o/$organizationSlug/todos'
+    | '/o/$organizationSlug/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  DashboardRoute: typeof DashboardRouteWithChildren
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
+  NewOrganizationRoute: typeof NewOrganizationRoute
+  ORoute: typeof ORouteWithChildren
   ResetPasswordRoute: typeof ResetPasswordRoute
   SignupRoute: typeof SignupRoute
+  TestRoute: typeof TestRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/test': {
+      id: '/test'
+      path: '/test'
+      fullPath: '/test'
+      preLoaderRoute: typeof TestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/signup': {
       id: '/signup'
       path: '/signup'
@@ -169,6 +215,20 @@ declare module '@tanstack/react-router' {
       path: '/reset-password'
       fullPath: '/reset-password'
       preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/o': {
+      id: '/o'
+      path: '/o'
+      fullPath: '/o'
+      preLoaderRoute: typeof ORouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/new-organization': {
+      id: '/new-organization'
+      path: '/new-organization'
+      fullPath: '/new-organization'
+      preLoaderRoute: typeof NewOrganizationRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -185,13 +245,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -199,26 +252,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/dashboard/': {
-      id: '/dashboard/'
+    '/o/$organizationSlug': {
+      id: '/o/$organizationSlug'
+      path: '/$organizationSlug'
+      fullPath: '/o/$organizationSlug'
+      preLoaderRoute: typeof OOrganizationSlugRouteImport
+      parentRoute: typeof ORoute
+    }
+    '/o/$organizationSlug/': {
+      id: '/o/$organizationSlug/'
       path: '/'
-      fullPath: '/dashboard/'
-      preLoaderRoute: typeof DashboardIndexRouteImport
-      parentRoute: typeof DashboardRoute
+      fullPath: '/o/$organizationSlug/'
+      preLoaderRoute: typeof OOrganizationSlugIndexRouteImport
+      parentRoute: typeof OOrganizationSlugRoute
     }
-    '/dashboard/todos': {
-      id: '/dashboard/todos'
+    '/o/$organizationSlug/todos': {
+      id: '/o/$organizationSlug/todos'
       path: '/todos'
-      fullPath: '/dashboard/todos'
-      preLoaderRoute: typeof DashboardTodosRouteImport
-      parentRoute: typeof DashboardRoute
+      fullPath: '/o/$organizationSlug/todos'
+      preLoaderRoute: typeof OOrganizationSlugTodosRouteImport
+      parentRoute: typeof OOrganizationSlugRoute
     }
-    '/dashboard/settings': {
-      id: '/dashboard/settings'
+    '/o/$organizationSlug/settings': {
+      id: '/o/$organizationSlug/settings'
       path: '/settings'
-      fullPath: '/dashboard/settings'
-      preLoaderRoute: typeof DashboardSettingsRouteImport
-      parentRoute: typeof DashboardRoute
+      fullPath: '/o/$organizationSlug/settings'
+      preLoaderRoute: typeof OOrganizationSlugSettingsRouteImport
+      parentRoute: typeof OOrganizationSlugRoute
     }
     '/api/auth/$': {
       id: '/api/auth/$'
@@ -230,29 +290,40 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface DashboardRouteChildren {
-  DashboardSettingsRoute: typeof DashboardSettingsRoute
-  DashboardTodosRoute: typeof DashboardTodosRoute
-  DashboardIndexRoute: typeof DashboardIndexRoute
+interface OOrganizationSlugRouteChildren {
+  OOrganizationSlugSettingsRoute: typeof OOrganizationSlugSettingsRoute
+  OOrganizationSlugTodosRoute: typeof OOrganizationSlugTodosRoute
+  OOrganizationSlugIndexRoute: typeof OOrganizationSlugIndexRoute
 }
 
-const DashboardRouteChildren: DashboardRouteChildren = {
-  DashboardSettingsRoute: DashboardSettingsRoute,
-  DashboardTodosRoute: DashboardTodosRoute,
-  DashboardIndexRoute: DashboardIndexRoute,
+const OOrganizationSlugRouteChildren: OOrganizationSlugRouteChildren = {
+  OOrganizationSlugSettingsRoute: OOrganizationSlugSettingsRoute,
+  OOrganizationSlugTodosRoute: OOrganizationSlugTodosRoute,
+  OOrganizationSlugIndexRoute: OOrganizationSlugIndexRoute,
 }
 
-const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
-  DashboardRouteChildren,
-)
+const OOrganizationSlugRouteWithChildren =
+  OOrganizationSlugRoute._addFileChildren(OOrganizationSlugRouteChildren)
+
+interface ORouteChildren {
+  OOrganizationSlugRoute: typeof OOrganizationSlugRouteWithChildren
+}
+
+const ORouteChildren: ORouteChildren = {
+  OOrganizationSlugRoute: OOrganizationSlugRouteWithChildren,
+}
+
+const ORouteWithChildren = ORoute._addFileChildren(ORouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  DashboardRoute: DashboardRouteWithChildren,
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
+  NewOrganizationRoute: NewOrganizationRoute,
+  ORoute: ORouteWithChildren,
   ResetPasswordRoute: ResetPasswordRoute,
   SignupRoute: SignupRoute,
+  TestRoute: TestRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport

@@ -13,13 +13,16 @@ import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@w
 import { useMutation } from 'convex/react'
 import { CheckSquare } from 'lucide-react'
 import { useState } from 'react'
+import { useOrganization } from '@/shared/auth/hooks/useOrganizationSlug'
 import TodoForm from '../components/todo-form'
 import TodoItem from '../components/todo-item'
 
 export default function TodosList() {
   const [newTodoText, setNewTodoText] = useState('')
 
-  const todosQuery = useSuspenseQuery(convexQuery(api.todos.getAll, {}))
+  const organization = useOrganization()
+
+  const todosQuery = useSuspenseQuery(convexQuery(api.todos.getAll, { organizationId: organization._id }))
   const todos = todosQuery.data
 
   const createTodo = useMutation(api.todos.create)
@@ -32,7 +35,7 @@ export default function TodosList() {
     if (text) {
       setNewTodoText('')
       try {
-        await createTodo({ text })
+        await createTodo({ text, organizationId: organization._id })
       }
       catch (error) {
         console.error('Failed to add todo:', error)
@@ -43,7 +46,7 @@ export default function TodosList() {
 
   const handleToggleTodo = async (id: Id<'todos'>, completed: boolean) => {
     try {
-      await toggleTodo({ id, completed: !completed })
+      await toggleTodo({ id, completed: !completed, organizationId: organization._id })
     }
     catch (error) {
       console.error('Failed to toggle todo:', error)
@@ -52,7 +55,7 @@ export default function TodosList() {
 
   const handleDeleteTodo = async (id: Id<'todos'>) => {
     try {
-      await removeTodo({ id })
+      await removeTodo({ id, organizationId: organization._id })
     }
     catch (error) {
       console.error('Failed to delete todo:', error)

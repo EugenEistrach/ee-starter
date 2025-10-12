@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@work
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@workspace/ui/components/empty'
 import { Settings } from 'lucide-react'
 
-export const Route = createFileRoute('/dashboard/settings')({
+export const Route = createFileRoute('/o/$organizationSlug/settings')({
   component: SettingsPage,
 })
 

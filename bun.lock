@@ -3,6 +3,10 @@
   "workspaces": {
     "": {
       "name": "ee-starter",
+      "dependencies": {
+        "react": "catalog:",
+        "react-dom": "catalog:",
+      },
       "devDependencies": {
         "@types/node": "^24.7.1",
         "husky": "^9.1.7",
@@ -26,6 +30,7 @@
         "@tanstack/router-plugin": "^1.132.51",
         "@workspace/backend": "workspace:*",
         "@workspace/ui": "workspace:*",
+        "@workspace/utils": "workspace:*",
         "better-auth": "catalog:",
         "convex": "catalog:",
         "lucide-react": "catalog:",
@@ -67,6 +72,7 @@
       "dependencies": {
         "@convex-dev/better-auth": "catalog:",
         "@convex-dev/resend": "^0.1.13",
+        "@workspace/utils": "workspace:*",
         "better-auth": "catalog:",
         "convex": "catalog:",
       },

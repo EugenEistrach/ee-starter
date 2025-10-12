@@ -22,7 +22,7 @@ import {
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { createServerFn } from '@tanstack/react-start'
 import { getCookie, getRequest } from '@tanstack/react-start/server'
-import { createAuth } from '@workspace/backend/convex/auth'
+import { createAuth } from '@workspace/backend/shared/auth/auth'
 
 import { Button } from '@workspace/ui/components/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card'
@@ -133,18 +133,23 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 function RootDocument() {
   const context = useRouteContext({ from: Route.id })
   return (
-    <ProgressProvider>
-      <ConvexBetterAuthProvider
-        client={context.convexClient}
-        authClient={authClient}
-      >
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <html lang="en">
-            <head>
-              <HeadContent />
-            </head>
-            <body>
+
+    <ConvexBetterAuthProvider
+      client={context.convexClient}
+      authClient={authClient}
+    >
+
+      <html lang="en" suppressHydrationWarning>
+
+        <head>
+          <HeadContent />
+        </head>
+
+        <body>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <ProgressProvider>
               <RouterProgressSync />
+
               <Outlet />
               <Toaster richColors />
               <TanStackDevtools
@@ -168,12 +173,16 @@ function RootDocument() {
                     : []),
                 ]}
               />
-              <Scripts />
-            </body>
-          </html>
-        </ThemeProvider>
-      </ConvexBetterAuthProvider>
-    </ProgressProvider>
+
+            </ProgressProvider>
+          </ThemeProvider>
+          <Scripts />
+        </body>
+
+      </html>
+
+    </ConvexBetterAuthProvider>
+
   )
 }
 

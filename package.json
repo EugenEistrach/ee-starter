@@ -53,7 +53,10 @@
     "prepare": "husky",
     "postinstall": "bun run packages/scripts/src/postinstall.ts"
   },
-  "dependencies": {},
+  "dependencies": {
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  },
   "devDependencies": {
     "@types/node": "^24.7.1",
     "husky": "^9.1.7",

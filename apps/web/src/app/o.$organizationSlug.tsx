@@ -1,5 +1,7 @@
+import { convexQuery } from '@convex-dev/react-query'
 import { createFileRoute, Link, Outlet, redirect, useNavigate } from '@tanstack/react-router'
 import { api } from '@workspace/backend/convex/_generated/api'
+
 import { Avatar, AvatarFallback } from '@workspace/ui/components/avatar'
 import {
   DropdownMenu,
@@ -26,16 +28,26 @@ import {
 } from '@workspace/ui/components/sidebar'
 import { ThemeToggle } from '@workspace/ui/components/theme-toggle'
 import { TooltipProvider } from '@workspace/ui/components/tooltip'
-import { useQuery } from 'convex/react'
 import { CheckSquare, ChevronsUpDown, LogOut, Settings } from 'lucide-react'
+import { useCurrentUser } from '@/shared/auth/hooks/useCurrentUser'
+import { useOrganization } from '@/shared/auth/hooks/useOrganizationSlug'
 import { authClient } from '@/shared/auth/lib/auth-client'
 
-export const Route = createFileRoute('/dashboard')({
-  beforeLoad: async ({ context }) => {
+export const Route = createFileRoute('/o/$organizationSlug')({
+  beforeLoad: async ({ context, params }) => {
     if (!context.userId) {
       throw redirect({ to: '/login' })
     }
+
+    const { user } = await context.queryClient.ensureQueryData(convexQuery(api.users.getCurrentUser, {}))
+
+    const organization = user?.organizations.find(organization => organization.slug === params.organizationSlug)
+
+    if (!organization) {
+      throw redirect({ to: '/new-organization' })
+    }
   },
+
   component: DashboardLayout,
 })
 
@@ -57,7 +69,12 @@ function DashboardLayout() {
 
 function AppSidebar() {
   const navigate = useNavigate()
-  const user = useQuery(api.users.getCurrentUser)
+  const user = useCurrentUser()
+  const organization = useOrganization()
+
+  if (!user) {
+    return null
+  }
 
   return (
     <Sidebar collapsible="icon" variant="inset">
@@ -85,7 +102,7 @@ function AppSidebar() {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip="Todos">
-                  <Link to="/dashboard/todos">
+                  <Link to="/o/$organizationSlug/todos" params={{ organizationSlug: organization.slug }}>
                     <CheckSquare />
                     <span>Todos</span>
                   </Link>
@@ -99,7 +116,7 @@ function AppSidebar() {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip="Settings">
-                  <Link to="/dashboard/settings">
+                  <Link to="/o/$organizationSlug/settings" params={{ organizationSlug: organization.slug }}>
                     <Settings />
                     <span>Settings</span>
                   </Link>
@@ -121,7 +138,7 @@ function AppSidebar() {
                 >
                   <Avatar className="h-8 w-8 rounded-lg">
                     <AvatarFallback className="rounded-lg">
-                      {user?.name?.slice(0, 2).toUpperCase() || 'CN'}
+                      {user.name?.slice(0, 2).toUpperCase() || 'CN'}
                     </AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
