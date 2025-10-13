@@ -1,5 +1,5 @@
 import { convexQuery } from '@convex-dev/react-query'
-import { createFileRoute, Link, Outlet, redirect, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, Link, Outlet, redirect } from '@tanstack/react-router'
 import { api } from '@workspace/backend/convex/_generated/api'
 
 import { Avatar, AvatarFallback } from '@workspace/ui/components/avatar'
@@ -29,23 +29,36 @@ import {
 import { ThemeToggle } from '@workspace/ui/components/theme-toggle'
 import { TooltipProvider } from '@workspace/ui/components/tooltip'
 import { CheckSquare, ChevronsUpDown, LogOut, Settings } from 'lucide-react'
+import { Suspense } from 'react'
+import { OrganizationSwitcher } from '@/features/organizations/views/organization-switcher'
 import { useCurrentUser } from '@/shared/auth/hooks/useCurrentUser'
+import { useLogout } from '@/shared/auth/hooks/useLogout'
 import { useOrganization } from '@/shared/auth/hooks/useOrganizationSlug'
-import { authClient } from '@/shared/auth/lib/auth-client'
 
 export const Route = createFileRoute('/o/$organizationSlug')({
+
   beforeLoad: async ({ context, params }) => {
     if (!context.userId) {
       throw redirect({ to: '/login' })
     }
 
-    const organizations = await context.queryClient.ensureQueryData(convexQuery(api.organizations.listAll, {}))
+    const [
+
+      organizations,
+    ] = await Promise.all([
+      context.queryClient.ensureQueryData(convexQuery(api.organizations.listAll, {})),
+      context.queryClient.ensureQueryData(convexQuery(api.users.getCurrentUser, {})),
+      context.queryClient.ensureQueryData(convexQuery(api.organizations.get, { slug: params.organizationSlug })),
+
+    ])
 
     const organization = organizations.find(organization => organization.slug === params.organizationSlug)
 
     if (!organization) {
       throw redirect({ to: '/new-organization' })
     }
+
+    return { organization }
   },
 
   component: DashboardLayout,
@@ -59,7 +72,9 @@ function DashboardLayout() {
         <SidebarInset>
           <DashboardHeader />
           <div className="flex flex-1 flex-col gap-4 p-4 md:gap-6 md:p-6">
-            <Outlet />
+            <Suspense fallback={<div>Loading...</div>}>
+              <Outlet />
+            </Suspense>
           </div>
         </SidebarInset>
       </SidebarProvider>
@@ -68,9 +83,9 @@ function DashboardLayout() {
 }
 
 function AppSidebar() {
-  const navigate = useNavigate()
   const user = useCurrentUser()
   const organization = useOrganization()
+  const logout = useLogout()
 
   if (!user) {
     return null
@@ -81,17 +96,11 @@ function AppSidebar() {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild size="lg">
-              <Link to="/">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <span className="text-lg font-bold">ES</span>
-                </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">ee-starter</span>
-                  <span className="truncate text-xs">Full-stack TypeScript</span>
-                </div>
-              </Link>
-            </SidebarMenuButton>
+            <OrganizationSwitcher
+              currentSlug={organization.slug}
+              currentName={organization.name}
+              currentLogo={organization.logo ?? null}
+            />
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
@@ -133,6 +142,7 @@ function AppSidebar() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton
+
                   size="lg"
                   className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                 >
@@ -150,7 +160,7 @@ function AppSidebar() {
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-                side="bottom"
+                side="right"
                 align="end"
                 sideOffset={4}
               >
@@ -170,13 +180,7 @@ function AppSidebar() {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() => {
-                    authClient.signOut({
-                      fetchOptions: {
-                        onSuccess: () => {
-                          navigate({ to: '/login' })
-                        },
-                      },
-                    })
+                    logout()
                   }}
                 >
                   <LogOut />

@@ -1,21 +1,26 @@
 import { Button } from '@workspace/ui/components/button'
 import { Input } from '@workspace/ui/components/input'
+import { useState } from 'react'
 
 interface TodoFormProps {
-  value: string
-  onChange: (value: string) => void
-  onSubmit: (e: React.FormEvent) => void
+  onSubmit: (value: string) => void | Promise<void>
 }
 
-export default function TodoForm({ value, onChange, onSubmit }: TodoFormProps) {
+export default function TodoForm({ onSubmit }: TodoFormProps) {
+  const [value, setValue] = useState('')
   return (
     <form
-      onSubmit={onSubmit}
+      onSubmit={(e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        onSubmit(value)
+        setValue('')
+      }}
       className="mb-6 flex items-center space-x-2"
     >
       <Input
         value={value}
-        onChange={e => onChange(e.target.value)}
+        onChange={e => setValue(e.target.value)}
         placeholder="Add a new task..."
       />
       <Button type="submit" disabled={!value.trim()}>

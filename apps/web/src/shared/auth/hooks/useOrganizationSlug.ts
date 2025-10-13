@@ -1,4 +1,4 @@
-import type { Id } from '@workspace/backend/convex/_generated/dataModel'
+import type { Id as BetterAuthId } from '@workspace/backend/convex/components/betterAuth/_generated/dataModel'
 import { convexQuery } from '@convex-dev/react-query'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
@@ -10,6 +10,6 @@ export function useOrganization() {
   const { data: organization } = useSuspenseQuery(convexQuery(api.organizations.get, { slug: organizationSlug }))
   return {
     ...organization,
-    id: organization.id as Id<'organization'>,
+    id: organization.id as BetterAuthId<'organization'>,
   }
 }

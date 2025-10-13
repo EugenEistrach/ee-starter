@@ -1,22 +1,19 @@
 import { Link, useNavigate } from '@tanstack/react-router'
+import { Card, CardContent } from '@workspace/ui/components/card'
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@workspace/ui/components/card'
+  CenteredLayout,
+  CenteredLayoutContent,
+  CenteredLayoutFooter,
+  CenteredLayoutHeader,
+  CenteredLayoutTitle,
+} from '@workspace/ui/components/centered-layout'
 import { FieldGroup } from '@workspace/ui/components/field'
 import { useAppForm } from '@workspace/ui/components/form'
-import { cn } from '@workspace/ui/lib/utils'
 import { toast } from 'sonner'
 import z from 'zod'
 import { authClient } from '@/shared/auth/lib/auth-client'
 
-export default function SignUpForm({
-  className,
-  ...props
-}: React.ComponentProps<'div'>) {
+export default function SignUpForm() {
   const navigate = useNavigate()
 
   const form = useAppForm({
@@ -56,52 +53,59 @@ export default function SignUpForm({
   })
 
   return (
-    <div className={cn('flex flex-col gap-6', className)} {...props}>
-      <Card>
-        <CardHeader className="text-center">
-          <CardTitle className="text-xl">Create account</CardTitle>
-          <CardDescription>
-            Sign up with your email and password
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form
-            noValidate
-            onSubmit={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              form.handleSubmit()
-            }}
+    <CenteredLayout size="sm">
+      <CenteredLayoutHeader>
+        <CenteredLayoutTitle>Create your account</CenteredLayoutTitle>
+      </CenteredLayoutHeader>
+
+      <CenteredLayoutContent>
+        <form
+          id="signup-form"
+          noValidate
+          onSubmit={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            form.handleSubmit()
+          }}
+        >
+          <Card className="w-full">
+            <CardContent>
+              <FieldGroup>
+                <form.AppField name="name">
+                  {field => <field.TextField label="Name" placeholder="John Doe" />}
+                </form.AppField>
+
+                <form.AppField name="email">
+                  {field => <field.TextField label="Email" placeholder="m@example.com" type="email" />}
+                </form.AppField>
+
+                <form.AppField name="password">
+                  {field => <field.PasswordField label="Password" />}
+                </form.AppField>
+              </FieldGroup>
+            </CardContent>
+          </Card>
+        </form>
+      </CenteredLayoutContent>
+
+      <CenteredLayoutFooter className="px-8">
+        <form.AppForm>
+          <form.SubmitButton
+            form="signup-form"
+            size="lg"
+            fieldClassName="flex items-center"
+            description={(
+              <>
+                Already have an account?
+                {' '}
+                <Link to="/login">Sign in</Link>
+              </>
+            )}
           >
-            <FieldGroup>
-              <form.AppField name="name">
-                {field => <field.TextField label="Name" placeholder="John Doe" />}
-              </form.AppField>
-
-              <form.AppField name="email">
-                {field => <field.TextField label="Email" placeholder="m@example.com" type="email" />}
-              </form.AppField>
-
-              <form.AppField name="password">
-                {field => <field.PasswordField label="Password" />}
-              </form.AppField>
-
-              <form.AppForm>
-                <form.SubmitButton description={(
-                  <>
-                    Already have an account?
-                    {' '}
-                    <Link to="/login">Sign in</Link>
-                  </>
-                )}
-                >
-                  Sign up
-                </form.SubmitButton>
-              </form.AppForm>
-            </FieldGroup>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
+            Sign up
+          </form.SubmitButton>
+        </form.AppForm>
+      </CenteredLayoutFooter>
+    </CenteredLayout>
   )
 }

@@ -1,6 +1,6 @@
 import type { Subset } from 'better-auth/plugins/access'
-import { adminAc, defaultStatements } from 'better-auth/plugins'
 import { createAccessControl } from 'better-auth/plugins/access'
+import { adminAc, defaultStatements, memberAc, ownerAc } from 'better-auth/plugins/organization/access'
 
 const statement = {
   ...defaultStatements,
@@ -9,20 +9,31 @@ const statement = {
 
 export const ac = createAccessControl(statement)
 
-export const member = ac.newRole({
+const member = ac.newRole({
+
   todo: ['create', 'update'],
+  ...memberAc.statements,
 })
 
-export const admin = ac.newRole({
+const admin = ac.newRole({
   todo: ['create', 'update', 'delete'],
   ...adminAc.statements,
 })
 
-export const owner = ac.newRole({
+const owner = ac.newRole({
   todo: ['create', 'update', 'delete'],
+  ...ownerAc.statements,
 })
+
+export const roles = {
+  member,
+  admin,
+  owner,
+}
 
 export type Permissions = Partial<Subset<
   keyof typeof ac.statements,
   typeof ac.statements
 >>
+
+export type Role = keyof typeof roles

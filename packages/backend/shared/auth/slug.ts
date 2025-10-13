@@ -1,4 +1,5 @@
 import type { QueryCtx } from '../../convex/_generated/server'
+import { getAuth } from './auth'
 
 /**
  * Generates a random alphanumeric suffix for slug collision resolution.
@@ -16,11 +17,12 @@ function generateRandomSuffix(length: number): string {
  * Helper to check if slug exists in database
  */
 async function slugExists(ctx: QueryCtx, slug: string): Promise<boolean> {
-  const existing = await ctx.db
-    .query('organization')
-    .withIndex('slug', q => q.eq('slug', slug))
-    .first()
-  return existing !== null
+  const { auth } = await getAuth(ctx)
+  const { status } = await auth.api.checkOrganizationSlug({
+    body: { slug },
+
+  })
+  return status
 }
 
 /**

@@ -1,22 +1,20 @@
 import { Link } from '@tanstack/react-router'
+import { Card, CardContent } from '@workspace/ui/components/card'
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@workspace/ui/components/card'
+  CenteredLayout,
+  CenteredLayoutContent,
+  CenteredLayoutDescription,
+  CenteredLayoutFooter,
+  CenteredLayoutHeader,
+  CenteredLayoutTitle,
+} from '@workspace/ui/components/centered-layout'
 import { FieldGroup } from '@workspace/ui/components/field'
 import { useAppForm } from '@workspace/ui/components/form'
-import { cn } from '@workspace/ui/lib/utils'
 import { toast } from 'sonner'
 import z from 'zod'
 import { authClient } from '@/shared/auth/lib/auth-client'
 
-export default function ForgotPasswordForm({
-  className,
-  ...props
-}: React.ComponentProps<'div'>) {
+export default function ForgotPasswordForm() {
   const form = useAppForm({
     defaultValues: {
       email: '',
@@ -43,44 +41,54 @@ export default function ForgotPasswordForm({
   })
 
   return (
-    <div className={cn('flex flex-col gap-6', className)} {...props}>
-      <Card>
-        <CardHeader className="text-center">
-          <CardTitle className="text-xl">Forgot Password?</CardTitle>
-          <CardDescription>
-            Enter your email and we'll send you a link to reset your password
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form
-            noValidate
-            onSubmit={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              form.handleSubmit()
-            }}
-          >
-            <FieldGroup>
-              <form.AppField name="email">
-                {field => <field.TextField label="Email" placeholder="m@example.com" type="email" />}
-              </form.AppField>
+    <CenteredLayout size="sm">
+      <CenteredLayoutHeader>
+        <CenteredLayoutTitle>Forgot Password?</CenteredLayoutTitle>
+        <CenteredLayoutDescription>
+          Enter your email and we'll send you a link to reset your password
+        </CenteredLayoutDescription>
+      </CenteredLayoutHeader>
 
-              <form.AppForm>
-                <form.SubmitButton description={(
-                  <>
-                    Remember your password?
-                    {' '}
-                    <Link to="/login">Sign in</Link>
-                  </>
-                )}
-                >
-                  Send Reset Link
-                </form.SubmitButton>
-              </form.AppForm>
-            </FieldGroup>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
+      <CenteredLayoutContent>
+        <form
+          id="forgot-password-form"
+          noValidate
+          onSubmit={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            form.handleSubmit()
+          }}
+        >
+          <Card className="w-full">
+            <CardContent>
+              <FieldGroup>
+                <form.AppField name="email">
+                  {field => <field.TextField label="Email" placeholder="m@example.com" type="email" />}
+                </form.AppField>
+              </FieldGroup>
+            </CardContent>
+          </Card>
+        </form>
+      </CenteredLayoutContent>
+
+      <CenteredLayoutFooter className="px-8">
+        <form.AppForm>
+          <form.SubmitButton
+            form="forgot-password-form"
+            size="lg"
+            fieldClassName="flex items-center"
+            description={(
+              <>
+                Remember your password?
+                {' '}
+                <Link to="/login">Sign in</Link>
+              </>
+            )}
+          >
+            Send Reset Link
+          </form.SubmitButton>
+        </form.AppForm>
+      </CenteredLayoutFooter>
+    </CenteredLayout>
   )
 }

@@ -13,7 +13,7 @@ import betterAuthSchema from '../../convex/components/betterAuth/schema'
 import { createMagicLinkEmail } from './emails/magic-link'
 import { createOrganizationInviteEmail } from './emails/organization-invite'
 import { createPasswordResetEmail } from './emails/password-reset'
-import { ac, admin, member, owner } from './permissions'
+import { ac, roles } from './permissions'
 
 const authFunctions: AuthFunctions = internal.auth
 
@@ -79,11 +79,7 @@ export function createAuth(ctx: GenericCtx<DataModel>, { optionsOnly } = { optio
       }),
       organization({
         ac,
-        roles: {
-          owner,
-          admin,
-          member,
-        },
+        roles,
         teams: {
           enabled: false,
         },

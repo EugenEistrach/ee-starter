@@ -15,6 +15,8 @@ import {
   createRootRouteWithContext,
   HeadContent,
   Outlet,
+  redirect,
+  retainSearchParams,
   Scripts,
   useRouteContext,
   useRouterState,
@@ -29,14 +31,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@work
 import { Toaster } from '@workspace/ui/components/sonner'
 import { ThemeProvider } from '@workspace/ui/components/theme-provider'
 import { useEffect } from 'react'
+import z from 'zod'
 import { EmailPanel } from '@/features/dev-tools/views/email-panel'
 import { authClient } from '@/shared/auth/lib/auth-client'
 import appCss from '../index.css?url'
 
 const fetchAuth = createServerFn({ method: 'GET' }).handler(async () => {
   const { session } = await fetchSession(getRequest())
+
   const sessionCookieName = getCookieName(createAuth)
   const token = getCookie(sessionCookieName)
+
   return {
     userId: session?.user.id,
     token,
@@ -50,20 +55,43 @@ interface RouterAppContext {
 }
 
 export const Route = createRootRouteWithContext<RouterAppContext>()({
+  validateSearch: z.object({
+    redirectTo: z.string().optional(),
+  }),
+  search: {
+    middlewares: [
+      retainSearchParams(['redirectTo']),
+    ],
+  },
+  notFoundComponent: () => {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-8 bg-background">
+        <Card className="max-w-2xl w-full border-destructive">
+          <CardHeader>
+            <CardTitle className="text-destructive">Page Not Found</CardTitle>
+          </CardHeader>
+        </Card>
+      </div>
+    )
+  },
   beforeLoad: async (ctx) => {
     try {
       const { userId, token } = await fetchAuth()
       if (token) {
+        // Ensure SSR and CSR both have the Convex identity set before any queries run
         ctx.context.convexQueryClient.serverHttpClient?.setAuth(token)
       }
+
+      if (userId && !token && ctx.location.pathname !== '/recover') {
+        throw redirect({ to: '/recover' })
+      }
+
       return { userId, token }
     }
     catch (error) {
-      console.error('Failed to fetch auth session:', error)
       throw parseAuthError(error)
     }
   },
-
   errorComponent: ({ error }) => {
     const isBackendDown = error.message.includes('connection refused') || error.message.includes('ECONNREFUSED')
 

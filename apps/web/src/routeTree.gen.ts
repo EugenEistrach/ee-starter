@@ -11,12 +11,14 @@
 import { Route as rootRouteImport } from './app/__root'
 import { Route as SignupRouteImport } from './app/signup'
 import { Route as ResetPasswordRouteImport } from './app/reset-password'
-import { Route as ORouteImport } from './app/o'
+import { Route as RecoverRouteImport } from './app/recover'
 import { Route as NewOrganizationRouteImport } from './app/new-organization'
 import { Route as LoginRouteImport } from './app/login'
 import { Route as ForgotPasswordRouteImport } from './app/forgot-password'
 import { Route as IndexRouteImport } from './app/index'
+import { Route as OIndexRouteImport } from './app/o.index'
 import { Route as OOrganizationSlugRouteImport } from './app/o.$organizationSlug'
+import { Route as AcceptInviteInvitationIdRouteImport } from './app/accept-invite.$invitationId'
 import { Route as OOrganizationSlugIndexRouteImport } from './app/o.$organizationSlug.index'
 import { Route as OOrganizationSlugTodosRouteImport } from './app/o.$organizationSlug.todos'
 import { Route as OOrganizationSlugSettingsRouteImport } from './app/o.$organizationSlug.settings'
@@ -32,9 +34,9 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
   path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ORoute = ORouteImport.update({
-  id: '/o',
-  path: '/o',
+const RecoverRoute = RecoverRouteImport.update({
+  id: '/recover',
+  path: '/recover',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NewOrganizationRoute = NewOrganizationRouteImport.update({
@@ -57,11 +59,22 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const OOrganizationSlugRoute = OOrganizationSlugRouteImport.update({
-  id: '/$organizationSlug',
-  path: '/$organizationSlug',
-  getParentRoute: () => ORoute,
+const OIndexRoute = OIndexRouteImport.update({
+  id: '/o/',
+  path: '/o/',
+  getParentRoute: () => rootRouteImport,
 } as any)
+const OOrganizationSlugRoute = OOrganizationSlugRouteImport.update({
+  id: '/o/$organizationSlug',
+  path: '/o/$organizationSlug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AcceptInviteInvitationIdRoute =
+  AcceptInviteInvitationIdRouteImport.update({
+    id: '/accept-invite/$invitationId',
+    path: '/accept-invite/$invitationId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const OOrganizationSlugIndexRoute = OOrganizationSlugIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -89,10 +102,12 @@ export interface FileRoutesByFullPath {
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/new-organization': typeof NewOrganizationRoute
-  '/o': typeof ORouteWithChildren
+  '/recover': typeof RecoverRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
+  '/accept-invite/$invitationId': typeof AcceptInviteInvitationIdRoute
   '/o/$organizationSlug': typeof OOrganizationSlugRouteWithChildren
+  '/o': typeof OIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/o/$organizationSlug/settings': typeof OOrganizationSlugSettingsRoute
   '/o/$organizationSlug/todos': typeof OOrganizationSlugTodosRoute
@@ -103,9 +118,11 @@ export interface FileRoutesByTo {
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/new-organization': typeof NewOrganizationRoute
-  '/o': typeof ORouteWithChildren
+  '/recover': typeof RecoverRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
+  '/accept-invite/$invitationId': typeof AcceptInviteInvitationIdRoute
+  '/o': typeof OIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/o/$organizationSlug/settings': typeof OOrganizationSlugSettingsRoute
   '/o/$organizationSlug/todos': typeof OOrganizationSlugTodosRoute
@@ -117,10 +134,12 @@ export interface FileRoutesById {
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/new-organization': typeof NewOrganizationRoute
-  '/o': typeof ORouteWithChildren
+  '/recover': typeof RecoverRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
+  '/accept-invite/$invitationId': typeof AcceptInviteInvitationIdRoute
   '/o/$organizationSlug': typeof OOrganizationSlugRouteWithChildren
+  '/o/': typeof OIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/o/$organizationSlug/settings': typeof OOrganizationSlugSettingsRoute
   '/o/$organizationSlug/todos': typeof OOrganizationSlugTodosRoute
@@ -133,10 +152,12 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/new-organization'
-    | '/o'
+    | '/recover'
     | '/reset-password'
     | '/signup'
+    | '/accept-invite/$invitationId'
     | '/o/$organizationSlug'
+    | '/o'
     | '/api/auth/$'
     | '/o/$organizationSlug/settings'
     | '/o/$organizationSlug/todos'
@@ -147,9 +168,11 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/new-organization'
-    | '/o'
+    | '/recover'
     | '/reset-password'
     | '/signup'
+    | '/accept-invite/$invitationId'
+    | '/o'
     | '/api/auth/$'
     | '/o/$organizationSlug/settings'
     | '/o/$organizationSlug/todos'
@@ -160,10 +183,12 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/new-organization'
-    | '/o'
+    | '/recover'
     | '/reset-password'
     | '/signup'
+    | '/accept-invite/$invitationId'
     | '/o/$organizationSlug'
+    | '/o/'
     | '/api/auth/$'
     | '/o/$organizationSlug/settings'
     | '/o/$organizationSlug/todos'
@@ -175,9 +200,12 @@ export interface RootRouteChildren {
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
   NewOrganizationRoute: typeof NewOrganizationRoute
-  ORoute: typeof ORouteWithChildren
+  RecoverRoute: typeof RecoverRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SignupRoute: typeof SignupRoute
+  AcceptInviteInvitationIdRoute: typeof AcceptInviteInvitationIdRoute
+  OOrganizationSlugRoute: typeof OOrganizationSlugRouteWithChildren
+  OIndexRoute: typeof OIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
@@ -197,11 +225,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/o': {
-      id: '/o'
-      path: '/o'
-      fullPath: '/o'
-      preLoaderRoute: typeof ORouteImport
+    '/recover': {
+      id: '/recover'
+      path: '/recover'
+      fullPath: '/recover'
+      preLoaderRoute: typeof RecoverRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/new-organization': {
@@ -232,12 +260,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/o/': {
+      id: '/o/'
+      path: '/o'
+      fullPath: '/o'
+      preLoaderRoute: typeof OIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/o/$organizationSlug': {
       id: '/o/$organizationSlug'
-      path: '/$organizationSlug'
+      path: '/o/$organizationSlug'
       fullPath: '/o/$organizationSlug'
       preLoaderRoute: typeof OOrganizationSlugRouteImport
-      parentRoute: typeof ORoute
+      parentRoute: typeof rootRouteImport
+    }
+    '/accept-invite/$invitationId': {
+      id: '/accept-invite/$invitationId'
+      path: '/accept-invite/$invitationId'
+      fullPath: '/accept-invite/$invitationId'
+      preLoaderRoute: typeof AcceptInviteInvitationIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/o/$organizationSlug/': {
       id: '/o/$organizationSlug/'
@@ -285,24 +327,17 @@ const OOrganizationSlugRouteChildren: OOrganizationSlugRouteChildren = {
 const OOrganizationSlugRouteWithChildren =
   OOrganizationSlugRoute._addFileChildren(OOrganizationSlugRouteChildren)
 
-interface ORouteChildren {
-  OOrganizationSlugRoute: typeof OOrganizationSlugRouteWithChildren
-}
-
-const ORouteChildren: ORouteChildren = {
-  OOrganizationSlugRoute: OOrganizationSlugRouteWithChildren,
-}
-
-const ORouteWithChildren = ORoute._addFileChildren(ORouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
   NewOrganizationRoute: NewOrganizationRoute,
-  ORoute: ORouteWithChildren,
+  RecoverRoute: RecoverRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SignupRoute: SignupRoute,
+  AcceptInviteInvitationIdRoute: AcceptInviteInvitationIdRoute,
+  OOrganizationSlugRoute: OOrganizationSlugRouteWithChildren,
+  OIndexRoute: OIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport

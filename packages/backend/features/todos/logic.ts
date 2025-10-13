@@ -1,7 +1,7 @@
 import type { Id } from '../../convex/_generated/dataModel'
 import type { MutationCtx, QueryCtx } from '../../convex/_generated/server'
 
-export async function getAllTodos(ctx: QueryCtx, organizationId: Id<'organization'>) {
+export async function getAllTodos(ctx: QueryCtx, organizationId: string) {
   return ctx.db
     .query('todos')
     .withIndex('by_organization', q => q.eq('organizationId', organizationId))
@@ -11,8 +11,8 @@ export async function getAllTodos(ctx: QueryCtx, organizationId: Id<'organizatio
 export async function createTodo(
   ctx: MutationCtx,
   text: string,
-  organizationId: Id<'organization'>,
-  createdBy: Id<'user'>,
+  organizationId: string,
+  createdBy: string,
 ) {
   const newTodoId = await ctx.db.insert('todos', {
     text,

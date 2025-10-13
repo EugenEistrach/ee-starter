@@ -13,6 +13,7 @@ import type * as components_betterAuth__generated_api from "../components/better
 import type * as components_betterAuth__generated_server from "../components/betterAuth/_generated/server.js";
 import type * as components_betterAuth_adapter from "../components/betterAuth/adapter.js";
 import type * as components_betterAuth_auth from "../components/betterAuth/auth.js";
+import type * as components_betterAuth_generatedSchema from "../components/betterAuth/generatedSchema.js";
 import type * as emails from "../emails.js";
 import type * as healthCheck from "../healthCheck.js";
 import type * as http from "../http.js";
@@ -40,6 +41,7 @@ declare const fullApi: ApiFromModules<{
   "components/betterAuth/_generated/server": typeof components_betterAuth__generated_server;
   "components/betterAuth/adapter": typeof components_betterAuth_adapter;
   "components/betterAuth/auth": typeof components_betterAuth_auth;
+  "components/betterAuth/generatedSchema": typeof components_betterAuth_generatedSchema;
   emails: typeof emails;
   healthCheck: typeof healthCheck;
   http: typeof http;

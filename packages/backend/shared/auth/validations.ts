@@ -8,30 +8,27 @@ import { authComponent, getAuth } from './auth'
  * Throws if not authenticxated or user not found.
  */
 export async function ensureUser(ctx: AuthCtx) {
-  const { user } = await getUserOrNull(ctx)
-
-  ensure(!!user, 'User not found')
-
+  const user = await authComponent.getAuthUser(ctx)
   return { user }
 }
 
 export async function ensureUserWithOrganization(ctx: AuthCtx, { organizationId }: { organizationId: string }) {
   const { user } = await ensureUser(ctx)
-  const membership = await ctx.db.query('member')
-    .withIndex('userId', q => q.eq('userId', user._id))
-    .filter(q => q.eq(q.field('organizationId'), organizationId))
-    .first()
+  const { auth, headers } = await getAuth(ctx)
+  const organizations = await auth.api.listOrganizations({
 
-  ensure(membership !== null, `User does not have access to this organization`)
+    headers,
+  })
+
+  ensure(organizations.some(organization => organization.id === organizationId), `User does not have access to this organization`)
 
   return {
     user,
-    membership,
   }
 }
 
 export async function ensureUserWithPermissions(ctx: AuthCtx, { permissions, organizationId }: { permissions: Permissions, organizationId: string }) {
-  const { user, membership } = await ensureUserWithOrganization(ctx, { organizationId })
+  const { user } = await ensureUserWithOrganization(ctx, { organizationId })
 
   const { auth, headers } = await getAuth(ctx)
 
@@ -47,7 +44,6 @@ export async function ensureUserWithPermissions(ctx: AuthCtx, { permissions, org
 
   return {
     user,
-    membership,
   }
 }
 

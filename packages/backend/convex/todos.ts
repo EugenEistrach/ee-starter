@@ -1,6 +1,6 @@
 import { v } from 'convex/values'
-import { createTodo, getAllTodos, removeTodo, toggleTodo } from '../features/todos/logic'
 
+import { createTodo, getAllTodos, removeTodo, toggleTodo } from '../features/todos/logic'
 import { ensureUserWithOrganization, ensureUserWithPermissions } from '../shared/auth/validations'
 import { mutation, query } from './_generated/server'
 
@@ -9,13 +9,13 @@ const todoValidator = v.object({
   _creationTime: v.number(),
   text: v.string(),
   completed: v.boolean(),
-  organizationId: v.id('organization'),
-  createdBy: v.id('user'),
+  organizationId: v.string(),
+  createdBy: v.string(),
 })
 
 export const getAll = query({
   args: {
-    organizationId: v.id('organization'),
+    organizationId: v.string(),
   },
   returns: v.array(todoValidator),
   handler: async (ctx, { organizationId }) => {
@@ -27,7 +27,7 @@ export const getAll = query({
 export const create = mutation({
   args: {
     text: v.string(),
-    organizationId: v.id('organization'),
+    organizationId: v.string(),
   },
   returns: v.union(todoValidator, v.null()),
   handler: async (ctx, { text, organizationId }) => {
@@ -41,7 +41,7 @@ export const create = mutation({
 export const toggle = mutation({
   args: {
     id: v.id('todos'),
-    organizationId: v.id('organization'),
+    organizationId: v.string(),
     completed: v.boolean(),
   },
   returns: v.object({ success: v.boolean() }),
@@ -56,7 +56,7 @@ export const toggle = mutation({
 export const deleteTodo = mutation({
   args: {
     id: v.id('todos'),
-    organizationId: v.id('organization'),
+    organizationId: v.string(),
   },
   returns: v.object({ success: v.boolean() }),
   handler: async (ctx, { id, organizationId }) => {
