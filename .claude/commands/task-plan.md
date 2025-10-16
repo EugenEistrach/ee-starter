@@ -22,7 +22,7 @@ Read and internalize the project structure:
 1. @docs/references/tech-stack.md - What's already implemented (auth, UI, etc.)
 2. @docs/references/architecture.md - Layer structure and patterns
 3. @docs/references/convex-guidelines.md - Backend best practices
-4. All other files in @docs/references/
+4. Read other docs in @docs/references/ ONLY if directly relevant to the task
 
 **Purpose:** Understand:
 - What features already exist (avoid recreating!)
@@ -83,54 +83,198 @@ Read and internalize the project structure:
 
 **Report findings:** Tell user what already exists to avoid recreating functionality.
 
-### Step 5: Ask Clarifying Questions
+### Step 5: Ask Clarifying Questions (If Needed)
 
-Based on requirements and existing code, ask about:
+Ask ONE focused round of questions. Group into max 3 categories:
 
-**Missing information:**
-- What specific requirements are unclear or not specified?
-- What are the edge cases to handle?
-- What's the expected user experience?
+**Requirements & Integration:**
+- What's unclear about requirements or user experience?
+- How should this integrate with existing [X, Y] features?
 
-**Integration with existing code:**
-- The project already has [X], should we extend it or build new?
-- How should this integrate with existing [Y] feature?
-- Should we follow the pattern used in [Z]?
+**Architecture & Decisions:**
+- Should we [A] or [B]? (only for non-trivial choices)
+- New feature or extend existing?
 
-**Architecture decisions:**
-- Which layer should each piece go in (app/features/shared)?
-- Should this be a new feature or added to existing one?
-- What dependencies/packages are needed?
+**Technical Unknowns:**
+- What data/schemas are needed?
+- Any third-party packages required?
 
-**Technical details:**
-- What data needs to be stored?
-- What APIs need to be created?
-- What UI components are needed?
+**Skip questions where:**
+- Answer is obvious from context
+- You can make reasonable default choice
+- User already provided the answer
 
 ### Step 6: Create Implementation Plan
 
-Present a **focused, scannable plan**:
+Present a **structured, detailed plan** with this format:
 
-**Format:**
-- Use clear headings and bullet points
-- Group related changes together
-- Show file paths clearly
-- Focus on high-level architecture decisions
+#### 1. Files to Create
+List new files with brief purpose:
+- `path/to/file.ts` - Purpose
 
-**What to include:**
-- New files to create (with paths)
-- Existing files to modify (with what changes)
-- How it integrates into the architecture
-- User flow (if UI changes)
-- Implementation order
+**Show code examples** for non-obvious structure (schemas, key functions, etc.)
 
-**What to skip:**
-- Configuration details (use good defaults)
-- Obvious testing steps
-- Low-level implementation details
-- Questions about trivial decisions
+#### 2. Files to Modify
+List existing files with specific changes:
+- `path/to/file.ts` - What changes (be specific)
 
-**Keep it concise** - the user wants to scan and understand quickly, not read documentation.
+**Show code snippets** for complex modifications
+
+#### 3. Key Decisions
+- Architectural choices made
+- What we're reusing vs building new
+- Integration points
+
+#### 4. Implementation Order (optional)
+If dependencies exist between changes
+
+#### 5. TLDR
+**3-5 bullet summary at the end:**
+- What we're building (1 line)
+- Main files/components (1-2 lines)
+- Key reuse/integration points (1-2 lines)
+
+**Guidelines:**
+- Show code for: schemas, key type definitions, complex logic patterns
+- Be specific: "Add handleSubmit to useCreatePost hook" not "update hooks"
+- Skip: obvious imports, trivial config, testing boilerplate
+- Focus: architecture decisions, what goes where, why
+
+---
+
+## Example: Good Plan Structure
+
+**Feature:** Add post comments system
+
+#### 1. Files to Create
+
+**Backend:**
+- `packages/backend/features/comments/schema.ts` - Comment table linked to posts
+
+```typescript
+export const commentsTable = defineTable({
+  content: v.string(),
+  postId: v.id("posts"),
+  organizationId: v.string(),
+  createdBy: v.string(),
+})
+  .index("by_post", ["postId"])
+  .index("by_organization", ["organizationId"])
+```
+
+- `packages/backend/features/comments/logic.ts` - CRUD operations
+
+```typescript
+export async function getCommentsByPost(ctx: QueryCtx, postId: Id<"posts">, organizationId: string) {
+  return ctx.db
+    .query('comments')
+    .withIndex('by_post', q => q.eq('postId', postId))
+    .filter(q => q.eq(q.field('organizationId'), organizationId))
+    .collect()
+}
+
+export async function createComment(
+  ctx: MutationCtx,
+  postId: Id<"posts">,
+  content: string,
+  organizationId: string,
+  createdBy: string,
+) {
+  const newCommentId = await ctx.db.insert('comments', {
+    postId,
+    content,
+    organizationId,
+    createdBy,
+  })
+  return ctx.db.get(newCommentId)
+}
+```
+
+- `packages/backend/convex/comments.ts` - API endpoints with auth validation
+
+```typescript
+export const getByPost = query({
+  args: { postId: v.id('posts'), organizationId: v.string() },
+  returns: v.array(commentValidator),
+  handler: async (ctx, { postId, organizationId }) => {
+    await ensureUserWithOrganization(ctx, { organizationId })
+    return getCommentsByPost(ctx, postId, organizationId)
+  },
+})
+
+export const create = mutation({
+  args: { postId: v.id('posts'), content: v.string(), organizationId: v.string() },
+  returns: v.union(commentValidator, v.null()),
+  handler: async (ctx, { postId, content, organizationId }) => {
+    const { user } = await ensureUserWithPermissions(ctx, {
+      permissions: { comment: ['create'] },
+      organizationId
+    })
+    return createComment(ctx, postId, content, organizationId, user._id)
+  },
+})
+```
+
+**Frontend:**
+- `apps/web/src/features/comments/components/comment-item.tsx` - Single comment display
+- `apps/web/src/features/comments/components/comment-form.tsx` - Form to add comment
+- `apps/web/src/features/comments/views/comment-list.tsx` - Full comment section
+
+```typescript
+// Key pattern: TanStack Query + Convex + optimistic updates
+export function CommentList({ postId }: { postId: Id<"posts"> }) {
+  const organization = useOrganization()
+
+  const commentsQuery = useSuspenseQuery(
+    convexQuery(api.comments.getByPost, { postId, organizationId: organization.id })
+  )
+  const comments = commentsQuery.data
+
+  const createComment = useMutation(api.comments.create).withOptimisticUpdate(
+    (localStore, args) => {
+      const existing = localStore.getQuery(api.comments.getByPost,
+        { postId, organizationId: organization.id })
+      if (!existing) return
+
+      localStore.setQuery(api.comments.getByPost,
+        { postId, organizationId: organization.id },
+        [...existing, { ...args, _id: crypto.randomUUID(), _creationTime: Date.now() }]
+      )
+    }
+  )
+  // ...
+}
+```
+
+#### 2. Files to Modify
+
+- `packages/backend/convex/schema.ts` - Import commentsTable and add to schema
+- `apps/web/src/app/posts.$id.tsx` - Add `<CommentList postId={post._id} />` after post content
+
+#### 3. Key Decisions
+
+- Comments belong to posts (not standalone feature) → new `comments/` feature
+- Using existing auth pattern from todos → `ensureUserWithPermissions` with comment permissions
+- Reusing form components from `@workspace/ui` → `<Textarea>`, `<Button>`
+- Organization-based with permission checks (following todos pattern)
+- Optimistic updates for better UX
+- No edit functionality (keep scope small) → only create/delete for now
+
+#### 4. Implementation Order
+
+1. Backend schema + logic (defines data structure)
+2. Backend API endpoints (test in Convex dashboard)
+3. Frontend components (build bottom-up: item → form → list)
+4. Integrate into post page
+
+#### 5. TLDR
+
+- Adding comment system for posts with create/delete functionality
+- Backend: `features/comments/` with schema, logic, API endpoints using organization permissions
+- Frontend: `features/comments/` with TanStack Query + Convex + optimistic updates
+- Reusing: auth/permissions from todos, `useOrganization()` hook, UI components from `@workspace/ui`
+
+---
 
 ## IMPORTANT RULES
 

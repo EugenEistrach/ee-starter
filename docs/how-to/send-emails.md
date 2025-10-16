@@ -1,29 +1,8 @@
-# Email Feature
+# How to Send Emails
 
-Generic email sending system with template support, automatic provider switching (Resend/local), and full audit trail.
+Template-based email system with automatic provider switching (Resend/local) and full audit trail.
 
-## Features
-
-- **Template-based emails** - Create reusable email templates
-- **Automatic provider switching** - Uses Resend in production, console logging in local dev
-- **Full audit trail** - All emails stored in database with metadata and status tracking
-- **Devtools integration** - View sent emails in TanStack Devtools Email panel (dev only)
-- **Error handling** - Failed emails are tracked with error messages
-- **Better Auth integration** - Automatically sends welcome email on user signup
-
-## Architecture
-
-```
-features/email/
-├── logic.ts              # Core sendEmail function
-├── schema.ts             # Email tracking table schema
-└── templates/
-    └── welcome.ts        # Welcome email template
-```
-
-## Usage
-
-### Creating a Template
+## Creating a Template
 
 Templates return an `EmailTemplate` object with subject, HTML, and text content:
 
@@ -50,7 +29,7 @@ export function createPasswordResetEmail({ name, resetUrl }: PasswordResetEmailP
 }
 ```
 
-### Sending an Email
+## Sending an Email
 
 Use the generic `send` internal action from `convex/emails.ts`:
 
@@ -104,3 +83,22 @@ The Email panel in TanStack Devtools shows:
 - Metadata (e.g., triggered by signup)
 
 Access via: TanStack Devtools → Emails tab (dev mode only)
+
+## Architecture
+
+```
+features/email/
+├── logic.ts              # Core sendEmail function
+├── schema.ts             # Email tracking table schema
+└── templates/
+    └── welcome.ts        # Welcome email template
+```
+
+## Features
+
+- **Template-based emails** - Create reusable email templates
+- **Automatic provider switching** - Uses Resend in production, console logging in local dev
+- **Full audit trail** - All emails stored in database with metadata and status tracking
+- **Devtools integration** - View sent emails in TanStack Devtools Email panel (dev only)
+- **Error handling** - Failed emails are tracked with error messages
+- **Better Auth integration** - Automatically sends welcome email on user signup

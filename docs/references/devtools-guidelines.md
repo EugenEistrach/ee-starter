@@ -1,4 +1,4 @@
-# Dev Tools Feature
+# Devtools Guidelines
 
 Custom panels for TanStack Devtools integration. These panels extend the built-in devtools with app-specific debugging capabilities.
 

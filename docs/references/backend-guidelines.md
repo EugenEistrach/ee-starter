@@ -104,4 +104,4 @@ export const userProfilesSchema = {
 
 ## Sending Emails
 
-Use `ctx.scheduler.runAfter(0, internal.emails.send, {...})` for template-based emails. See `shared/email/README.md`.
+Use `ctx.scheduler.runAfter(0, internal.emails.send, {...})` for template-based emails. See `docs/how-to/send-emails.md`.

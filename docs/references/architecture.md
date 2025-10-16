@@ -87,13 +87,11 @@ packages/backend/
 │   └── schema.ts              # Composed from all feature schemas
 ├── features/                   # Feature slices (isolated domains)
 │   ├── billing/
-│   │   ├── README.md          # Feature summary
 │   │   ├── invoices.ts        # Organize by subdomain if complex
 │   │   ├── payments.ts
 │   │   ├── schema.ts
 │   │   └── subscriptions.ts
 │   └── user-profile/
-│       ├── README.md
 │       ├── logic.ts           # Business logic (split if complex)
 │       ├── schema.ts          # Table definitions
 │       ├── types.ts           # (optional) Exported types
@@ -125,11 +123,9 @@ export default defineSchema({ ...usersSchema, ... });
 ```
 
 **File Organization:**
-- Start minimal: `README.md` + `schema.ts` + `logic.ts`
+- Start minimal: `schema.ts` + `logic.ts`
 - Split when complex: by subdomain (preferred) or operation type
 - Add `types.ts`, `validators.ts` only when needed
-
-**Documentation:** Each feature slice includes a README.md summarizing its purpose and functionality.
 
 **When slices are coupled:** If two feature slices need each other → combine them into one slice. This prevents circular dependencies and maintains clear boundaries.
 
@@ -150,7 +146,6 @@ apps/web/src/
 │   └── todos.tsx              # Todos route
 ├── features/                   # Feature slices (isolated UI domains)
 │   ├── todos/
-│   │   ├── README.md          # Feature summary
 │   │   ├── components/        # Dumb/presentational components
 │   │   │   ├── todo-item.tsx
 │   │   │   └── todo-form.tsx
@@ -161,7 +156,6 @@ apps/web/src/
 │   │   └── lib/               # Feature-specific utilities
 │   │       └── todo-helpers.ts
 │   └── billing/
-│       ├── README.md
 │       ├── components/
 │       ├── views/
 │       ├── hooks/
@@ -190,11 +184,9 @@ apps/web/src/
 - `lib/`: Utilities and helpers
 
 **File Organization:**
-- Start minimal: `README.md` + basic components
+- Start minimal: basic components
 - Add `views/`, `hooks/`, `lib/` folders only when needed
 - Keep components focused and single-purpose
-
-**Documentation:** Each feature slice includes a README.md summarizing its purpose and functionality.
 
 **When slices are coupled:** If two feature slices need each other → combine them into one slice. This prevents circular dependencies and maintains clear boundaries.
 
