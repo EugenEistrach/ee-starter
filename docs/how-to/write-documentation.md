@@ -8,7 +8,6 @@
 4. **Avoid duplication** - Check existing docs before creating new ones
 
 ## Structure
-
 - `docs/how-to/` - Step-by-step processes and workflows
 - `docs/references/` - General information and reference material
 

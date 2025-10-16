@@ -29,7 +29,7 @@
 ### Email System
 - Template-based emails with design components
 - Automatic provider switching (Resend/local)
-- See `packages/backend/features/email/README.md`
+- See `docs/how-to/send-emails.md`
 
 ### Example Feature: Todos
 - Full CRUD: `packages/backend/features/todos/` + `apps/web/src/features/todos/`
