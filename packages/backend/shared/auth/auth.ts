@@ -5,10 +5,12 @@ import { createClient } from '@convex-dev/better-auth'
 import { convex } from '@convex-dev/better-auth/plugins'
 import { requireActionCtx } from '@convex-dev/better-auth/utils'
 import { betterAuth } from 'better-auth'
-import { magicLink, organization } from 'better-auth/plugins'
+import { APIError } from 'better-auth/api'
+import { anonymous, createAuthMiddleware, magicLink, organization } from 'better-auth/plugins'
 import { components, internal } from '../../convex/_generated/api'
 // eslint-disable-next-line boundaries/element-types
 import betterAuthSchema from '../../convex/components/betterAuth/schema'
+import { isDebugEnabled } from '../debug'
 
 import { createMagicLinkEmail } from './emails/magic-link'
 import { createOrganizationInviteEmail } from './emails/organization-invite'
@@ -20,7 +22,6 @@ const authFunctions: AuthFunctions = internal.auth
 export const authComponent = createClient<DataModel, typeof betterAuthSchema>(components.betterAuth, {
   authFunctions,
   local: {
-
     schema: betterAuthSchema,
   },
 
@@ -60,7 +61,10 @@ export function createAuth(ctx: GenericCtx<DataModel>, { optionsOnly } = { optio
       },
     },
     plugins: [
-      convex(),
+      anonymous({
+        emailDomainName: 'test.com',
+      }),
+
       magicLink({
         async sendMagicLink({ email, url }) {
           const template = createMagicLinkEmail({
@@ -101,7 +105,19 @@ export function createAuth(ctx: GenericCtx<DataModel>, { optionsOnly } = { optio
           })
         },
       }),
+      convex(),
     ],
+    hooks: {
+      before: createAuthMiddleware(async (ctx) => {
+        if (ctx.path === '/sign-in/anonymous') {
+          if (!isDebugEnabled()) {
+            throw new APIError('FORBIDDEN', {
+              message: 'Anonymous login is only available in development mode',
+            })
+          }
+        }
+      }),
+    },
 
   })
 }

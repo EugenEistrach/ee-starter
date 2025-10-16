@@ -2,50 +2,58 @@
 
 Local Better Auth component for schema control and plugin support.
 
+## Schema Files
+
+- `packages/backend/convex/components/betterAuth/generatedSchema.ts` - Auto-generated, never edit manually
+- `packages/backend/convex/components/betterAuth/schema.ts` - Custom indexes and extensions
+
 ## Schema Generation
 
-**CLI Bug:** The Better Auth CLI outputs schema to `packages/backend/schema.ts` (root) instead of `convex/betterAuth/schema.ts`, regardless of working directory.
-
-**Generate schema (run from `packages/backend/`):**
+**Generate schema (run from project root):**
 ```bash
-npx @better-auth/cli generate -y --config convex/betterAuth/auth.ts
-mv schema.ts convex/betterAuth/schema.ts
+npx @better-auth/cli generate -y \
+  --output packages/backend/convex/components/betterAuth/generatedSchema.ts \
+  --config packages/backend/convex/components/betterAuth/auth.ts
 ```
 
 **Regenerate when:**
 - Adding/removing Better Auth plugins
 - Changing auth providers
-- Modifying auth configuration in `convex/auth.ts`
+- Modifying auth configuration
 
-## Manual Schema Changes
+## Custom Indexes
 
-Schema is auto-generated. Manual changes will be **overwritten** on regeneration and must be re-applied.
-
-**Current manual changes to re-apply after regeneration:**
-
-1. **Remove `activeOrganizationId` from session table** (we use URL-based org selection)
-   - The organization plugin adds this field, but we don't use it
-   - After generation, remove the line: `activeOrganizationId: v.optional(v.union(v.null(), v.string()))`
-   - Add comment: `// MANUAL CHANGE: removed activeOrganizationId - we use URL-based org selection`
-
-If you need custom indexes:
-1. Add after schema generation
-2. Comment them clearly
-3. Re-add after each regeneration
+Add custom indexes in `packages/backend/convex/components/betterAuth/schema.ts`:
 
 ```typescript
-// Custom index - re-add after regeneration
-users: defineTable({...}).index('by_email_verified', ['email', 'emailVerified'])
+// packages/backend/convex/components/betterAuth/schema.ts
+import { tables } from './generatedSchema'
+
+const schema = defineSchema({
+  ...tables,
+  member: tables.member.index('organizationId_userId', ['organizationId', 'userId']),
+})
 ```
 
-## Generated Tables
+## Extending User Data
 
-- `user` - User accounts
-- `session` - Active sessions
-- `account` - OAuth/social accounts
-- `verification` - Email verification tokens
+**User-related features:** Create separate table in feature slice, link via `userId`
+```typescript
+// packages/backend/features/profiles/schema.ts
+profiles: defineTable({
+  userId: v.string(),
+  bio: v.string(),
+}).index('userId', ['userId'])
+```
 
-Do not rename or remove these tables.
+**Auth-specific capabilities:** Add new table in `packages/backend/convex/components/betterAuth/schema.ts`
+```typescript
+// packages/backend/convex/components/betterAuth/schema.ts
+const schema = defineSchema({
+  ...tables,
+  customAuthTable: defineTable({...}),
+})
+```
 
 ## Type Utilities
 

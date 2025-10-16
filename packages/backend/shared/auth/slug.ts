@@ -1,5 +1,5 @@
 import type { QueryCtx } from '../../convex/_generated/server'
-import { getAuth } from './auth'
+import { components } from '../../convex/_generated/api'
 
 /**
  * Generates a random alphanumeric suffix for slug collision resolution.
@@ -14,15 +14,11 @@ function generateRandomSuffix(length: number): string {
 }
 
 /**
- * Helper to check if slug exists in database
+ * Checks if a slug is available (not taken).
+ * Returns true if the slug can be used, false if it's already taken.
  */
-async function slugExists(ctx: QueryCtx, slug: string): Promise<boolean> {
-  const { auth } = await getAuth(ctx)
-  const { status } = await auth.api.checkOrganizationSlug({
-    body: { slug },
-
-  })
-  return status
+async function isSlugAvailable(ctx: QueryCtx, slug: string): Promise<boolean> {
+  return ctx.runQuery(components.betterAuth.organization.isSlugAvailable, { slug })
 }
 
 /**
@@ -56,8 +52,8 @@ export async function generateSlug(
 
   // 4. Try base slug first (if not reserved/taken)
 
-  const baseExists = await slugExists(ctx, baseSlug)
-  if (!baseExists) {
+  const baseIsAvailable = await isSlugAvailable(ctx, baseSlug)
+  if (baseIsAvailable) {
     return baseSlug // Base slug is available!
   }
 
@@ -67,13 +63,14 @@ export async function generateSlug(
     const suffix = generateRandomSuffix(4) // e.g., 'x7k2'
     const slug = `${baseSlug}-${suffix}`
 
-    const slugAlreadyExists = await slugExists(ctx, slug)
-    if (!slugAlreadyExists) {
+    const slugIsAvailable = await isSlugAvailable(ctx, slug)
+    if (slugIsAvailable) {
       return slug
     }
   }
 
   // 6. Fallback: Use UUID fragment (should never reach here)
   const uuid = crypto.randomUUID().split('-')[0]
-  return `${baseSlug}-${uuid}`
+  const fallbackSlug = `${baseSlug}-${uuid}`
+  return fallbackSlug
 }

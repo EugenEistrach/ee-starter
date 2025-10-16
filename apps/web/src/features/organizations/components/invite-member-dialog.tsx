@@ -1,4 +1,5 @@
 import type { Role } from '@workspace/backend/shared/auth/permissions'
+
 import { Button } from '@workspace/ui/components/button'
 import {
   Dialog,
@@ -27,7 +28,7 @@ export function InviteMemberDialog({ open, onOpenChange, onInvite }: InviteMembe
     validators: {
       onSubmit: z.object({
         email: z.email('Invalid email address'),
-        role: z.enum(['owner', 'admin', 'member']),
+        role: z.enum(['member', 'admin', 'owner']),
       }),
     },
     onSubmit: async ({ value }) => {

@@ -11,6 +11,7 @@
 import type * as adapter from "../adapter.js";
 import type * as auth from "../auth.js";
 import type * as generatedSchema from "../generatedSchema.js";
+import type * as organization from "../organization.js";
 
 import type {
   ApiFromModules,
@@ -30,6 +31,7 @@ declare const fullApi: ApiFromModules<{
   adapter: typeof adapter;
   auth: typeof auth;
   generatedSchema: typeof generatedSchema;
+  organization: typeof organization;
 }>;
 export type Mounts = {
   adapter: {
@@ -44,6 +46,7 @@ export type Mounts = {
                 email: string;
                 emailVerified: boolean;
                 image?: null | string;
+                isAnonymous?: null | boolean;
                 name: string;
                 updatedAt: number;
                 userId?: null | string;
@@ -150,6 +153,7 @@ export type Mounts = {
                   | "createdAt"
                   | "updatedAt"
                   | "userId"
+                  | "isAnonymous"
                   | "_id";
                 operator?:
                   | "lt"
@@ -429,6 +433,7 @@ export type Mounts = {
                   | "createdAt"
                   | "updatedAt"
                   | "userId"
+                  | "isAnonymous"
                   | "_id";
                 operator?:
                   | "lt"
@@ -785,6 +790,7 @@ export type Mounts = {
                 email?: string;
                 emailVerified?: boolean;
                 image?: null | string;
+                isAnonymous?: null | boolean;
                 name?: string;
                 updatedAt?: number;
                 userId?: null | string;
@@ -799,6 +805,7 @@ export type Mounts = {
                   | "createdAt"
                   | "updatedAt"
                   | "userId"
+                  | "isAnonymous"
                   | "_id";
                 operator?:
                   | "lt"
@@ -1130,6 +1137,7 @@ export type Mounts = {
                 email?: string;
                 emailVerified?: boolean;
                 image?: null | string;
+                isAnonymous?: null | boolean;
                 name?: string;
                 updatedAt?: number;
                 userId?: null | string;
@@ -1144,6 +1152,7 @@ export type Mounts = {
                   | "createdAt"
                   | "updatedAt"
                   | "userId"
+                  | "isAnonymous"
                   | "_id";
                 operator?:
                   | "lt"
@@ -1454,6 +1463,30 @@ export type Mounts = {
         onUpdateHandle?: string;
       },
       any
+    >;
+  };
+  organization: {
+    getInvitation: FunctionReference<
+      "query",
+      "public",
+      { invitationId: string },
+      null | {
+        email: string;
+        expiresAt: number;
+        id: string;
+        inviterEmail: string;
+        inviterName: string;
+        organizationName: string;
+        organizationSlug: string;
+        role: "member" | "admin" | "owner";
+        status: string;
+      }
+    >;
+    isSlugAvailable: FunctionReference<
+      "query",
+      "public",
+      { slug: string },
+      boolean
     >;
   };
 };

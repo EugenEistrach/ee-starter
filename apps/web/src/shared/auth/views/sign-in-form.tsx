@@ -1,4 +1,5 @@
 import { Link, useNavigate } from '@tanstack/react-router'
+import { Button } from '@workspace/ui/components/button'
 import { Card, CardContent } from '@workspace/ui/components/card'
 import {
   CenteredLayout,
@@ -16,6 +17,7 @@ import {
 } from '@workspace/ui/components/empty'
 import { FieldGroup } from '@workspace/ui/components/field'
 import { useAppForm } from '@workspace/ui/components/form'
+import { Separator } from '@workspace/ui/components/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs'
 import { MailCheck } from 'lucide-react'
 import { useState } from 'react'
@@ -187,7 +189,7 @@ export default function SignInForm() {
         </Tabs>
       </CenteredLayoutContent>
 
-      <CenteredLayoutFooter className="px-8">
+      <CenteredLayoutFooter className="px-8 flex flex-col gap-4">
         {activeTab === 'password'
           ? (
               <passwordForm.AppForm>
@@ -227,6 +229,38 @@ export default function SignInForm() {
                   </magicLinkForm.SubmitButton>
                 </magicLinkForm.AppForm>
               )}
+
+        {!magicLinkSent && (
+          <>
+            <div className="flex w-full items-center gap-4">
+              <Separator className="flex-1" />
+              <span className="text-sm text-muted-foreground">OR</span>
+              <Separator className="flex-1" />
+            </div>
+
+            <Button
+              variant="outline"
+              size="lg"
+              className="w-full"
+              onClick={async () => {
+                await authClient.signIn.anonymous(
+                  {},
+                  {
+                    onSuccess: () => {
+                      navigate({ to: '/o' })
+                      toast.success('Signed in as guest')
+                    },
+                    onError: (error) => {
+                      toast.error(error.error.message || 'Failed to sign in as guest')
+                    },
+                  },
+                )
+              }}
+            >
+              Continue as Guest
+            </Button>
+          </>
+        )}
       </CenteredLayoutFooter>
     </CenteredLayout>
   )

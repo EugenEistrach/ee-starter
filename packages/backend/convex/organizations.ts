@@ -1,8 +1,10 @@
 import { ensure } from '@workspace/utils/ensure'
 import { v } from 'convex/values'
 import { getAuth } from '../shared/auth/auth'
+import { Role } from '../shared/auth/permissions'
 import { generateSlug } from '../shared/auth/slug'
 import { ensureUser } from '../shared/auth/validations'
+import { components } from './_generated/api'
 import { mutation, query } from './_generated/server'
 
 const OrganizationSchema = v.object({
@@ -15,7 +17,6 @@ const OrganizationSchema = v.object({
 export const create = mutation({
   args: {
     name: v.string(),
-    logo: v.optional(v.string()),
   },
   returns: v.object({
     id: v.string(),
@@ -23,7 +24,7 @@ export const create = mutation({
     slug: v.string(),
     logo: v.optional(v.union(v.null(), v.string())),
   }),
-  handler: async (ctx, { name, logo }) => {
+  handler: async (ctx, { name }) => {
     await ensureUser(ctx)
 
     const { auth, headers } = await getAuth(ctx)
@@ -34,7 +35,6 @@ export const create = mutation({
       body: {
         name,
         slug,
-        logo: logo ?? undefined,
       },
       headers,
     })
@@ -89,7 +89,7 @@ export const get = query({
     invites: v.array(v.object({
       id: v.string(),
       email: v.string(),
-      role: v.union(v.literal('member'), v.literal('owner'), v.literal('admin')),
+      role: Role,
       status: v.string(),
       expiresAt: v.optional(v.union(v.null(), v.number())),
     })),
@@ -140,7 +140,7 @@ export const getInvitation = query({
   args: {
     invitationId: v.string(),
   },
-  returns: v.object({
+  returns: v.union(v.null(), v.object({
     id: v.string(),
     email: v.string(),
     role: v.string(),
@@ -148,26 +148,10 @@ export const getInvitation = query({
     organizationName: v.string(),
     organizationSlug: v.string(),
     inviterEmail: v.string(),
+    inviterName: v.string(),
     expiresAt: v.number(),
-  }),
+  })),
   handler: async (ctx, { invitationId }) => {
-    const { auth, headers } = await getAuth(ctx)
-
-    const { response: invitation } = await auth.api.getInvitation({
-      query: { id: invitationId },
-      headers,
-      returnHeaders: true,
-    })
-
-    return {
-      id: invitation.id,
-      email: invitation.email,
-      role: invitation.role,
-      status: invitation.status,
-      organizationName: invitation.organizationName,
-      organizationSlug: invitation.organizationSlug,
-      inviterEmail: invitation.inviterEmail,
-      expiresAt: invitation.expiresAt as unknown as number,
-    }
+    return ctx.runQuery(components.betterAuth.organization.getInvitation, { invitationId })
   },
 })

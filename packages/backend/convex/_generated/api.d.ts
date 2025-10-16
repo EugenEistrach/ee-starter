@@ -14,6 +14,8 @@ import type * as components_betterAuth__generated_server from "../components/bet
 import type * as components_betterAuth_adapter from "../components/betterAuth/adapter.js";
 import type * as components_betterAuth_auth from "../components/betterAuth/auth.js";
 import type * as components_betterAuth_generatedSchema from "../components/betterAuth/generatedSchema.js";
+import type * as components_betterAuth_organization from "../components/betterAuth/organization.js";
+import type * as debug from "../debug.js";
 import type * as emails from "../emails.js";
 import type * as healthCheck from "../healthCheck.js";
 import type * as http from "../http.js";
@@ -42,6 +44,8 @@ declare const fullApi: ApiFromModules<{
   "components/betterAuth/adapter": typeof components_betterAuth_adapter;
   "components/betterAuth/auth": typeof components_betterAuth_auth;
   "components/betterAuth/generatedSchema": typeof components_betterAuth_generatedSchema;
+  "components/betterAuth/organization": typeof components_betterAuth_organization;
+  debug: typeof debug;
   emails: typeof emails;
   healthCheck: typeof healthCheck;
   http: typeof http;
@@ -74,6 +78,7 @@ export declare const components: {
                   email: string;
                   emailVerified: boolean;
                   image?: null | string;
+                  isAnonymous?: null | boolean;
                   name: string;
                   updatedAt: number;
                   userId?: null | string;
@@ -180,6 +185,7 @@ export declare const components: {
                     | "createdAt"
                     | "updatedAt"
                     | "userId"
+                    | "isAnonymous"
                     | "_id";
                   operator?:
                     | "lt"
@@ -459,6 +465,7 @@ export declare const components: {
                     | "createdAt"
                     | "updatedAt"
                     | "userId"
+                    | "isAnonymous"
                     | "_id";
                   operator?:
                     | "lt"
@@ -815,6 +822,7 @@ export declare const components: {
                   email?: string;
                   emailVerified?: boolean;
                   image?: null | string;
+                  isAnonymous?: null | boolean;
                   name?: string;
                   updatedAt?: number;
                   userId?: null | string;
@@ -829,6 +837,7 @@ export declare const components: {
                     | "createdAt"
                     | "updatedAt"
                     | "userId"
+                    | "isAnonymous"
                     | "_id";
                   operator?:
                     | "lt"
@@ -1160,6 +1169,7 @@ export declare const components: {
                   email?: string;
                   emailVerified?: boolean;
                   image?: null | string;
+                  isAnonymous?: null | boolean;
                   name?: string;
                   updatedAt?: number;
                   userId?: null | string;
@@ -1174,6 +1184,7 @@ export declare const components: {
                     | "createdAt"
                     | "updatedAt"
                     | "userId"
+                    | "isAnonymous"
                     | "_id";
                   operator?:
                     | "lt"
@@ -1484,6 +1495,30 @@ export declare const components: {
           onUpdateHandle?: string;
         },
         any
+      >;
+    };
+    organization: {
+      getInvitation: FunctionReference<
+        "query",
+        "internal",
+        { invitationId: string },
+        null | {
+          email: string;
+          expiresAt: number;
+          id: string;
+          inviterEmail: string;
+          inviterName: string;
+          organizationName: string;
+          organizationSlug: string;
+          role: "member" | "admin" | "owner";
+          status: string;
+        }
+      >;
+      isSlugAvailable: FunctionReference<
+        "query",
+        "internal",
+        { slug: string },
+        boolean
       >;
     };
   };

@@ -18,6 +18,7 @@ import {
   redirect,
   retainSearchParams,
   Scripts,
+  useLocation,
   useRouteContext,
   useRouterState,
 } from '@tanstack/react-router'
@@ -92,43 +93,7 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
       throw parseAuthError(error)
     }
   },
-  errorComponent: ({ error }) => {
-    const isBackendDown = error.message.includes('connection refused') || error.message.includes('ECONNREFUSED')
-
-    return (
-      <>
-        <link rel="stylesheet" href={appCss} />
-        <div className="min-h-screen flex items-center justify-center p-8 bg-background">
-          <Card className="max-w-2xl w-full border-destructive">
-            <CardHeader>
-              <CardTitle className="text-destructive">
-                {isBackendDown ? 'Backend Not Running' : 'Application Error'}
-              </CardTitle>
-              <CardDescription className="font-mono text-sm">{error.message}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {isBackendDown && (
-                <div className="bg-muted p-3 rounded text-sm">
-                  <p className="font-medium mb-1">Start the backend:</p>
-                  <code>bun run dev:server</code>
-                </div>
-              )}
-              <Button
-                onClick={(e) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  window.location.reload()
-                }}
-                className="w-full"
-              >
-                Retry
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      </>
-    )
-  },
+  errorComponent: ErrorComponent,
 
   component: RootDocument,
   head: () => ({
@@ -246,4 +211,47 @@ function parseAuthError(error: unknown): Error {
   }
 
   return error
+}
+
+function ErrorComponent({ error }: { error: Error }) {
+  const isBackendDown = error.message.includes('connection refused') || error.message.includes('ECONNREFUSED')
+  const location = useLocation()
+  const path = location.pathname
+
+  return (
+    <>
+      <link rel="stylesheet" href={appCss} />
+      {/* eslint-disable-next-line react-dom/no-dangerously-set-innerhtml */}
+      <script dangerouslySetInnerHTML={{ __html: `
+        const timeOut = setTimeout(() => {
+          window.location.reload()
+        }, 1000)
+      ` }}
+      />
+      <div className="min-h-screen flex items-center justify-center p-8 bg-background">
+        <Card className="max-w-2xl w-full border-destructive">
+          <CardHeader>
+            <CardTitle className="text-destructive">
+              {isBackendDown ? 'Backend Not Running' : 'Application Error'}
+            </CardTitle>
+            <CardDescription className="font-mono text-sm">{error.message}</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {isBackendDown && (
+              <div className="bg-muted p-3 rounded text-sm">
+                <p className="font-medium mb-1">Start the backend:</p>
+                <code>bun run dev:server</code>
+              </div>
+            )}
+            <Button
+              className="w-full"
+              asChild
+            >
+              <a href={path}>Retry</a>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    </>
+  )
 }

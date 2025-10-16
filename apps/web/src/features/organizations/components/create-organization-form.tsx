@@ -12,25 +12,22 @@ import { useAppForm } from '@workspace/ui/components/form'
 import { z } from 'zod'
 
 interface CreateOrganizationFormProps {
-  onSubmit: (data: { name: string, logo?: string }) => Promise<void>
+  onSubmit: (data: { name: string }) => Promise<void>
 }
 
 export function CreateOrganizationForm({ onSubmit }: CreateOrganizationFormProps) {
   const form = useAppForm({
     defaultValues: {
       name: '',
-      logo: '',
     },
     validators: {
       onSubmit: z.object({
         name: z.string().min(1, 'Organization name is required'),
-        logo: z.url('Invalid URL').or(z.literal('')),
       }),
     },
     onSubmit: async ({ value }) => {
       await onSubmit({
         name: value.name.trim(),
-        logo: value.logo.trim() || undefined,
       })
     },
   })
@@ -62,17 +59,6 @@ export function CreateOrganizationForm({ onSubmit }: CreateOrganizationFormProps
                     <field.TextField
                       label="Organization Name"
                       placeholder="Acme Inc."
-                    />
-                  )}
-                </form.AppField>
-
-                <form.AppField name="logo">
-                  {field => (
-                    <field.TextField
-                      label="Logo URL"
-                      placeholder="https://example.com/logo.png"
-                      type="text"
-                      optional
                     />
                   )}
                 </form.AppField>
