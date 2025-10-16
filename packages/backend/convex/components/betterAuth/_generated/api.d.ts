@@ -1482,6 +1482,12 @@ export type Mounts = {
         status: string;
       }
     >;
+    getRole: FunctionReference<
+      "query",
+      "public",
+      { organizationId: string; userId: string },
+      "member" | "admin" | "owner"
+    >;
     isSlugAvailable: FunctionReference<
       "query",
       "public",

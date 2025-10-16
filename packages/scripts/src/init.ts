@@ -117,7 +117,7 @@ function HomeComponent() {
           ${appName}
         </h1>
         <Button asChild size="lg">
-          <Link to="/dashboard">
+          <Link to="/o">
             Go to Dashboard
           </Link>
         </Button>

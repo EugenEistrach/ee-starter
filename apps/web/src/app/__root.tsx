@@ -29,8 +29,10 @@ import { createAuth } from '@workspace/backend/shared/auth/auth'
 
 import { Button } from '@workspace/ui/components/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card'
+import { CenteredLayout, CenteredLayoutContent, CenteredLayoutDescription, CenteredLayoutHeader, CenteredLayoutTitle } from '@workspace/ui/components/centered-layout'
 import { Toaster } from '@workspace/ui/components/sonner'
 import { ThemeProvider } from '@workspace/ui/components/theme-provider'
+import { FileQuestion } from 'lucide-react'
 import { useEffect } from 'react'
 import z from 'zod'
 import { EmailPanel } from '@/features/dev-tools/views/email-panel'
@@ -64,17 +66,7 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
       retainSearchParams(['redirectTo']),
     ],
   },
-  notFoundComponent: () => {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-8 bg-background">
-        <Card className="max-w-2xl w-full border-destructive">
-          <CardHeader>
-            <CardTitle className="text-destructive">Page Not Found</CardTitle>
-          </CardHeader>
-        </Card>
-      </div>
-    )
-  },
+  notFoundComponent: NotFoundComponent,
   beforeLoad: async (ctx) => {
     try {
       const { userId, token } = await fetchAuth()
@@ -176,6 +168,37 @@ function RootDocument() {
 
     </ConvexBetterAuthProvider>
 
+  )
+}
+
+function NotFoundComponent() {
+  const context = useRouteContext({ from: Route.id })
+  const isLoggedIn = !!context.userId
+  const homeLink = isLoggedIn ? '/o' : '/'
+  const homeLinkText = isLoggedIn ? 'Go to Organizations' : 'Go to Home'
+
+  return (
+    <>
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <link rel="stylesheet" href={appCss} />
+        <CenteredLayout>
+          <CenteredLayoutContent>
+            <CenteredLayoutHeader>
+              <div className="flex size-12 items-center justify-center rounded-full bg-muted">
+                <FileQuestion className="size-6 text-muted-foreground" />
+              </div>
+              <CenteredLayoutTitle>Page not found</CenteredLayoutTitle>
+              <CenteredLayoutDescription>
+                The page you're looking for doesn't exist or has been moved.
+              </CenteredLayoutDescription>
+            </CenteredLayoutHeader>
+            <Button asChild className="w-full">
+              <a href={homeLink}>{homeLinkText}</a>
+            </Button>
+          </CenteredLayoutContent>
+        </CenteredLayout>
+      </ThemeProvider>
+    </>
   )
 }
 

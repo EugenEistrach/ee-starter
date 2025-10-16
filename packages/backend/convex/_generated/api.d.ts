@@ -1514,6 +1514,12 @@ export declare const components: {
           status: string;
         }
       >;
+      getRole: FunctionReference<
+        "query",
+        "internal",
+        { organizationId: string; userId: string },
+        "member" | "admin" | "owner"
+      >;
       isSlugAvailable: FunctionReference<
         "query",
         "internal",

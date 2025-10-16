@@ -74,7 +74,9 @@ export function MembersTable({
                 email={member.email}
                 role={member.role}
                 canManage={canManageMembers}
-                onChangeRole={role => onChangeRole(member.id, role)}
+                onChangeRole={(role) => {
+                  onChangeRole(member.id, role)
+                }}
                 onRemove={() => onRemoveMember(member.id)}
               />
             ))}

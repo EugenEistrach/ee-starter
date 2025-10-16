@@ -66,3 +66,38 @@ Empty states with icon, title, and description:
   </EmptyContent>
 </Empty>
 ```
+
+### Centered Layout
+Centered layout for auth and standalone pages:
+
+```tsx
+<CenteredLayout size="default">
+  <CenteredLayoutHeader>
+    <CenteredLayoutTitle>Sign In</CenteredLayoutTitle>
+    <CenteredLayoutDescription>
+      Enter your credentials to continue
+    </CenteredLayoutDescription>
+  </CenteredLayoutHeader>
+  <CenteredLayoutContent>
+    <Card>
+      <CardContent>
+        {/* Form content */}
+      </CardContent>
+    </Card>
+  </CenteredLayoutContent>
+</CenteredLayout>
+```
+
+Sizes: `sm`, `default`, `lg`
+
+## Organization Hooks
+
+```typescript
+useOrganization()        // Get current org (in /o/$organizationSlug/* routes)
+useCurrentUser()         // Get user (throws if not auth)
+useCurrentUserOrNull()   // Get user or null
+```
+
+Location: `@/shared/auth/hooks/`
+
+Pass `organizationId` to all org-scoped API calls.

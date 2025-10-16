@@ -5,7 +5,6 @@ import { ensure } from '@workspace/utils'
 
 export function useCurrentUserOrNull() {
   const { data: { user } } = useSuspenseQuery(convexQuery(api.users.getCurrentUser, {}))
-
   return user
 }
 

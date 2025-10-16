@@ -1,5 +1,5 @@
 import { convexQuery } from '@convex-dev/react-query'
-import { createFileRoute, Link, Outlet, redirect } from '@tanstack/react-router'
+import { createFileRoute, Link, notFound, Outlet, redirect } from '@tanstack/react-router'
 import { api } from '@workspace/backend/convex/_generated/api'
 
 import { Avatar, AvatarFallback } from '@workspace/ui/components/avatar'
@@ -36,7 +36,6 @@ import { useOrganization } from '@/shared/auth/hooks/useOrganizationSlug'
 import { OrganizationSwitcher } from '@/shared/auth/views/organization-switcher'
 
 export const Route = createFileRoute('/o/$organizationSlug')({
-
   beforeLoad: async ({ context, params }) => {
     if (!context.userId) {
       throw redirect({ to: '/login' })
@@ -45,18 +44,24 @@ export const Route = createFileRoute('/o/$organizationSlug')({
     const [
 
       organizations,
+
     ] = await Promise.all([
       context.queryClient.ensureQueryData(convexQuery(api.organizations.listAll, {})),
       context.queryClient.ensureQueryData(convexQuery(api.users.getCurrentUser, {})),
-      context.queryClient.ensureQueryData(convexQuery(api.organizations.get, { slug: params.organizationSlug })),
 
     ])
 
     const organization = organizations.find(organization => organization.slug === params.organizationSlug)
 
+    if (!organization && organizations.length > 0) {
+      throw notFound()
+    }
+
     if (!organization) {
       throw redirect({ to: '/new-organization' })
     }
+
+    context.queryClient.ensureQueryData(convexQuery(api.organizations.get, { slug: params.organizationSlug }))
 
     return { organization }
   },

@@ -76,7 +76,7 @@ export default function ForgotPasswordForm() {
           <form.SubmitButton
             form="forgot-password-form"
             size="lg"
-            fieldClassName="flex items-center"
+            fieldClassName="flex items-center w-full px-8"
             description={(
               <>
                 Remember your password?

@@ -40,6 +40,7 @@ export const Route = createFileRoute('/o/$organizationSlug/settings')({
 
 function SettingsPage() {
   const organization = useOrganization()
+
   const navigate = useNavigate()
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
@@ -56,17 +57,22 @@ function SettingsPage() {
     },
     validators: {
       onSubmit: z.object({
+
         name: z.string().min(1, 'Organization name is required'),
         logo: z.url('Invalid URL').or(z.literal('')),
       }),
     },
     onSubmit: async ({ value }) => {
-      await authClient.organization.update({
+      const result = await authClient.organization.update({
         data: {
           name: value.name.trim(),
           logo: value.logo.trim() || undefined,
         },
       })
+      if (result.error) {
+        toast.error(result.error.message)
+        return
+      }
       toast.success('Organization updated successfully')
     },
   })
@@ -91,7 +97,11 @@ function SettingsPage() {
 
   const handleChangeRole = async (memberId: string, role: Role) => {
     try {
-      await authClient.organization.updateMemberRole({ memberId, role })
+      const result = await authClient.organization.updateMemberRole({ memberId, role, organizationId: organization.id })
+      if (result.error) {
+        toast.error(result.error.message)
+        return
+      }
       toast.success('Member role updated successfully')
     }
     catch (error) {
@@ -102,7 +112,11 @@ function SettingsPage() {
 
   const handleRemoveMember = async (memberId: string) => {
     try {
-      await authClient.organization.removeMember({ memberIdOrEmail: memberId })
+      const result = await authClient.organization.removeMember({ memberIdOrEmail: memberId })
+      if (result.error) {
+        toast.error(result.error.message)
+        return
+      }
       toast.success('Member removed successfully')
     }
     catch (error) {
@@ -113,7 +127,11 @@ function SettingsPage() {
 
   const handleCancelInvitation = async (invitationId: string) => {
     try {
-      await authClient.organization.cancelInvitation({ invitationId })
+      const result = await authClient.organization.cancelInvitation({ invitationId })
+      if (result.error) {
+        toast.error(result.error.message)
+        return
+      }
       toast.success('Invitation cancelled successfully')
     }
     catch (error) {
@@ -124,7 +142,11 @@ function SettingsPage() {
 
   const handleDeleteOrganization = async () => {
     try {
-      await authClient.organization.delete({ organizationId: organization.id })
+      const result = await authClient.organization.delete({ organizationId: organization.id })
+      if (result.error) {
+        toast.error(result.error.message)
+        return
+      }
       toast.success('Organization deleted successfully')
 
       const remaining = allOrganizations.filter(org => org.id !== organization.id)
@@ -163,6 +185,13 @@ function SettingsPage() {
       toast.error('Failed to leave organization')
     }
   }
+
+  authClient.organization.checkRolePermission({
+    permissions: {
+      organization: ['update', 'delete'],
+    },
+    role: organization.currentRole,
+  })
 
   return (
     <div className="mx-auto w-full max-w-4xl space-y-6">

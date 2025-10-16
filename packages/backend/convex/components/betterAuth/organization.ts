@@ -60,6 +60,21 @@ export const getInvitation = query({
   },
 })
 
+export const getRole = query({
+  args: {
+    organizationId: v.string(),
+    userId: v.string(),
+  },
+  returns: Role,
+  handler: async (ctx, { organizationId, userId }) => {
+    const member = await ctx.db.query('member').withIndex('organizationId_userId', q => q.eq('organizationId', organizationId).eq('userId', userId)).first()
+    if (!member) {
+      return 'member'
+    }
+    return member.role as Role
+  },
+})
+
 export const isSlugAvailable = query({
   args: {
     slug: v.string(),

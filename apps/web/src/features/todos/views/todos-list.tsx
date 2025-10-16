@@ -37,9 +37,11 @@ export default function TodosList() {
       completed: false,
       organizationId: organization.id,
       createdBy: 'optimistic_user_id',
+      // eslint-disable-next-line react-hooks/purity -- its false positive
       _creationTime: Date.now(),
     }])
   })
+
   const toggleTodo = useMutation(api.todos.toggle).withOptimisticUpdate((localStore, args) => {
     const existingTodos = localStore.getQuery(api.todos.getAll, { organizationId: organization.id })
 
@@ -54,6 +56,7 @@ export default function TodosList() {
       return todo
     }))
   })
+
   const removeTodo = useMutation(api.todos.deleteTodo).withOptimisticUpdate((localStore, args) => {
     const existingTodos = localStore.getQuery(api.todos.getAll, { organizationId: organization.id })
 

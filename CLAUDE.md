@@ -50,11 +50,9 @@ bun run fix          # Auto-fix errors (all packages)
 
 <!-- [auto-generated] packages/scripts/src/update-docs.ts -->
 **How-To Guides** (processes and workflows):
-- docs/how-to/abc.md
 - docs/how-to/build-forms.md
 - docs/how-to/create-pull-requests.md
 - docs/how-to/deploy-production.md
-- docs/how-to/temp.md
 - docs/how-to/update-dependencies.md
 - docs/how-to/use-linear-cli.md
 - docs/how-to/write-documentation.md
@@ -64,6 +62,5 @@ bun run fix          # Auto-fix errors (all packages)
 - docs/references/backend-guidelines.md
 - docs/references/convex-guidelines.md
 - docs/references/frontend-guidelines.md
-- docs/references/system-internals.md
 - docs/references/tech-stack.md
 <!-- [/auto-generated] -->

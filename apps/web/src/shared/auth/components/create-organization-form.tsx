@@ -70,7 +70,7 @@ export function CreateOrganizationForm({ onSubmit }: CreateOrganizationFormProps
 
       <CenteredLayoutFooter>
         <form.AppForm>
-          <form.SubmitButton form="create-org-form" size="lg" className="w-full max-w-sm" fieldClassName="flex items-center">
+          <form.SubmitButton form="create-org-form" size="lg" fieldClassName="flex items-center w-full px-8">
             Create Organization
           </form.SubmitButton>
         </form.AppForm>

@@ -80,11 +80,13 @@ export const get = query({
     name: v.string(),
     slug: v.string(),
     logo: v.optional(v.union(v.null(), v.string())),
+    currentRole: Role,
     members: v.array(v.object({
       id: v.string(),
       name: v.string(),
       email: v.string(),
       role: v.string(),
+      userId: v.string(),
     })),
     invites: v.array(v.object({
       id: v.string(),
@@ -96,7 +98,7 @@ export const get = query({
 
   }),
   handler: async (ctx, { slug }) => {
-    await ensureUser(ctx)
+    const { user } = await ensureUser(ctx)
 
     const { auth, headers } = await getAuth(ctx)
 
@@ -112,16 +114,20 @@ export const get = query({
       headers,
     })
 
+    const currentRole = await ctx.runQuery(components.betterAuth.organization.getRole, { organizationId: organization.id, userId: user._id })
+
     return {
       id: organization.id,
       name: organization.name,
       slug: organization.slug,
       logo: organization.logo,
+      currentRole,
       members: organization.members.map(member => ({
-        id: member.userId,
+        id: member.id,
         name: member.user.name,
         email: member.user.email,
         role: member.role,
+        userId: member.userId,
       })),
       invites: invites.map((invite) => {
         return ({

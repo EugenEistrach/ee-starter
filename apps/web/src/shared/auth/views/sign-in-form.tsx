@@ -1,3 +1,4 @@
+import type { LinkProps } from '@tanstack/react-router'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { Button } from '@workspace/ui/components/button'
 import { Card, CardContent } from '@workspace/ui/components/card'
@@ -70,7 +71,7 @@ export default function SignInForm() {
       await authClient.signIn.magicLink(
         {
           email: value.email,
-          callbackURL: '/dashboard',
+          callbackURL: '/o' satisfies LinkProps['to'],
         },
         {
           onSuccess: () => {
