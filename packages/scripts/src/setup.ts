@@ -137,9 +137,9 @@ execSync("npx convex dev --until-success", {
   stdio: "inherit"
 })
 
-// Generate and set BETTER_AUTH_SECRET
+// Set BETTER_AUTH_SECRET - use consistent secret for local development
 console.log("🔧 Setting BETTER_AUTH_SECRET...")
-const betterAuthSecret = execSync("openssl rand -base64 32").toString().trim()
+const betterAuthSecret = "local-dev-secret-do-not-use-in-production-32chars"
 execSync(`npx convex dev --once --run-sh "npx convex env set BETTER_AUTH_SECRET \\"${betterAuthSecret}\\""`, {
   cwd: join(ROOT_DIR, "packages/backend"),
   stdio: "inherit"
