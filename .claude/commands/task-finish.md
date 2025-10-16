@@ -23,7 +23,7 @@ Follow the PR creation workflow from @docs/how-to/create-pull-requests.md
 **Important steps:**
 
 1. **Update documentation:**
-   - Quick check: Review staged/unstaged changes (`git status`, `git diff --stat`)
+   - Quick check: Review changes vs origin (`git status`, `git diff --stat origin/main...HEAD`)
    - If changes are small and you understand them well: Skip to proposing doc updates directly
    - If changes are large or unfamiliar: Use SlashCommand tool to execute `/update-docs` (which will use change-summarizer agent)
    - Propose doc updates based on the changes
@@ -43,7 +43,7 @@ Follow the PR creation workflow from @docs/how-to/create-pull-requests.md
    - If branch already has a Linear ticket in the name, use that ticket number
 
 3. **Follow PR guide:**
-   - Review changes with `git status` and `git diff`
+   - Review changes with `git status` and `git diff origin/main...HEAD`
    - If unexpected files/changes appear:
      * List them clearly
      * Ask if they are intended changes

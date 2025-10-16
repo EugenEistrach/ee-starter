@@ -53,6 +53,7 @@ bun run fix          # Auto-fix errors (all packages)
 - docs/how-to/build-forms.md
 - docs/how-to/create-pull-requests.md
 - docs/how-to/deploy-production.md
+- docs/how-to/send-emails.md
 - docs/how-to/update-dependencies.md
 - docs/how-to/use-linear-cli.md
 - docs/how-to/write-documentation.md
@@ -61,6 +62,7 @@ bun run fix          # Auto-fix errors (all packages)
 - docs/references/architecture.md
 - docs/references/backend-guidelines.md
 - docs/references/convex-guidelines.md
+- docs/references/devtools-guidelines.md
 - docs/references/frontend-guidelines.md
 - docs/references/tech-stack.md
 <!-- [/auto-generated] -->
