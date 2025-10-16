@@ -27,9 +27,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/componen
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { z } from 'zod'
-import { MembersTable } from '@/features/organizations/views/members-table'
 import { useOrganization } from '@/shared/auth/hooks/useOrganizationSlug'
 import { authClient } from '@/shared/auth/lib/auth-client'
+import { MembersTable } from '@/shared/auth/views/members-table'
 
 export const Route = createFileRoute('/o/$organizationSlug/settings')({
   component: SettingsPage,

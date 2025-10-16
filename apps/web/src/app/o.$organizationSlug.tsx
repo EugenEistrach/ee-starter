@@ -30,10 +30,10 @@ import { ThemeToggle } from '@workspace/ui/components/theme-toggle'
 import { TooltipProvider } from '@workspace/ui/components/tooltip'
 import { CheckSquare, ChevronsUpDown, LogOut, Settings } from 'lucide-react'
 import { Suspense } from 'react'
-import { OrganizationSwitcher } from '@/features/organizations/views/organization-switcher'
 import { useCurrentUser } from '@/shared/auth/hooks/useCurrentUser'
 import { useLogout } from '@/shared/auth/hooks/useLogout'
 import { useOrganization } from '@/shared/auth/hooks/useOrganizationSlug'
+import { OrganizationSwitcher } from '@/shared/auth/views/organization-switcher'
 
 export const Route = createFileRoute('/o/$organizationSlug')({
 

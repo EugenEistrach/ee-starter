@@ -2,7 +2,7 @@ import { useConvexMutation } from '@convex-dev/react-query'
 import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
 import { api } from '@workspace/backend/convex/_generated/api'
 import { toast } from 'sonner'
-import { CreateOrganizationForm } from '@/features/organizations/components/create-organization-form'
+import { CreateOrganizationForm } from '@/shared/auth/components/create-organization-form'
 import { LoggedInAs } from '@/shared/auth/components/logged-in-as'
 
 export const Route = createFileRoute('/new-organization')({
