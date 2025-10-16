@@ -109,7 +109,7 @@ export default function ResetPasswordForm({
               </form.AppField>
 
               <form.AppForm>
-                <form.SubmitButton>
+                <form.SubmitButton size="lg" fieldClassName="flex items-center w-full px-8">
                   Reset Password
                 </form.SubmitButton>
               </form.AppForm>

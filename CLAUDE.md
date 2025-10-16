@@ -62,6 +62,5 @@ bun run fix          # Auto-fix errors (all packages)
 - docs/references/backend-guidelines.md
 - docs/references/convex-guidelines.md
 - docs/references/frontend-guidelines.md
-- docs/references/system-internals.md
 - docs/references/tech-stack.md
 <!-- [/auto-generated] -->

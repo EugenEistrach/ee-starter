@@ -1,5 +1,5 @@
+import { getUserOrNull } from '../shared/auth/validations'
 import { query } from './_generated/server'
-import { getUserOrNull } from './auth'
 
 // eslint-disable-next-line @workspace/convex-returns-required
 export const getCurrentUser = query({

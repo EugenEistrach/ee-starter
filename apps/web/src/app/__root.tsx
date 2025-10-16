@@ -15,28 +15,36 @@ import {
   createRootRouteWithContext,
   HeadContent,
   Outlet,
+  redirect,
+  retainSearchParams,
   Scripts,
+  useLocation,
   useRouteContext,
   useRouterState,
 } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { createServerFn } from '@tanstack/react-start'
 import { getCookie, getRequest } from '@tanstack/react-start/server'
-import { createAuth } from '@workspace/backend/convex/auth'
+import { createAuth } from '@workspace/backend/shared/auth/auth'
 
 import { Button } from '@workspace/ui/components/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card'
+import { CenteredLayout, CenteredLayoutContent, CenteredLayoutDescription, CenteredLayoutHeader, CenteredLayoutTitle } from '@workspace/ui/components/centered-layout'
 import { Toaster } from '@workspace/ui/components/sonner'
 import { ThemeProvider } from '@workspace/ui/components/theme-provider'
+import { FileQuestion } from 'lucide-react'
 import { useEffect } from 'react'
+import z from 'zod'
 import { EmailPanel } from '@/features/dev-tools/views/email-panel'
 import { authClient } from '@/shared/auth/lib/auth-client'
 import appCss from '../index.css?url'
 
 const fetchAuth = createServerFn({ method: 'GET' }).handler(async () => {
   const { session } = await fetchSession(getRequest())
+
   const sessionCookieName = getCookieName(createAuth)
   const token = getCookie(sessionCookieName)
+
   return {
     userId: session?.user.id,
     token,
@@ -50,57 +58,34 @@ interface RouterAppContext {
 }
 
 export const Route = createRootRouteWithContext<RouterAppContext>()({
+  validateSearch: z.object({
+    redirectTo: z.string().optional(),
+  }),
+  search: {
+    middlewares: [
+      retainSearchParams(['redirectTo']),
+    ],
+  },
+  notFoundComponent: NotFoundComponent,
   beforeLoad: async (ctx) => {
     try {
       const { userId, token } = await fetchAuth()
       if (token) {
+        // Ensure SSR and CSR both have the Convex identity set before any queries run
         ctx.context.convexQueryClient.serverHttpClient?.setAuth(token)
       }
+
+      if (userId && !token && ctx.location.pathname !== '/recover') {
+        throw redirect({ to: '/recover' })
+      }
+
       return { userId, token }
     }
     catch (error) {
-      console.error('Failed to fetch auth session:', error)
       throw parseAuthError(error)
     }
   },
-
-  errorComponent: ({ error }) => {
-    const isBackendDown = error.message.includes('connection refused') || error.message.includes('ECONNREFUSED')
-
-    return (
-      <>
-        <link rel="stylesheet" href={appCss} />
-        <div className="min-h-screen flex items-center justify-center p-8 bg-background">
-          <Card className="max-w-2xl w-full border-destructive">
-            <CardHeader>
-              <CardTitle className="text-destructive">
-                {isBackendDown ? 'Backend Not Running' : 'Application Error'}
-              </CardTitle>
-              <CardDescription className="font-mono text-sm">{error.message}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {isBackendDown && (
-                <div className="bg-muted p-3 rounded text-sm">
-                  <p className="font-medium mb-1">Start the backend:</p>
-                  <code>bun run dev:server</code>
-                </div>
-              )}
-              <Button
-                onClick={(e) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  window.location.reload()
-                }}
-                className="w-full"
-              >
-                Retry
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      </>
-    )
-  },
+  errorComponent: ErrorComponent,
 
   component: RootDocument,
   head: () => ({
@@ -133,18 +118,23 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 function RootDocument() {
   const context = useRouteContext({ from: Route.id })
   return (
-    <ProgressProvider>
-      <ConvexBetterAuthProvider
-        client={context.convexClient}
-        authClient={authClient}
-      >
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <html lang="en">
-            <head>
-              <HeadContent />
-            </head>
-            <body>
+
+    <ConvexBetterAuthProvider
+      client={context.convexClient}
+      authClient={authClient}
+    >
+
+      <html lang="en" suppressHydrationWarning>
+
+        <head>
+          <HeadContent />
+        </head>
+
+        <body>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <ProgressProvider>
               <RouterProgressSync />
+
               <Outlet />
               <Toaster richColors />
               <TanStackDevtools
@@ -168,12 +158,47 @@ function RootDocument() {
                     : []),
                 ]}
               />
-              <Scripts />
-            </body>
-          </html>
-        </ThemeProvider>
-      </ConvexBetterAuthProvider>
-    </ProgressProvider>
+
+            </ProgressProvider>
+          </ThemeProvider>
+          <Scripts />
+        </body>
+
+      </html>
+
+    </ConvexBetterAuthProvider>
+
+  )
+}
+
+function NotFoundComponent() {
+  const context = useRouteContext({ from: Route.id })
+  const isLoggedIn = !!context.userId
+  const homeLink = isLoggedIn ? '/o' : '/'
+  const homeLinkText = isLoggedIn ? 'Go to Organizations' : 'Go to Home'
+
+  return (
+    <>
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <link rel="stylesheet" href={appCss} />
+        <CenteredLayout>
+          <CenteredLayoutContent>
+            <CenteredLayoutHeader>
+              <div className="flex size-12 items-center justify-center rounded-full bg-muted">
+                <FileQuestion className="size-6 text-muted-foreground" />
+              </div>
+              <CenteredLayoutTitle>Page not found</CenteredLayoutTitle>
+              <CenteredLayoutDescription>
+                The page you're looking for doesn't exist or has been moved.
+              </CenteredLayoutDescription>
+            </CenteredLayoutHeader>
+            <Button asChild className="w-full">
+              <a href={homeLink}>{homeLinkText}</a>
+            </Button>
+          </CenteredLayoutContent>
+        </CenteredLayout>
+      </ThemeProvider>
+    </>
   )
 }
 
@@ -209,4 +234,47 @@ function parseAuthError(error: unknown): Error {
   }
 
   return error
+}
+
+function ErrorComponent({ error }: { error: Error }) {
+  const isBackendDown = error.message.includes('connection refused') || error.message.includes('ECONNREFUSED')
+  const location = useLocation()
+  const path = location.pathname
+
+  return (
+    <>
+      <link rel="stylesheet" href={appCss} />
+      {/* eslint-disable-next-line react-dom/no-dangerously-set-innerhtml */}
+      <script dangerouslySetInnerHTML={{ __html: `
+        const timeOut = setTimeout(() => {
+          window.location.reload()
+        }, 1000)
+      ` }}
+      />
+      <div className="min-h-screen flex items-center justify-center p-8 bg-background">
+        <Card className="max-w-2xl w-full border-destructive">
+          <CardHeader>
+            <CardTitle className="text-destructive">
+              {isBackendDown ? 'Backend Not Running' : 'Application Error'}
+            </CardTitle>
+            <CardDescription className="font-mono text-sm">{error.message}</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {isBackendDown && (
+              <div className="bg-muted p-3 rounded text-sm">
+                <p className="font-medium mb-1">Start the backend:</p>
+                <code>bun run dev:server</code>
+              </div>
+            )}
+            <Button
+              className="w-full"
+              asChild
+            >
+              <a href={path}>Retry</a>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    </>
+  )
 }

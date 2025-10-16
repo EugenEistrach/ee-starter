@@ -2,36 +2,41 @@
 
 ## Process
 
-1. **Run dependency update tool**
+1. **Check for available updates**
    ```bash
-   bunx taze major -r -w
+   bun run check-dependencies
    ```
 
-2. **Verify all updates**
+2. **Review what will be updated**, then apply:
+   ```bash
+   bun run update-dependencies
+   ```
 
-   Taze has a bug with catalog dependencies in `package.json` - they don't get updated automatically. Check the root `package.json` catalog section and manually update any versions that taze missed.
+3. **Verify catalog dependencies**
 
-3. **Install dependencies**
+   Taze has a bug with catalog dependencies in root `package.json` - they don't get updated automatically. Check the catalog section and manually update any versions missed.
+
+4. **Install dependencies**
    ```bash
    bun install
    ```
 
-4. **Run checks**
+5. **Run checks**
    ```bash
    bun run check
    ```
 
-5. **Fix or investigate errors**
+6. **Fix or investigate errors**
    - Easy fixes: Fix them directly
    - Breaking changes: Check GitHub release notes or migration guides
    - Stuck: Stop and ask for assistance
 
-6. **Verify completion**
+7. **Verify completion**
    ```bash
-   bunx taze major -r
+   bun run check-dependencies
    ```
 
-   Should show "dependencies are already up-to-date". If catalog dependencies updated correctly without manual intervention, ask if this note should be removed (taze may have fixed the bug).
+   Should show "dependencies are already up-to-date". If catalog dependencies updated correctly without manual intervention, the taze bug may be fixed.
 
 ## Notes
 

@@ -19,6 +19,8 @@ const ALLOWED_FILENAMES = [
 const ALLOWED_MD_DIRECTORIES = [
   "docs/how-to",
   "docs/references",
+  "docs/plans",
+  "docs/research",
   ".claude"
 ]
 

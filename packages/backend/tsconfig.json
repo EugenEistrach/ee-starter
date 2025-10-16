@@ -13,6 +13,9 @@
     ],
     "module": "ESNext",
     "moduleResolution": "Bundler",
+    "paths": {
+      "@workspace/utils": ["../utils/src/index.ts"]
+    },
     "types": ["node"],
     /* These settings are not required by Convex and can be modified. */
     "allowJs": true,

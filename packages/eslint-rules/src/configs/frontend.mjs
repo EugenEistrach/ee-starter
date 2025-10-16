@@ -3,6 +3,8 @@ import noTailwindRawColors from '../rules/no-tailwind-raw-colors.mjs'
 import noErrorInToast from '../rules/no-error-in-toast.mjs'
 import noPrematureOptimization from '../rules/no-premature-optimization.mjs'
 import noRestrictedImportsInFolders from '../rules/no-restricted-imports-in-folders.mjs'
+import noVanillaForms from '../rules/no-vanilla-forms.mjs'
+import noManualAsyncState from '../rules/no-manual-async-state.mjs'
 
 export default {
 	plugins: {
@@ -13,6 +15,8 @@ export default {
 				'no-error-in-toast': noErrorInToast,
 				'no-premature-optimization': noPrematureOptimization,
 				'no-restricted-imports-in-folders': noRestrictedImportsInFolders,
+				'no-vanilla-forms': noVanillaForms,
+				'no-manual-async-state': noManualAsyncState,
 			},
 		},
 	},
@@ -21,6 +25,8 @@ export default {
 		'@workspace/no-tailwind-raw-colors': 'error',
 		'@workspace/no-error-in-toast': 'error',
 		'@workspace/no-premature-optimization': 'error',
+		'@workspace/no-vanilla-forms': 'error',
+		'@workspace/no-manual-async-state': 'error',
 		'@workspace/no-restricted-imports-in-folders': ['error', [
 			{
 				folders: ['/components/'],

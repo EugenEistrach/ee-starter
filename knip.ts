@@ -4,6 +4,8 @@ export default {
     ".": {
       entry: ["!**"],
       project: ["!**"],
+
+      ignoreDependencies: ["react", "react-dom"],
     },
     "packages/ui": {
       entry: ["src/components/**/*.tsx", "src/lib/**/*.ts", "src/hooks/**/*.ts"],

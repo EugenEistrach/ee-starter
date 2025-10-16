@@ -1,6 +1,6 @@
 import { defineSchema } from 'convex/server'
-import { emailSchema } from '../features/email/schema'
 import { todosTable } from '../features/todos/schema'
+import { emailSchema } from '../shared/email/schema'
 
 export default defineSchema({
   todos: todosTable,

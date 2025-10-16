@@ -29,7 +29,7 @@ function HomeComponent() {
           {/* CTAs */}
           <div className="flex gap-4 justify-center pt-4">
             <Button asChild size="lg">
-              <Link to="/dashboard">
+              <Link to="/o">
                 View Dashboard
               </Link>
             </Button>

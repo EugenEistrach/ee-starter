@@ -1,5 +1,5 @@
-import type { EmailTemplate } from '../logic'
-import { createCard, createContent, createEmailLayout, createFooter, createHeader, p, primaryButton, strong } from '../components'
+import type { EmailTemplate } from '../../email/logic'
+import { createCard, createContent, createEmailLayout, createFooter, createHeader, p, primaryButton, strong } from '../../email/components'
 
 interface PasswordResetEmailParams {
   name: string

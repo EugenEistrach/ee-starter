@@ -69,7 +69,6 @@ bun run dev:server    # Start Convex backend only
 - [docs/references/backend-guidelines.md](docs/references/backend-guidelines.md)
 - [docs/references/convex-guidelines.md](docs/references/convex-guidelines.md)
 - [docs/references/frontend-guidelines.md](docs/references/frontend-guidelines.md)
-- [docs/references/system-internals.md](docs/references/system-internals.md)
 - [docs/references/tech-stack.md](docs/references/tech-stack.md)
 <!-- [/auto-generated] -->
 

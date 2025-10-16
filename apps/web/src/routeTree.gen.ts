@@ -11,13 +11,17 @@
 import { Route as rootRouteImport } from './app/__root'
 import { Route as SignupRouteImport } from './app/signup'
 import { Route as ResetPasswordRouteImport } from './app/reset-password'
+import { Route as RecoverRouteImport } from './app/recover'
+import { Route as NewOrganizationRouteImport } from './app/new-organization'
 import { Route as LoginRouteImport } from './app/login'
 import { Route as ForgotPasswordRouteImport } from './app/forgot-password'
-import { Route as DashboardRouteImport } from './app/dashboard'
 import { Route as IndexRouteImport } from './app/index'
-import { Route as DashboardIndexRouteImport } from './app/dashboard.index'
-import { Route as DashboardTodosRouteImport } from './app/dashboard.todos'
-import { Route as DashboardSettingsRouteImport } from './app/dashboard.settings'
+import { Route as OIndexRouteImport } from './app/o.index'
+import { Route as OOrganizationSlugRouteImport } from './app/o.$organizationSlug'
+import { Route as AcceptInviteInvitationIdRouteImport } from './app/accept-invite.$invitationId'
+import { Route as OOrganizationSlugIndexRouteImport } from './app/o.$organizationSlug.index'
+import { Route as OOrganizationSlugTodosRouteImport } from './app/o.$organizationSlug.todos'
+import { Route as OOrganizationSlugSettingsRouteImport } from './app/o.$organizationSlug.settings'
 import { Route as ApiAuthSplatRouteImport } from './app/api/auth.$'
 
 const SignupRoute = SignupRouteImport.update({
@@ -30,6 +34,16 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
   path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RecoverRoute = RecoverRouteImport.update({
+  id: '/recover',
+  path: '/recover',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NewOrganizationRoute = NewOrganizationRouteImport.update({
+  id: '/new-organization',
+  path: '/new-organization',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -40,31 +54,43 @@ const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DashboardRoute = DashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DashboardIndexRoute = DashboardIndexRouteImport.update({
+const OIndexRoute = OIndexRouteImport.update({
+  id: '/o/',
+  path: '/o/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OOrganizationSlugRoute = OOrganizationSlugRouteImport.update({
+  id: '/o/$organizationSlug',
+  path: '/o/$organizationSlug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AcceptInviteInvitationIdRoute =
+  AcceptInviteInvitationIdRouteImport.update({
+    id: '/accept-invite/$invitationId',
+    path: '/accept-invite/$invitationId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const OOrganizationSlugIndexRoute = OOrganizationSlugIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => DashboardRoute,
+  getParentRoute: () => OOrganizationSlugRoute,
 } as any)
-const DashboardTodosRoute = DashboardTodosRouteImport.update({
+const OOrganizationSlugTodosRoute = OOrganizationSlugTodosRouteImport.update({
   id: '/todos',
   path: '/todos',
-  getParentRoute: () => DashboardRoute,
+  getParentRoute: () => OOrganizationSlugRoute,
 } as any)
-const DashboardSettingsRoute = DashboardSettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => DashboardRoute,
-} as any)
+const OOrganizationSlugSettingsRoute =
+  OOrganizationSlugSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => OOrganizationSlugRoute,
+  } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -73,85 +99,113 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/new-organization': typeof NewOrganizationRoute
+  '/recover': typeof RecoverRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
-  '/dashboard/settings': typeof DashboardSettingsRoute
-  '/dashboard/todos': typeof DashboardTodosRoute
-  '/dashboard/': typeof DashboardIndexRoute
+  '/accept-invite/$invitationId': typeof AcceptInviteInvitationIdRoute
+  '/o/$organizationSlug': typeof OOrganizationSlugRouteWithChildren
+  '/o': typeof OIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/o/$organizationSlug/settings': typeof OOrganizationSlugSettingsRoute
+  '/o/$organizationSlug/todos': typeof OOrganizationSlugTodosRoute
+  '/o/$organizationSlug/': typeof OOrganizationSlugIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/new-organization': typeof NewOrganizationRoute
+  '/recover': typeof RecoverRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
-  '/dashboard/settings': typeof DashboardSettingsRoute
-  '/dashboard/todos': typeof DashboardTodosRoute
-  '/dashboard': typeof DashboardIndexRoute
+  '/accept-invite/$invitationId': typeof AcceptInviteInvitationIdRoute
+  '/o': typeof OIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/o/$organizationSlug/settings': typeof OOrganizationSlugSettingsRoute
+  '/o/$organizationSlug/todos': typeof OOrganizationSlugTodosRoute
+  '/o/$organizationSlug': typeof OOrganizationSlugIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/new-organization': typeof NewOrganizationRoute
+  '/recover': typeof RecoverRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
-  '/dashboard/settings': typeof DashboardSettingsRoute
-  '/dashboard/todos': typeof DashboardTodosRoute
-  '/dashboard/': typeof DashboardIndexRoute
+  '/accept-invite/$invitationId': typeof AcceptInviteInvitationIdRoute
+  '/o/$organizationSlug': typeof OOrganizationSlugRouteWithChildren
+  '/o/': typeof OIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/o/$organizationSlug/settings': typeof OOrganizationSlugSettingsRoute
+  '/o/$organizationSlug/todos': typeof OOrganizationSlugTodosRoute
+  '/o/$organizationSlug/': typeof OOrganizationSlugIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/dashboard'
     | '/forgot-password'
     | '/login'
+    | '/new-organization'
+    | '/recover'
     | '/reset-password'
     | '/signup'
-    | '/dashboard/settings'
-    | '/dashboard/todos'
-    | '/dashboard/'
+    | '/accept-invite/$invitationId'
+    | '/o/$organizationSlug'
+    | '/o'
     | '/api/auth/$'
+    | '/o/$organizationSlug/settings'
+    | '/o/$organizationSlug/todos'
+    | '/o/$organizationSlug/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/forgot-password'
     | '/login'
+    | '/new-organization'
+    | '/recover'
     | '/reset-password'
     | '/signup'
-    | '/dashboard/settings'
-    | '/dashboard/todos'
-    | '/dashboard'
+    | '/accept-invite/$invitationId'
+    | '/o'
     | '/api/auth/$'
+    | '/o/$organizationSlug/settings'
+    | '/o/$organizationSlug/todos'
+    | '/o/$organizationSlug'
   id:
     | '__root__'
     | '/'
-    | '/dashboard'
     | '/forgot-password'
     | '/login'
+    | '/new-organization'
+    | '/recover'
     | '/reset-password'
     | '/signup'
-    | '/dashboard/settings'
-    | '/dashboard/todos'
-    | '/dashboard/'
+    | '/accept-invite/$invitationId'
+    | '/o/$organizationSlug'
+    | '/o/'
     | '/api/auth/$'
+    | '/o/$organizationSlug/settings'
+    | '/o/$organizationSlug/todos'
+    | '/o/$organizationSlug/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  DashboardRoute: typeof DashboardRouteWithChildren
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
+  NewOrganizationRoute: typeof NewOrganizationRoute
+  RecoverRoute: typeof RecoverRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SignupRoute: typeof SignupRoute
+  AcceptInviteInvitationIdRoute: typeof AcceptInviteInvitationIdRoute
+  OOrganizationSlugRoute: typeof OOrganizationSlugRouteWithChildren
+  OIndexRoute: typeof OIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
@@ -171,6 +225,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/recover': {
+      id: '/recover'
+      path: '/recover'
+      fullPath: '/recover'
+      preLoaderRoute: typeof RecoverRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/new-organization': {
+      id: '/new-organization'
+      path: '/new-organization'
+      fullPath: '/new-organization'
+      preLoaderRoute: typeof NewOrganizationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -185,13 +253,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -199,26 +260,47 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/dashboard/': {
-      id: '/dashboard/'
+    '/o/': {
+      id: '/o/'
+      path: '/o'
+      fullPath: '/o'
+      preLoaderRoute: typeof OIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/o/$organizationSlug': {
+      id: '/o/$organizationSlug'
+      path: '/o/$organizationSlug'
+      fullPath: '/o/$organizationSlug'
+      preLoaderRoute: typeof OOrganizationSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/accept-invite/$invitationId': {
+      id: '/accept-invite/$invitationId'
+      path: '/accept-invite/$invitationId'
+      fullPath: '/accept-invite/$invitationId'
+      preLoaderRoute: typeof AcceptInviteInvitationIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/o/$organizationSlug/': {
+      id: '/o/$organizationSlug/'
       path: '/'
-      fullPath: '/dashboard/'
-      preLoaderRoute: typeof DashboardIndexRouteImport
-      parentRoute: typeof DashboardRoute
+      fullPath: '/o/$organizationSlug/'
+      preLoaderRoute: typeof OOrganizationSlugIndexRouteImport
+      parentRoute: typeof OOrganizationSlugRoute
     }
-    '/dashboard/todos': {
-      id: '/dashboard/todos'
+    '/o/$organizationSlug/todos': {
+      id: '/o/$organizationSlug/todos'
       path: '/todos'
-      fullPath: '/dashboard/todos'
-      preLoaderRoute: typeof DashboardTodosRouteImport
-      parentRoute: typeof DashboardRoute
+      fullPath: '/o/$organizationSlug/todos'
+      preLoaderRoute: typeof OOrganizationSlugTodosRouteImport
+      parentRoute: typeof OOrganizationSlugRoute
     }
-    '/dashboard/settings': {
-      id: '/dashboard/settings'
+    '/o/$organizationSlug/settings': {
+      id: '/o/$organizationSlug/settings'
       path: '/settings'
-      fullPath: '/dashboard/settings'
-      preLoaderRoute: typeof DashboardSettingsRouteImport
-      parentRoute: typeof DashboardRoute
+      fullPath: '/o/$organizationSlug/settings'
+      preLoaderRoute: typeof OOrganizationSlugSettingsRouteImport
+      parentRoute: typeof OOrganizationSlugRoute
     }
     '/api/auth/$': {
       id: '/api/auth/$'
@@ -230,29 +312,32 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface DashboardRouteChildren {
-  DashboardSettingsRoute: typeof DashboardSettingsRoute
-  DashboardTodosRoute: typeof DashboardTodosRoute
-  DashboardIndexRoute: typeof DashboardIndexRoute
+interface OOrganizationSlugRouteChildren {
+  OOrganizationSlugSettingsRoute: typeof OOrganizationSlugSettingsRoute
+  OOrganizationSlugTodosRoute: typeof OOrganizationSlugTodosRoute
+  OOrganizationSlugIndexRoute: typeof OOrganizationSlugIndexRoute
 }
 
-const DashboardRouteChildren: DashboardRouteChildren = {
-  DashboardSettingsRoute: DashboardSettingsRoute,
-  DashboardTodosRoute: DashboardTodosRoute,
-  DashboardIndexRoute: DashboardIndexRoute,
+const OOrganizationSlugRouteChildren: OOrganizationSlugRouteChildren = {
+  OOrganizationSlugSettingsRoute: OOrganizationSlugSettingsRoute,
+  OOrganizationSlugTodosRoute: OOrganizationSlugTodosRoute,
+  OOrganizationSlugIndexRoute: OOrganizationSlugIndexRoute,
 }
 
-const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
-  DashboardRouteChildren,
-)
+const OOrganizationSlugRouteWithChildren =
+  OOrganizationSlugRoute._addFileChildren(OOrganizationSlugRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  DashboardRoute: DashboardRouteWithChildren,
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
+  NewOrganizationRoute: NewOrganizationRoute,
+  RecoverRoute: RecoverRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SignupRoute: SignupRoute,
+  AcceptInviteInvitationIdRoute: AcceptInviteInvitationIdRoute,
+  OOrganizationSlugRoute: OOrganizationSlugRouteWithChildren,
+  OIndexRoute: OIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport
