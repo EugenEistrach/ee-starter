@@ -10,13 +10,14 @@
             "command": ".claude/hooks/post-write-docs.sh"
           }
         ]
-      },
+      }
+    ],
+    "Stop": [
       {
-        "matcher": "Bash",
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/post-commit-sync-routes.sh"
+            "command": ".claude/hooks/check-on-agent-finish.sh"
           }
         ]
       }
