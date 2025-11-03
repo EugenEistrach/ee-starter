@@ -1,4 +1,2 @@
-bun run fix
-bun run knip
-bun run packages/scripts/src/validate-commit.ts
+bun run packages/scripts/src/ensure-clean-commit.ts
 bun run packages/scripts/src/update-docs.ts
