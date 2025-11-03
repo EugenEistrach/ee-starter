@@ -6,7 +6,9 @@
     "build": "vite build",
     "serve": "vite preview",
     "dev": "vite dev --port 3000",
-    "check": "eslint --cache --cache-location .eslintcache --concurrency auto src/ && tsc --noEmit",
+    "lint": "eslint --cache --cache-location .eslintcache --concurrency auto src/",
+    "typecheck": "tsc --noEmit",
+    "check": "bun run lint && bun run typecheck",
     "fix": "eslint --cache --cache-location .eslintcache --concurrency auto --fix src/ && tsc --noEmit",
     "clean": "rm -rf node_modules .turbo dist .eslintcache"
   },
