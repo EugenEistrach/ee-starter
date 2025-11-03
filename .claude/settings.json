@@ -3,6 +3,15 @@
   "hooks": {
     "PostToolUse": [
       {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/post-bash-no-verify.sh"
+          }
+        ]
+      },
+      {
         "matcher": "Write",
         "hooks": [
           {

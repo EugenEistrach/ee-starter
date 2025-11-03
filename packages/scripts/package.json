@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "check": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
+    "check": "bun run typecheck",
     "clean": "rm -rf node_modules .turbo dist"
   },
   "devDependencies": {

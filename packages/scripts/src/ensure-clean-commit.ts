@@ -12,7 +12,8 @@ const ROOT_DIR = join(__dirname, "../../..")
 const ALLOWED_FILENAMES = [
   "readme.md",
   "claude.md",
-  "agents.md"
+  "agents.md",
+  "warp.md"
 ]
 
 // Directories where .md files are allowed

@@ -10,7 +10,14 @@ if [ $exit_code -ne 0 ]; then
   escaped_output=$(echo "$output" | jq -Rs .)
 
   # Create JSON with properly escaped content
-  jq -n --arg reason "⚠️  Linting errors found. Please fix these issues before completing the task:
+  jq -n --arg reason "⚠️  Code quality checks failed. You must:
+- Remove unused imports/variables/code
+- Make unused exports private or remove them
+- Fix all linting errors properly
+- DO NOT use --no-verify to bypass these checks
+
+If stuck on an issue, STOP and ask the user for guidance.
+Re-run checks until clean.
 
 $output" '{
     decision: "block",

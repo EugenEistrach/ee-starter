@@ -43,8 +43,10 @@
   "scripts": {
     "dev": "turbo dev",
     "build": "turbo build",
+    "lint": "turbo lint",
+    "typecheck": "turbo typecheck",
     "knip": "knip",
-    "check": "turbo check --continue",
+    "check": "turbo check --continue && bun run knip",
     "fix": "turbo fix",
     "dev:web": "turbo -F web dev",
     "dev:server": "turbo -F @workspace/backend dev",

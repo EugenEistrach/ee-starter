@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        check: [build, lint, typecheck, knip]
+      fail-fast: false  # Report all errors, don't stop on first failure
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.bun/install/cache
+            node_modules
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lockb') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Run ${{ matrix.check }}
+        run: bun run ${{ matrix.check }}
+
+  CI:
+    runs-on: ubuntu-latest
+    needs: quality
+    if: always()
+
+    steps:
+      - name: Check quality job results
+        run: |
+          if [ "${{ needs.quality.result }}" != "success" ]; then
+            echo "❌ Quality checks failed"
+            exit 1
+          fi
+          echo "✅ All quality checks passed"

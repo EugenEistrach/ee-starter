@@ -14,6 +14,16 @@
         "dist/**"
       ]
     },
+    "lint": {
+      "dependsOn": [
+        "^lint"
+      ]
+    },
+    "typecheck": {
+      "dependsOn": [
+        "^typecheck"
+      ]
+    },
     "//#knip": {
       "cache": true
     },
