@@ -45,14 +45,6 @@ Automated setup prompts for:
 - 🚧 Organization management
 - 🚧 Admin UIs
 
-## Development
-
-```bash
-bun run dev           # Start all services (web + backend)
-bun run dev:web       # Start web app only
-bun run dev:server    # Start Convex backend only
-```
-
 ## Documentation
 
 <!-- [auto-generated] packages/scripts/src/update-docs.ts -->
@@ -86,9 +78,23 @@ This starter is fully compatible with [Conductor](https://conductor.build/) for 
 **Required for automatic cleanup:**
 Set `CONVEX_TEAM_ACCESS_TOKEN` in `packages/backend/.env.local` to enable automatic Convex project deletion when you merge and archive worktrees in Conductor. Without this token, projects will need to be manually deleted from the Convex dashboard.
 
-## Lint Commands
+## Available Commands
 
+### Development
 ```bash
-bun run check        # Check for errors (all packages)
-bun run fix          # Auto-fix errors (all packages)
+bun run dev           # Start all services (web + backend)
+bun run dev:web       # Start web app only
+bun run dev:server    # Start Convex backend only
 ```
+
+### Quality Checks
+```bash
+bun run build         # Build all packages
+bun run lint          # Run ESLint on all packages
+bun run typecheck     # Run TypeScript type checking on all packages
+bun run knip          # Detect unused code, dependencies, and exports
+bun run check         # Run all checks (lint + typecheck + knip)
+bun run fix           # Auto-fix linting errors
+```
+
+**For local development and git hooks, use `bun run check` to run all validations at once.**
