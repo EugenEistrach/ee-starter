@@ -19,15 +19,6 @@ function slugify(name: string): string {
     .replace(/^-+|-+$/g, '')
 }
 
-function getInitials(name: string): string {
-  const words = name.trim().split(/\s+/).filter(w => w.length > 0)
-  if (words.length === 0) return 'AP'
-  if (words.length === 1) {
-    return words[0]!.slice(0, 2).toUpperCase()
-  }
-  return words.slice(0, 2).map(w => w[0]!).join('').toUpperCase()
-}
-
 function isValidSlug(slug: string): boolean {
   return /^[a-z0-9-]+$/.test(slug) && !slug.startsWith('-') && !slug.endsWith('-')
 }
@@ -67,8 +58,6 @@ async function main() {
     process.exit(1)
   }
 
-  const initials = getInitials(appName)
-
   console.log('\n📝 Updating project files...')
 
   // Update package.json
@@ -83,22 +72,8 @@ async function main() {
 
   // Update __root.tsx title
   const rootTsxPath = join(ROOT_DIR, 'apps/web/src/app/__root.tsx')
-  replaceInFile(rootTsxPath, /title:\s*'EE Starter'/, `title: '${appName}'`)
+  replaceInFile(rootTsxPath, /title:\s*'EE Starter',/, `title: '${appName}',`)
   console.log('✅ Updated site title')
-
-  // Update dashboard.tsx - initials and name
-  const dashboardPath = join(ROOT_DIR, 'apps/web/src/app/dashboard.tsx')
-  let dashboardContent = readFileSync(dashboardPath, 'utf-8')
-  dashboardContent = dashboardContent.replace(
-    /<span className="text-lg font-bold">ES<\/span>/,
-    `<span className="text-lg font-bold">${initials}</span>`
-  )
-  dashboardContent = dashboardContent.replace(
-    /<span className="truncate font-semibold">ee-starter<\/span>/,
-    `<span className="truncate font-semibold">${appName}</span>`
-  )
-  writeFileSync(dashboardPath, dashboardContent, 'utf-8')
-  console.log('✅ Updated dashboard')
 
   // Replace landing page with simple version
   const indexPath = join(ROOT_DIR, 'apps/web/src/app/index.tsx')
